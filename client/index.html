@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Altas Capacidades</title>
+	<link rel="shortcut icon" href="#">
+
+	<!-- DAO -->
+	<script src="dao/utils.js"></script>
+	<script src="dao/debug.js"></script>
+	<script src="dao/evented.js"></script>
+	<script src="dao/rest_client.js"></script>
+	<script src="dao/ws_client.js"></script>
+	<script src="dao/dao_element.js"></script>
+	<script src="dao/dao_item.js"></script>
+	<script src="dao/dao_list.js"></script>
+	<script src="dao/dao_entity.js"></script>
+	<script src="dao/dao_entity_client.js"></script>
+	<script src="dao/dao_client.js"></script>
+	<script src="dao/app_client.js"></script>
+
+	<!-- App -->
+	<script src="js/app.js" type="module"></script>
+</head>
+
+<body>
+	<div id="app">
+		<h1>Altas Capacidades</h1>
+		<ul>
+			<li v-for="fruta in frutas">
+				{{fruta.id}} - {{fruta.nombre}} ({{fruta.precio}})
+				<button @click="eliminar(fruta.id)">Eliminar</button>
+				<button @click="cambiarPrecio(fruta.id, fruta.precio + 1)">+</button>
+				<button @click="cambiarPrecio(fruta.id, fruta.precio - 1)">-</button>
+			</li>
+		</ul>
+		<div><input type="nombre" v-model="nombreFruta" /> <button @click="anyadir()">Añadir</button></div>
+	</div>
+</body>
+
+</html>
