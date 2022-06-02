@@ -1,0 +1,15 @@
+{
+	"title": "Llave de invitación",
+	"description": "Llave usada para la creación de nuevas cuentas en la aplicación.",
+	"properties": {
+		"id": "#",
+		"llave": "@string !",
+		"fecha_expiracion": "@datetime !",
+		"llave_activada": "@string",
+		"rol_id": "@integer !",
+		"create_time": "@string"
+	},
+	"table": "llave_invitacion",
+	"urlList": "/llave_invitacion",
+	"urlItem": "/llave_invitacion/:id"
+}

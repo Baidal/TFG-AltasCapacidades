@@ -1,0 +1,11 @@
+{
+	"title": "Estado",
+	"description": "Estado de un usuario dentro de la aplicación",
+	"properties": {
+		"id": "#",
+		"estado": "@string !"
+	},
+	"table": "estado",
+	"urlList": "/estado",
+	"urlItem": "/estado/:id"
+}

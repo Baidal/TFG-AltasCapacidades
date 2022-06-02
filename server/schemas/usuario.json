@@ -1,0 +1,19 @@
+{
+	"title": "Usuario",
+	"description": "Usuario de la aplicación",
+	"properties": {
+		"id": "#",
+		"email": "@email !",
+		"password": "@password !",
+		"nombre": "@string !",
+		"apellidos": "@string",
+		"dni": "@string !",
+		"telefono": "@string",
+		"fecha_nacimiento": "@datetime",
+		"create_time": "@string !",
+		"update_time": "@string !"
+	},
+	"table": "usuario",
+	"urlList": "/usuario",
+	"urlItem": "/usuario/:id"
+}

@@ -1,0 +1,17 @@
+{
+	"title": "Expediente",
+	"description": "Representa un expediente dentro de la aplicación, dónde se guardaran todos los datos de los cuestionarios, eventos, etc relacionados con un niño/a",
+	"properties": {
+		"id": "#",
+		"nombre_niño": "@string",
+        "apellidos_niño": "@string",
+        "nombre": "@string !",
+        "dni_niño": "@string",
+        "fechanacimiento_niño": "@string",
+        "create_time": "@string !",
+		"update_time": "@string !"
+	},
+	"table": "expediente",
+	"urlList": "/expediente",
+	"urlItem": "/expediente/:id"
+}

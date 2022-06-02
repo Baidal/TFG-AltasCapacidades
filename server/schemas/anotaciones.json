@@ -1,0 +1,14 @@
+{
+	"title": "Anotaciones",
+	"description": "Representa las anotaciones que se pueden realizar sobre un expediente",
+	"properties": {
+		"id": "#",
+		"titulo": "@string",
+        "anotacion": "@string !",
+        "create_time": "@string !",
+		"update_time": "@string !"
+	},
+	"table": "anotaciones",
+	"urlList": "/anotaciones",
+	"urlItem": "/anotaciones/:id"
+}

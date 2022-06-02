@@ -1,0 +1,11 @@
+{
+	"title": "Rol",
+	"description": "Representa el rol que tiene un usuario dentro de la aplicación",
+	"properties": {
+		"id": "#",
+		"rol": "string !"
+	},
+	"table": "anotaciones",
+	"urlList": "/anotaciones",
+	"urlItem": "/anotaciones/:id"
+}
