@@ -8,37 +8,28 @@ app.getConfig(location.origin).then(() => {
             .createApp({
                 data: function () {
                     return {
-                        nombreFruta: "",
-                        frutas: [],
+                        llave: "",
+                        llaves: [],
                     }
                 },
 
                 methods: {
                     cargar() {
-                        app.dao.fruta.read().then(frutas => { // lee un conjunto (array) de entidades
-                            this.frutas = frutas;
+                        console.log(app)
+                        app.dao.llave_invitacion.read().then(llaves => { // lee un conjunto (array) de entidades
+                            this.llaves = llaves;
+                            console.log(llaves)
                         });
                     },
-
                     anyadir() {
                         app.dao.fruta.create({ nombre: this.nombreFruta, precio: 0 }).then(nuevaFruta => { // crea una entidad
                             console.log("Nueva fruta creada con id:", nuevaFruta.id);
-                            this.cargar();
+                            llaves.push(nuevaFruta);
+                            //this.cargar();
                         });
                     },
-
-                    eliminar(frutaId) {
-                        app.dao.fruta.delete({id:frutaId}).then(() => { // elimina una entidad
-                            console.log("Fruta borrada");
-                            this.cargar();
-                        });
-                    },
-
-                    cambiarPrecio(frutaId, precio) {
-                        app.dao.fruta.update({id: frutaId}, {precio: precio}).then(()=> { // actualiza una entidad
-                            console.log("Precio actualizado");
-                            this.cargar();
-                        });
+                    eliminar(frutaId){
+                        llaves = llaves.filter(llave => llave.id === frutaId)
                     }
                 },
 

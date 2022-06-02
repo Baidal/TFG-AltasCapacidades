@@ -28,8 +28,8 @@
 	<div id="app">
 		<h1>Altas Capacidades</h1>
 		<ul>
-			<li v-for="fruta in frutas">
-				{{fruta.id}} - {{fruta.nombre}} ({{fruta.precio}})
+			<li v-for="llave in llaves">
+				{{llave.id}} - {{llave.llave}}
 				<button @click="eliminar(fruta.id)">Eliminar</button>
 				<button @click="cambiarPrecio(fruta.id, fruta.precio + 1)">+</button>
 				<button @click="cambiarPrecio(fruta.id, fruta.precio - 1)">-</button>
