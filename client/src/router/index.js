@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
+import AsignarCuestionariosExpediente from '../views/AsignarCuestionariosExpediente.vue'
 
 const routes = [
   {
@@ -7,6 +8,12 @@ const routes = [
     name: 'Home',
     component: Home
   },
+  {
+    path: '/crearCuestionario',
+    name: 'CrearCuestionario',
+    component: AsignarCuestionariosExpediente,
+    props: {creandoExpediente: true}
+  }
 ]
 
 const router = createRouter({
