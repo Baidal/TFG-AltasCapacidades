@@ -64,10 +64,10 @@
 	},
 	"database": {
 		"connection": {
-			"database": "altas_capacidades",
+			"database": "altascapacidades",
 			"host": "localhost",
-			"user": "root",
-			"password": "",
+			"user": "mtis",
+			"password": "mtis",
 			"port": 3306,
 			"multipleStatements": true
 		},
