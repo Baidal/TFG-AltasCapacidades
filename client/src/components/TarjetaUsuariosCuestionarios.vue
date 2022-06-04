@@ -9,10 +9,24 @@
             <input
                 type="search"
                 id="users"
-                placeholder="Añadir usuarios..."
+                placeholder="Buscar usuarios..."
                 class="w-full focus:outline-none"
-            />      
+                v-model="userSearchInput"
+            />
         </div>
+        <div class="w-2/3 mx-auto mt-2 max-h-52 overflow-scroll ">
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
+        </div>
+
         <AppButton :name="'Añadir usuario'" class="mt-5"/>
     </div>
 
@@ -60,10 +74,16 @@ import { SearchIcon, PlusCircleIcon } from "@heroicons/vue/outline";
 import TarjetaUsuario from '../components/TarjetaUsuario.vue'
 import TarjetaCuestionario from "./TarjetaCuestionario.vue";
 import AppButton from "./AppButton.vue";
+import BusquedaUsuarioTarjeta from "./BusquedaUsuarioTarjeta.vue";
 
 
 export default {
   name: "TarjetaUsuariosCuestionarios",
+  data() {
+    return {
+      userSearchInput: ''
+    }
+  },
   props: {
     titulo: "",
   },
@@ -72,7 +92,8 @@ export default {
     TarjetaUsuario,
     PlusCircleIcon,
     TarjetaCuestionario,
-    AppButton
+    AppButton,
+    BusquedaUsuarioTarjeta
 },
 };
 </script>
