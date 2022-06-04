@@ -13,7 +13,7 @@
                 class="w-full focus:outline-none"
             />      
         </div>
-        <button class="px-2 py-1 border-2 border-black rounded-md mt-4">Añadir usuarios</button>
+        <AppButton :name="'Añadir usuario'" class="mt-5"/>
     </div>
 
     <!-- Mostramos los usuarios añadidos a la categoría-->
@@ -59,6 +59,7 @@
 import { SearchIcon, PlusCircleIcon } from "@heroicons/vue/outline";
 import TarjetaUsuario from '../components/TarjetaUsuario.vue'
 import TarjetaCuestionario from "./TarjetaCuestionario.vue";
+import AppButton from "./AppButton.vue";
 
 
 export default {
@@ -67,10 +68,11 @@ export default {
     titulo: "",
   },
   components: {
-    SearchIcon,        
+    SearchIcon,
     TarjetaUsuario,
     PlusCircleIcon,
-    TarjetaCuestionario
-  },
+    TarjetaCuestionario,
+    AppButton
+},
 };
 </script>

@@ -9,21 +9,25 @@
         </div>
         <!-- Botones de login, registro, etc-->
         <div class="flex justify-center space-x-4">
-            <button class="bg-indigo-300 border-2 border-black px-4 py-2 rounded-md font-bold shadow-2xl hover:bg-indigo-900">
-                Expedientes
-            </button>
-            <button class="bg-indigo-300 border-2 border-black px-4 py-2 rounded-md font-bold shadow-2xl hover:bg-indigo-900">
-                Perfil
-            </button>
-            <button class="bg-indigo-300 border-2 border-black px-4 py-2 rounded-md font-bold shadow-2xl hover:bg-indigo-900">
-                Iniciar Sesión
-            </button>
-            <button class="bg-indigo-300 border-2 border-black px-4 py-2 rounded-md font-bold shadow-2xl hover:bg-indigo-900">
-                Registrarse
-            </button>
+            <NavBarButton :name="'Expediente'"/>
+            <NavBarButton :name="'Perfil'"/>
+            <NavBarButton :name="'Iniciar Sesión'"/>
+            <NavBarButton :name="'Registrarse'"/>
         </div>
     </div>
 </template>
+
+<script>
+import NavBarButton from './NavBarButton.vue'
+
+export default {
+    name: 'NavBar',
+    components: {
+        NavBarButton
+    }
+}
+</script>
+
 
 <style>
     .header-button {
