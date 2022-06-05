@@ -17,7 +17,7 @@
         </div>
         <!-- Mostramos los usuarios buscados -->
         <div class="w-2/3 mx-auto mt-2 max-h-52 overflow-scroll" v-if="showSearchedUsers()">
-          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'" v-for="user in usersSearched" :key="user.id" v-on:click="handleSelectUser(user.id)"/>
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="user.nombre" v-for="user in usersSearched" :key="user.id" v-on:click="handleSelectUser(user.id)"/>
         </div>
 
         <AppButton :name="'Añadir usuario'" class="mt-5"/>
@@ -93,6 +93,11 @@ export default {
     BusquedaUsuarioTarjeta,
   },
   methods: {
+    /**
+     * Cada vez que el usuario escriba algo en el input esta función buscará
+     * usuarios y los añadirá a usersSearched
+     * @param {string} input 
+     */
     async handleUserSearch(input){
       if(input.length < 3) return
 
@@ -102,9 +107,17 @@ export default {
         console.log(usuarios)        
       })
     },
+    /**
+     * Devuelve tru si hay usuarios en el array usersSearched
+     */
     showSearchedUsers(){
       return this.usersSearched.length != 0
     },
+    /**
+     * Cada vez que el usuario clica en un usuario buscado, este se añade en el array
+     * selectedUsers. Si vuelve a clicar, se elimina del array
+     * @param {int} id 
+     */
     handleSelectUser(id){
       //El usuario ya había sido seleccionado
       if(this.selectedUsers.find(user => user.id == id) != undefined){
@@ -118,6 +131,12 @@ export default {
     }
   },
   watch: {
+    /**
+     * Cada vez que cambia usersSearched se activa esta función, que llama
+     * a handleUserSearch con el nuevo valor
+     * @param {*} newInput 
+     * @param {*} _ 
+     */
     userSearchInput(newInput, _){
       if (newInput == ""){
         this.usersSearched = []

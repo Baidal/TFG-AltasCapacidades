@@ -51,7 +51,16 @@ export default {
                 apellidos: "",
                 dni: "",
                 fechaNac: ""
-            }
+            },
+            /**
+             * Categorías es un array de objetos con el siguiente prototipo:
+             * {
+             *  nombre: '',
+             *  usuarios: [],
+             *  cuestionarios: []
+             * }
+             */
+            categorias: [{nombre: 'Familiares', usuarios: [], cuestionarios: []}, {nombre: 'Colegio', usuarios: [], cuestionarios: []}]
         }
     },
     methods: {
