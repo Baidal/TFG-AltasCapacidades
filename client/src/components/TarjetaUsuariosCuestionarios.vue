@@ -20,7 +20,7 @@
           <BusquedaUsuarioTarjeta class="w-full" :nombre="user.nombre" v-for="user in usersSearched" :key="user.id" v-on:click="handleSelectUser(user.id)"/>
         </div>
 
-        <AppButton :name="'Añadir usuario'" class="mt-5" @click="$emit('addUsers',this.titulo,this.selectedUsers)"/>
+        <AppButton :name="'Añadir usuario'" class="mt-5" @click="$emit('addUsers',this.titulo,this.selectedUsers); clearSearchData()" v-if="showSearchedUsers()"/>
     </div>
 
     <!-- Mostramos los usuarios añadidos a la categoría-->
@@ -122,6 +122,15 @@ export default {
 
       //El usuario no había sido seleccionado
       this.selectedUsers.push(this.usersSearched.find(user => user.id == id))
+    },
+    /**
+     * Se encarga de dejar por defecto todas las variables que almacenan
+     * la información de los usuarios buscados
+     */
+    clearSearchData(){
+      this.userSearchInput = ""
+      this.usersSearched = []
+      this.selectedUsers = []
     }
   },
   watch: {
