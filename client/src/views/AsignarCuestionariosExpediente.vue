@@ -21,8 +21,7 @@
         </div>
         <!-- Tarjetas que contienen los usuarios y los cuestionarios a asignar al expediente-->
         <div class="flex justify-center flex-wrap space-x-4">
-            <TarjetaUsuariosCuestionarios :titulo="'Familiares'"/>
-            <TarjetaUsuariosCuestionarios :titulo="'Colegio'"/>
+            <TarjetaUsuariosCuestionarios :titulo="categoria.nombre" :usuarios="categoria.usuarios" @add-users="addUsersToCategory" v-for="categoria in categorias" :key="categoria.nombre"/>
         </div>
     </div>
 </template>
@@ -66,6 +65,22 @@ export default {
     methods: {
         toggleFormularioNiño(){
             this.mostrarFormularioNiño = !this.mostrarFormularioNiño
+        },
+        /**
+         * Cada vez que se elijan nuevos usuarios en las tarjetas 
+         * 'TarjetaUsuariosCuestionarios', desde el hijo se llamará
+         * a esta función, que guardará los usuarios de cada categoría
+         * 
+         * @param {*} nombre 
+         * @param {*} users 
+         */
+        addUsersToCategory(nombre, users){
+            var indexOfCategory = this.categorias.findIndex(categoria => categoria.nombre == nombre)
+            users.forEach(user => {
+                if(this.categorias[indexOfCategory].usuarios.find(userArray => userArray.id == user.id) == undefined){
+                    this.categorias[indexOfCategory].usuarios.push(user)
+                }
+            })
         }
     }
 }

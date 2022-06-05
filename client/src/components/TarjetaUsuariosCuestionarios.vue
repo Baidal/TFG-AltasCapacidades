@@ -20,21 +20,12 @@
           <BusquedaUsuarioTarjeta class="w-full" :nombre="user.nombre" v-for="user in usersSearched" :key="user.id" v-on:click="handleSelectUser(user.id)"/>
         </div>
 
-        <AppButton :name="'Añadir usuario'" class="mt-5"/>
+        <AppButton :name="'Añadir usuario'" class="mt-5" @click="$emit('addUsers',this.titulo,this.selectedUsers)"/>
     </div>
 
     <!-- Mostramos los usuarios añadidos a la categoría-->
     <div class="flex flex-wrap mx-4 justify-center">
-        <TarjetaUsuario :nombre="'Luis'" :email="'luisvr601@gmail.com'" class="mx-2 my-2"/>
-        <TarjetaUsuario :nombre="'Luis'" :email="'luisvr601@gmail.com'" class="mx-2 my-2"/>
-        <TarjetaUsuario :nombre="'Luis'" :email="'luisvr601@gmail.com'" class="mx-2 my-2"/>
-        <TarjetaUsuario :nombre="'Luis'" :email="'luisvr601@gmail.com'" class="mx-2 my-2"/>
-        <TarjetaUsuario :nombre="'Luis'" :email="'luisvr601@gmail.com'" class="mx-2 my-2"/>
-        <TarjetaUsuario :nombre="'Luis'" :email="'luisvr601@gmail.com'" class="mx-2 my-2"/>
-        <TarjetaUsuario :nombre="'Luis'" :email="'luisvr601@gmail.com'" class="mx-2 my-2"/>
-        <TarjetaUsuario :nombre="'Luisdsaddsadasd'" :email="'luisvr601@gmail.com'" class="mx-2 my-2"/>
-        <TarjetaUsuario :nombre="'Luisdsaddsadasd'" :email="'luisvr601@gmail.com'" class="mx-2 my-2"/>
-        <TarjetaUsuario :nombre="'Luisdsaddsadasd'" :email="'luisvr601@gmail.com'" class="mx-2 my-2"/>
+        <TarjetaUsuario :nombre="usuario.nombre" :email="usuario.email" class="mx-2 my-2" v-for="usuario in usuarios" :key="usuario.id"/>
         <!-- Botón de añadir nuevo usuario-->
         <div class="flex flex-col items-center my-auto">
             <PlusCircleIcon class="w-14 h-14"/>
@@ -83,6 +74,9 @@ export default {
   },
   props: {
     titulo: "",
+    usuarios: {
+      type: Array
+    }
   },
   components: {
     SearchIcon,
