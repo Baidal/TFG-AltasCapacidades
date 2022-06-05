@@ -3,7 +3,7 @@
     <p class="font-bold text-lg">{{ titulo }}</p>
     <!-- Buscador de usuarios-->
     <div>
-        <label for="users">Añadir usuarios a la categría</label>
+        <label for="users">Añadir usuarios a la categoría</label>
         <div class="flex space-x-2 mx-auto border-2 border-black p-1 rounded-lg w-2/3">
             <SearchIcon class="w-6 h-6" />
             <input
@@ -12,19 +12,12 @@
                 placeholder="Buscar usuarios..."
                 class="w-full focus:outline-none"
                 v-model="userSearchInput"
+                v-on:change="handleUserSearch"
             />
         </div>
-        <div class="w-2/3 mx-auto mt-2 max-h-52 overflow-scroll ">
-          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
-          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
-          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
-          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
-          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
-          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
-          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
-          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
-          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
-          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'"/>
+        <!-- Mostramos los usuarios buscados -->
+        <div class="w-2/3 mx-auto mt-2 max-h-52 overflow-scroll" v-if="showSearchedUsers()">
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="'Luis Vidal Rico'" v-for="user in usersSearched" :key="user.id" v-on:click="handleSelectUser(user.id)"/>
         </div>
 
         <AppButton :name="'Añadir usuario'" class="mt-5"/>
@@ -70,6 +63,8 @@
 </template>
 
 <script>
+import initializeAppObject from '../services/daoProvider'
+
 import { SearchIcon, PlusCircleIcon } from "@heroicons/vue/outline";
 import TarjetaUsuario from '../components/TarjetaUsuario.vue'
 import TarjetaCuestionario from "./TarjetaCuestionario.vue";
@@ -81,7 +76,9 @@ export default {
   name: "TarjetaUsuariosCuestionarios",
   data() {
     return {
-      userSearchInput: ''
+      userSearchInput: '',
+      usersSearched: [],
+      selectedUsers: []
     }
   },
   props: {
@@ -93,7 +90,41 @@ export default {
     PlusCircleIcon,
     TarjetaCuestionario,
     AppButton,
-    BusquedaUsuarioTarjeta
-},
+    BusquedaUsuarioTarjeta,
+  },
+  methods: {
+    async handleUserSearch(input){
+      if(input.length < 3) return
+
+      const app = await initializeAppObject()
+      app.dao.usuario.read().then(usuarios => {
+        this.usersSearched = usuarios
+        console.log(usuarios)        
+      })
+    },
+    showSearchedUsers(){
+      return this.usersSearched.length != 0
+    },
+    handleSelectUser(id){
+      //El usuario ya había sido seleccionado
+      if(this.selectedUsers.find(user => user.id == id) != undefined){
+        //eliminamos al usuario del array (porque le ha dado click y lo ha deseleccionado)
+        this.selectedUsers = this.selectedUsers.filter(user => user.id != id)
+        return
+      }
+
+      //El usuario no había sido seleccionado
+      this.selectedUsers.push(this.usersSearched.find(user => user.id == id))
+    }
+  },
+  watch: {
+    userSearchInput(newInput, _){
+      if (newInput == ""){
+        this.usersSearched = []
+        return
+      }
+      this.handleUserSearch(newInput)
+    }
+  }
 };
 </script>
