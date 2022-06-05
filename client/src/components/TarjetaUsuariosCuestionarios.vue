@@ -25,7 +25,7 @@
 
     <!-- Mostramos los usuarios añadidos a la categoría-->
     <div class="flex flex-wrap mx-4 justify-center">
-        <TarjetaUsuario :nombre="usuario.nombre" :email="usuario.email" class="mx-2 my-2" v-for="usuario in usuarios" :key="usuario.id"/>
+        <TarjetaUsuario :nombre="usuario.nombre" :email="usuario.email" :id="usuario.id" class="mx-2 my-2" v-for="usuario in usuarios" :key="usuario.id" @delete-user="(id) => $emit('deleteUser', id, titulo)"/>
         <!-- Botón de añadir nuevo usuario-->
         <div class="flex flex-col items-center my-auto">
             <PlusCircleIcon class="w-14 h-14"/>
