@@ -29,7 +29,9 @@
                 v-for="categoria in categorias" 
                 :key="categoria.nombre"
                 @delete-user="deleteUser"
-                @new-created-user="newCreatedUser"/>
+                @new-created-user="newCreatedUser"
+                @delete-cuestionario="deleteCuestionario"
+                />
         </div>
     </div>
 </template>
@@ -129,6 +131,11 @@ export default {
             }
 
             this.categorias[indexOfCategory].usuarios.push(nuevoUsuario)
+        },
+        deleteCuestionario(nombreCategoria, idCuestionario){
+            var indexOfCategory = this.indexCategory(nombreCategoria)
+
+            this.categorias[indexOfCategory].cuestionarios = this.categorias[indexOfCategory].cuestionarios.filter(cuestionario => cuestionario.id != idCuestionario) 
         }
     }
 }

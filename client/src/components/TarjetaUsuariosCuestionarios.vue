@@ -49,7 +49,9 @@
         <TarjetaCuestionario 
           v-for="cuestionario in cuestionarios"
           :key="cuestionario.id"
-          :nombre="cuestionario.nombre" 
+          :nombre="cuestionario.nombre"
+          :id="cuestionario.id"
+          @delete-cuestionario="(id) => $emit('deleteCuestionario', titulo, id)"
           class="mx-1 my-1"/>
         <!-- Botón de añadir cuestionario-->
         <div class="flex flex-col items-center my-auto w-1/4 mx-1">
