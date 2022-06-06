@@ -1,5 +1,7 @@
 <template>
+  
   <div class="w-2/6 border-2 border-black text-center rounded-lg flex flex-col space-y-3">
+    <PopUpAnyadirUsuario v-if="mostrarNuevoUsuario" @close-new-user="this.mostrarNuevoUsuario = !this.mostrarNuevoUsuario" @new-user="handleCreateUser"/>
     <p class="font-bold text-lg">{{ titulo }}</p>
     <!-- Buscador de usuarios-->
     <div>
@@ -25,9 +27,17 @@
 
     <!-- Mostramos los usuarios añadidos a la categoría-->
     <div class="flex flex-wrap mx-4 justify-center">
-        <TarjetaUsuario :nombre="usuario.nombre" :email="usuario.email" :id="usuario.id" class="mx-2 my-2" v-for="usuario in usuarios" :key="usuario.id" @delete-user="(id) => $emit('deleteUser', id, titulo)"/>
+        <TarjetaUsuario 
+          :nombre="usuario.nombre" 
+          :email="usuario.email" 
+          :id="usuario.id"
+          :nuevoUsuario="usuario.nuevoUsuario"
+          class="mx-2 my-2" 
+          v-for="usuario in usuarios" 
+          :key="usuario.email" 
+          @delete-user="(id) => $emit('deleteUser', id, titulo)"/>
         <!-- Botón de añadir nuevo usuario-->
-        <div class="flex flex-col items-center my-auto">
+        <div class="flex flex-col items-center my-auto cursor-pointer" @click="this.mostrarNuevoUsuario = !this.mostrarNuevoUsuario">
             <PlusCircleIcon class="w-14 h-14"/>
             <p class="font-bold">Crear nuevo usuario</p>
         </div>
@@ -61,6 +71,7 @@ import TarjetaUsuario from '../components/TarjetaUsuario.vue'
 import TarjetaCuestionario from "./TarjetaCuestionario.vue";
 import AppButton from "./AppButton.vue";
 import BusquedaUsuarioTarjeta from "./BusquedaUsuarioTarjeta.vue";
+import PopUpAnyadirUsuario from './PopUpAnyadirUsuario.vue'
 
 
 export default {
@@ -69,7 +80,8 @@ export default {
     return {
       userSearchInput: '',
       usersSearched: [],
-      selectedUsers: []
+      selectedUsers: [],
+      mostrarNuevoUsuario: false
     }
   },
   props: {
@@ -85,6 +97,7 @@ export default {
     TarjetaCuestionario,
     AppButton,
     BusquedaUsuarioTarjeta,
+    PopUpAnyadirUsuario,
   },
   methods: {
     /**
@@ -131,7 +144,20 @@ export default {
       this.userSearchInput = ""
       this.usersSearched = []
       this.selectedUsers = []
+    },
+    handleCreateUser(newUser){
+      this.mostrarNuevoUsuario = !this.mostrarNuevoUsuario
+
+      //Buscamos si el usuario que se ha creado ya está en el array de usuarios seleccionados
+      if(this.usuarios.findIndex(user => user.email == newUser.email) != -1){
+        return
+      }
+
+      newUser.nuevoUsuario = true
+
+      this.$emit('newCreatedUser',this.titulo ,newUser)
     }
+
   },
   watch: {
     /**

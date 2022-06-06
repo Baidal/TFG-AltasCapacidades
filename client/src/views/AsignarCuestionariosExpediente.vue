@@ -1,6 +1,5 @@
 <template>
     <div class="block text-center mt-2 space-y-2">
-        <PopUpAnyadirUsuario/>
         <p class="text-lg font-bold">{{this.creandoExpediente ? "Nuevo expediente" : "Añadir formularios al expediente"}}</p>
         <PlusCircleIcon class="h-14 w-14 mx-auto text-green-800"/>
         <AppButton v-on:click="toggleFormularioNiño" :name="mostrarFormularioNiño ? 'Esconder datos' : 'Mostrar datos'"/>
@@ -28,7 +27,8 @@
                 @add-users="addUsersToCategory" 
                 v-for="categoria in categorias" 
                 :key="categoria.nombre"
-                @delete-user="deleteUser"/>
+                @delete-user="deleteUser"
+                @new-created-user="newCreatedUser"/>
         </div>
     </div>
 </template>
@@ -68,7 +68,7 @@ export default {
              *  cuestionarios: []
              * }
              */
-            categorias: [{nombre: 'Familiares', usuarios: [], cuestionarios: []}, {nombre: 'Colegio', usuarios: [], cuestionarios: []}]
+            categorias: [{nombre: 'Familiares', usuarios: [], cuestionarios: []}, {nombre: 'Colegio', usuarios: [], cuestionarios: []}],
         }
     },
     methods: {
@@ -97,6 +97,24 @@ export default {
         },
         indexCategory(nombre) {
             return this.categorias.findIndex(categoria => categoria.nombre==nombre)
+        },
+        /**
+         * Esta función es parecida a 'addUsersToCategory', con la diferencia de que
+         * el nuevo usuario que le llega no está en el sistema, lo ha 'creado' el usuario, por
+         * lo que será un nuevo usuario que aún no estará registrado en el sistema (se creará cuando se cree
+         * el expediente)
+         * @param {string} nombreCategoria 
+         * @param {object} nuevoUsuario 
+         */
+        newCreatedUser(nombreCategoria, nuevoUsuario){
+            var indexOfCategory = this.indexCategory(nombreCategoria)
+
+            //Buscamos si el usuario ya está en la categoría
+            if(this.categorias[indexOfCategory].usuarios.findIndex(usuario => usuario.email == nuevoUsuario.email) != -1){
+                return
+            }
+
+            this.categorias[indexOfCategory].usuarios.push(nuevoUsuario)
         }
     }
 }

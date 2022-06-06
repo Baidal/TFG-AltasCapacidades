@@ -1,5 +1,5 @@
 <template>
-    <div class="border-2 border-black w-1/4 rounded-md h-24">
+    <div class="border-2 border-green-800 w-1/4 rounded-md h-24">
         <ClipboardListIcon class="w-10 h-10 mx-auto"/>
         <p class="font-bold">{{nombre}}</p>
     </div>

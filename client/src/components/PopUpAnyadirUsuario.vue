@@ -1,6 +1,7 @@
 <template>
     <div class="fixed top-0 left-0 w-screen h-screen bg-gray-200 opacity-90 z-20">
         <div class="absolute top-1/3 left-1/2 -mt-12 -ml-80 w-1/3 border-2 border-black rounded-md shadow-md opacity-100 p-2 bg-gray-300 ">
+            <div class="absolute top-2 right-4 cursor-pointer"><XCircleIcon class="w-6 h-6" @click="$emit('closeNewUser')"/></div>
             <p class="font-bold text-base">Nuevo usuario</p>
             <div class="w-3/5 mx-auto space-y-2">        
                 <!-- Email -->
@@ -35,10 +36,13 @@
 </template>
 
 <script>
-import AppButton from './AppButton.vue';
+    import AppButton from './AppButton.vue';
+
+    import {XCircleIcon} from '@heroicons/vue/outline'
+
     export default {
     name: "PopUpAnyadirUsuario",
-    components: { AppButton },
+    components: { AppButton, XCircleIcon },
     data(){
         return {
             newUser: {
@@ -87,11 +91,20 @@ import AppButton from './AppButton.vue';
 
             return allOk
         },
+        /**
+         * Le envíamos al padre del componente el nuevo usuario creado
+         */
         handleNewUser(){
             if(!this.allInputsAreOk()){
                 return
             }
-            
+            this.$emit('newUser', this.newUser)
+            this.newUser = {email: '',
+                nombre: '',
+                apellidos: '',
+                dni: '',
+                telefono: '',
+                fechaNac: ''}
         }
     }
 }
