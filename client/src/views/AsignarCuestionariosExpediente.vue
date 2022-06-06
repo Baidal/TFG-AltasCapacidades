@@ -1,5 +1,6 @@
 <template>
     <div class="block text-center mt-2 space-y-2">
+        <PopUpAnyadirUsuario/>
         <p class="text-lg font-bold">{{this.creandoExpediente ? "Nuevo expediente" : "Añadir formularios al expediente"}}</p>
         <PlusCircleIcon class="h-14 w-14 mx-auto text-green-800"/>
         <AppButton v-on:click="toggleFormularioNiño" :name="mostrarFormularioNiño ? 'Esconder datos' : 'Mostrar datos'"/>
@@ -37,6 +38,7 @@
 import {PlusCircleIcon} from '@heroicons/vue/outline'
 import TarjetaUsuariosCuestionarios from '../components/TarjetaUsuariosCuestionarios.vue'
 import AppButton from '../components/AppButton.vue'
+import PopUpAnyadirUsuario from '../components/PopUpAnyadirUsuario.vue'
 
 export default {
     name: 'AsignarCuestionariosExpediente',
@@ -44,6 +46,7 @@ export default {
         PlusCircleIcon,
         TarjetaUsuariosCuestionarios,
         AppButton,
+        PopUpAnyadirUsuario
     },
     props: {
         creandoExpediente: Boolean
