@@ -1,7 +1,14 @@
 <template>
   
   <div class="w-2/6 border-2 border-black text-center rounded-lg flex flex-col space-y-3">
-    <PopUpAnyadirUsuario v-if="mostrarNuevoUsuario" @close-new-user="this.mostrarNuevoUsuario = !this.mostrarNuevoUsuario" @new-user="handleCreateUser"/>
+    <PopUpAnyadirUsuario v-if="mostrarNuevoUsuario" 
+      @close-new-user="this.mostrarNuevoUsuario = !this.mostrarNuevoUsuario" 
+      @new-user="handleCreateUser"
+      />
+    <PopUpBuscarCuestionarios v-if="mostrarBuscarCuestionario"
+      @close-buscar-cuestionario="this.mostrarBuscarCuestionario = !this.mostrarBuscarCuestionario"
+      @anyadir-cuestionarios="handleAnyadirCuestionario"
+      />
     <p class="font-bold text-lg">{{ titulo }}</p>
     <!-- Buscador de usuarios-->
     <div>
@@ -51,10 +58,11 @@
           :key="cuestionario.id"
           :nombre="cuestionario.nombre"
           :id="cuestionario.id"
+          :showRemoveButton="true"
           @delete-cuestionario="(id) => $emit('deleteCuestionario', titulo, id)"
           class="mx-1 my-1"/>
         <!-- Botón de añadir cuestionario-->
-        <div class="flex flex-col items-center my-auto w-1/4 mx-1">
+        <div class="flex flex-col items-center my-auto w-1/4 mx-1 cursor-pointer" @click="this.mostrarBuscarCuestionario = !this.mostrarBuscarCuestionario">
             <PlusCircleIcon class="w-14 h-14"/>
             <p class="font-bold">Añadir</p>
             <p class="font-bold">cuestionario</p>
@@ -74,6 +82,7 @@ import TarjetaCuestionario from "./TarjetaCuestionario.vue";
 import AppButton from "./AppButton.vue";
 import BusquedaUsuarioTarjeta from "./BusquedaUsuarioTarjeta.vue";
 import PopUpAnyadirUsuario from './PopUpAnyadirUsuario.vue'
+import PopUpBuscarCuestionarios from './PopUpBuscarCuestionarios.vue';
 
 
 export default {
@@ -83,7 +92,8 @@ export default {
       userSearchInput: '',
       usersSearched: [],
       selectedUsers: [],
-      mostrarNuevoUsuario: false
+      mostrarNuevoUsuario: false,
+      mostrarBuscarCuestionario: false
     }
   },
   props: {
@@ -103,7 +113,8 @@ export default {
     AppButton,
     BusquedaUsuarioTarjeta,
     PopUpAnyadirUsuario,
-  },
+    PopUpBuscarCuestionarios
+},
   methods: {
     /**
      * Cada vez que el usuario escriba algo en el input esta función buscará
@@ -161,6 +172,10 @@ export default {
       newUser.nuevoUsuario = true
 
       this.$emit('newCreatedUser',this.titulo ,newUser)
+    },
+    handleAnyadirCuestionario(cuestionarios){
+      this.$emit('anyadirCuestionarios', this.titulo, cuestionarios)
+      this.mostrarBuscarCuestionario = !this.mostrarBuscarCuestionario
     }
 
   },

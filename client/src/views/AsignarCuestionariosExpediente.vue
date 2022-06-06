@@ -31,6 +31,7 @@
                 @delete-user="deleteUser"
                 @new-created-user="newCreatedUser"
                 @delete-cuestionario="deleteCuestionario"
+                @anyadir-cuestionarios="anyadirCuesiontarios"
                 />
         </div>
     </div>
@@ -136,6 +137,17 @@ export default {
             var indexOfCategory = this.indexCategory(nombreCategoria)
 
             this.categorias[indexOfCategory].cuestionarios = this.categorias[indexOfCategory].cuestionarios.filter(cuestionario => cuestionario.id != idCuestionario) 
+        },
+        anyadirCuesiontarios(nombreCategoria, cuestionarios){
+            var indexOfCategory = this.indexCategory(nombreCategoria)
+            
+            cuestionarios.forEach(cuestionario => {
+                //El cuestionario ya había sido añadido
+                if (this.categorias[indexOfCategory].cuestionarios.findIndex(cuestionarioCategoria => cuestionarioCategoria.id == cuestionario.id) != -1)
+                    return
+                
+                this.categorias[indexOfCategory].cuestionarios.push(cuestionario)
+            })
         }
     }
 }
