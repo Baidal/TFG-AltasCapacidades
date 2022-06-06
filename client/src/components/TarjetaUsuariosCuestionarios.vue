@@ -46,11 +46,11 @@
     <p class="font-bold text-lg m-4">Cuestionarios</p>
     <!-- Mostramos los cuestionarios de la categoría -->
     <div class="flex flex-wrap justify-center">
-        <TarjetaCuestionario :nombre="'Cuestionario 1'" class="mx-1 my-1"/>
-        <TarjetaCuestionario :nombre="'Cuestionario 1'" class="mx-1 my-1"/>
-        <TarjetaCuestionario :nombre="'Cuestionario 1'" class="mx-1 my-1"/>
-        <TarjetaCuestionario :nombre="'Cuestionario 1'" class="mx-1 my-1"/>
-        <TarjetaCuestionario :nombre="'Cuestionario 1'" class="mx-1 my-1"/>
+        <TarjetaCuestionario 
+          v-for="cuestionario in cuestionarios"
+          :key="cuestionario.id"
+          :nombre="cuestionario.nombre" 
+          class="mx-1 my-1"/>
         <!-- Botón de añadir cuestionario-->
         <div class="flex flex-col items-center my-auto w-1/4 mx-1">
             <PlusCircleIcon class="w-14 h-14"/>
@@ -87,6 +87,9 @@ export default {
   props: {
     titulo: "",
     usuarios: {
+      type: Array
+    },
+    cuestionarios: {
       type: Array
     }
   },

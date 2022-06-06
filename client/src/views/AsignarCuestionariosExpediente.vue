@@ -23,7 +23,8 @@
         <div class="flex justify-center flex-wrap space-x-4">
             <TarjetaUsuariosCuestionarios 
                 :titulo="categoria.nombre" 
-                :usuarios="categoria.usuarios" 
+                :usuarios="categoria.usuarios"
+                :cuestionarios="categoria.cuestionarios" 
                 @add-users="addUsersToCategory" 
                 v-for="categoria in categorias" 
                 :key="categoria.nombre"
@@ -34,6 +35,7 @@
 </template>
 
 <script>
+import initializeAppObject from '../services/daoProvider'
 
 import {PlusCircleIcon} from '@heroicons/vue/outline'
 import TarjetaUsuariosCuestionarios from '../components/TarjetaUsuariosCuestionarios.vue'
@@ -68,8 +70,20 @@ export default {
              *  cuestionarios: []
              * }
              */
-            categorias: [{nombre: 'Familiares', usuarios: [], cuestionarios: []}, {nombre: 'Colegio', usuarios: [], cuestionarios: []}],
+            categorias: [{nombre: 'Familiares', usuarios: [], cuestionarios: [{id: 1}, {id: 2}, {id: 3}]}, {nombre: 'Colegio', usuarios: [], cuestionarios: [{id: 4}]}],
         }
+    },
+    /**
+     * Se encarga de cargar los cuestionarios predefinicidos en cada categoría de la base de datos
+     */
+    async created(){
+        var app = await initializeAppObject()
+        this.categorias.forEach((categoria, indexCategoria) => {
+            categoria.cuestionarios.forEach(async (cuestionario, indexCuestionario) => {
+                const cuestionario_db = await app.dao.cuestionarios.read(cuestionario.id)
+                this.categorias[indexCategoria].cuestionarios[indexCuestionario].nombre = cuestionario_db.nombre
+            })
+        })
     },
     methods: {
         toggleFormularioNiño(){
