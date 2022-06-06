@@ -1,0 +1,11 @@
+{
+	"title": "Cuestionarios",
+	"description": "Cuestionarios que podrán realizar los usuarios de la aplicación",
+	"properties": {
+		"id": "#",
+		"nombre": "@string !"
+	},
+	"table": "cuestionarios",
+	"urlList": "/cuestionarios",
+	"urlItem": "/cuestionarios/:id"
+}
