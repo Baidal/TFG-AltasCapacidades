@@ -1,0 +1,11 @@
+{
+	"title": "Usuario_Expediente",
+	"description": "Relación N:N entre un usuario y un expediente",
+	"properties": {
+		"usuario_id": "@integer !",
+        "expediente_id": "@integer !"
+	},
+	"table": "usuario_expediente",
+	"urlList": "/usuario_expediente",
+	"urlItem": "/usuario_expediente/:id"
+}
