@@ -8,8 +8,8 @@
         "nombre": "@string !",
         "dni_niño": "@string",
         "fechanacimiento_niño": "@string",
-        "create_time": "@string !",
-		"update_time": "@string !"
+        "create_time": "@string",
+		"update_time": "@string"
 	},
 	"table": "expediente",
 	"urlList": "/expediente",

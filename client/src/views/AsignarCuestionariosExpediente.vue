@@ -1,11 +1,14 @@
 <template>
     <div class="block text-center mt-2 space-y-2">
         <p class="text-lg font-bold">{{this.creandoExpediente ? "Nuevo expediente" : "Añadir formularios al expediente"}}</p>
-        <PlusCircleIcon class="h-14 w-14 mx-auto text-green-800"/>
+        <PlusCircleIcon class="h-14 w-14 mx-auto text-green-800 cursor-pointer" @click="crearExpediente"/>
         <AppButton v-on:click="toggleFormularioNiño" :name="mostrarFormularioNiño ? 'Esconder datos' : 'Mostrar datos'"/>
         <!-- Formulario con los datos del niño -->
         <div v-if="this.mostrarFormularioNiño">
             <div class="w-2/5 border-4 border-black rounded-md mx-auto flex space-y-2 flex-col pl-4 pr-4 pb-4 pt-2 shadow-lg">
+                <p class="font-bold text-md mb-2">Nombre del expediente</p>
+                <input v-model="nombreExpediente" name="nombreExpediente" class="w-full border-2 border-black rounded-md p-1 mx-auto" placeholder="Nombre expediente..."/>
+                
                 <!-- Nombre y apellidos-->
                 <p class="font-bold text-md mb-2">Datos del niño/a</p>
                 <div class="flex space-x-2">
@@ -15,7 +18,7 @@
                 <!-- Dni y Fecha nacimiento-->
                 <div class="flex space-x-2">
                     <input v-model="datosNiño.dni" name="dni" class="w-1/4 border-2 border-black rounded-md p-1" placeholder="Dni..."/>
-                    <input v-model="datosNiño.fechaNac" name="fechaNac" class="w-3/4 border-2 border-black rounded-md p-1" placeholder="Fecha nacimiento..."/>
+                    <input v-model="datosNiño.fechaNac" type="date" name="fechaNac" class="w-3/4 border-2 border-black rounded-md p-1" placeholder="Fecha nacimiento..."/>
                 </div>
             </div>
         </div>
@@ -66,6 +69,7 @@ export default {
                 dni: "",
                 fechaNac: ""
             },
+            nombreExpediente: '',
             /**
              * Categorías es un array de objetos con el siguiente prototipo:
              * {
@@ -159,6 +163,58 @@ export default {
             var userIndex = this.indexOfUser(indexOfCategory, cleanEmail)
 
             this.categorias[indexOfCategory].usuarios[userIndex] = userModified
+        },
+        async crearExpediente(){
+            var app = await initializeAppObject()
+            //Creamos el expediente
+            var expediente = await app.dao.expediente.create(
+                {
+                    nombre_niño: this.datosNiño.nombre,
+                    apellidos_niño: this.datosNiño.apellidos,
+                    nombre: this.nombreExpediente,
+                    dni_niño: this.datosNiño.dni,
+                    fechanacimiento_niño: this.datosNiño.fechaNac,
+                })
+            
+            //Usuarios cuya creación ha sido errónea
+            var usuariosNoCreados = []
+
+            //Para cada categoría creamos y relacionamos todos los usuarios
+            this.categorias.forEach(categoria => {
+                categoria.usuarios.forEach(usuario => {
+                    //El usuario se ha creado en el momento de crear el expediente
+                    if(usuario.nuevoUsuario){
+                        app.dao.usuario.create({
+                            email: usuario.email,
+                            nombre: usuario.nombre,
+                            apellidos: usuario.apellidos,
+                            dni: usuario.dni,
+                            telefono: usuario.telefono,
+                            fecha_nacimiento: usuario.fechaNac,
+                            password: '123',
+                            estado_id: 1,
+                            rol_id: 1
+                        })
+                        .then(nuevoUsuario => {
+                            //Relaciona el usuario creado con el expediente
+                            this.relacionarUsuarioExpediente(app, nuevoUsuario.id, expediente.id)
+                        })
+                        .catch(_ => {
+                            usuariosNoCreados.push(usuario)
+                        })
+                        return
+                    }
+                    this.relacionarUsuarioExpediente(app, usuario.id, expediente.id)
+                })
+            })
+
+            console.log(expediente)
+        },
+        relacionarUsuarioExpediente(app, usuarioId, expedienteId){
+            app.dao.usuario_expediente.create({
+                usuario_id: usuarioId,
+                expediente_id: expedienteId
+            })
         }
     }
 }
