@@ -1,14 +1,23 @@
 <template>
   
   <div class="w-2/6 border-2 border-black text-center rounded-lg flex flex-col space-y-3">
+    <!-- PopUp que se muestra cuando se añade un usuario-->
     <PopUpAnyadirUsuario v-if="mostrarNuevoUsuario" 
       @close-new-user="this.mostrarNuevoUsuario = !this.mostrarNuevoUsuario" 
       @new-user="handleCreateUser"
-      />
+      :alreadyCreated="false"
+    />
+    <!-- PopUp que se muestra cuando se modifica un usuario creado-->
+    <PopUpAnyadirUsuario v-if="mostrarModificarUsuario" 
+      @close-modify-user="mostrarModificarUsuario = !mostrarModificarUsuario" 
+      @modify-user="handleModifyUser"
+      :alreadyCreated="true"
+      :createdUser="this.userToModify"
+    />
     <PopUpBuscarCuestionarios v-if="mostrarBuscarCuestionario"
       @close-buscar-cuestionario="this.mostrarBuscarCuestionario = !this.mostrarBuscarCuestionario"
       @anyadir-cuestionarios="handleAnyadirCuestionario"
-      />
+    />
     <p class="font-bold text-lg">{{ titulo }}</p>
     <!-- Buscador de usuarios-->
     <div>
@@ -42,7 +51,9 @@
           class="mx-2 my-2" 
           v-for="usuario in usuarios" 
           :key="usuario.email" 
-          @delete-user="(id) => $emit('deleteUser', id, titulo)"/>
+          @delete-user="(id) => $emit('deleteUser', id, titulo)"
+          @modify-user="(id) => addUserToModify(id)"
+          />
         <!-- Botón de añadir nuevo usuario-->
         <div class="flex flex-col items-center my-auto cursor-pointer" @click="this.mostrarNuevoUsuario = !this.mostrarNuevoUsuario">
             <PlusCircleIcon class="w-14 h-14"/>
@@ -93,7 +104,9 @@ export default {
       usersSearched: [],
       selectedUsers: [],
       mostrarNuevoUsuario: false,
-      mostrarBuscarCuestionario: false
+      mostrarBuscarCuestionario: false,
+      mostrarModificarUsuario: false,
+      userToModify: {}
     }
   },
   props: {
@@ -123,9 +136,9 @@ export default {
      */
     async handleUserSearch(input){
       if(input.length < 3) return
-
+      //.read({}, {filter:  {nombre: "Diego"}})
       const app = await initializeAppObject()
-      app.dao.usuario.read().then(usuarios => {
+      app.dao.usuario.read({}).then(usuarios => {
         this.usersSearched = usuarios
         console.log(usuarios)        
       })
@@ -176,6 +189,17 @@ export default {
     handleAnyadirCuestionario(cuestionarios){
       this.$emit('anyadirCuestionarios', this.titulo, cuestionarios)
       this.mostrarBuscarCuestionario = !this.mostrarBuscarCuestionario
+    },
+    handleModifyUser(modifiedUser, cleanEmail){      
+      this.mostrarModificarUsuario = !this.mostrarModificarUsuario
+
+      modifiedUser.nuevoUsuario = true
+
+      this.$emit('modifyUser', this.titulo, modifiedUser, cleanEmail)
+    },
+    addUserToModify(id){
+      this.userToModify = this.usuarios.find(usuario => usuario.id == id)
+      this.mostrarModificarUsuario = !this.mostrarModificarUsuario
     }
 
   },

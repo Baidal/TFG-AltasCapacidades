@@ -4,6 +4,7 @@
         <p class="truncate font-semibold">{{nombre}}</p>
         <p class="truncate font-bold">{{email}}</p>
         <p v-if="this.nuevoUsuario" class="text-gray-600 font-semibold text-sm italic">Nuevo usuario</p>
+        <p v-if="this.nuevoUsuario" class="text-gray-800 font-semibold text-sm italic border border-gray-800 cursor-pointer" @click="$emit('modifyUser', id)">Modificar</p>
         <XCircleIcon class="w-8 h-8 mx-auto cursor-pointer" @click="$emit('deleteUser', id)"/>    
     </div>
 

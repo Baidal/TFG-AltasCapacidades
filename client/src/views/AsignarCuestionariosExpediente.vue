@@ -32,6 +32,7 @@
                 @new-created-user="newCreatedUser"
                 @delete-cuestionario="deleteCuestionario"
                 @anyadir-cuestionarios="anyadirCuesiontarios"
+                @modify-user="modifyUser"
                 />
         </div>
     </div>
@@ -115,6 +116,9 @@ export default {
         indexCategory(nombre) {
             return this.categorias.findIndex(categoria => categoria.nombre==nombre)
         },
+        indexOfUser(categoryIndex, email){
+            return this.categorias[categoryIndex].usuarios.findIndex(usuario => usuario.email == email)
+        },
         /**
          * Esta función es parecida a 'addUsersToCategory', con la diferencia de que
          * el nuevo usuario que le llega no está en el sistema, lo ha 'creado' el usuario, por
@@ -148,6 +152,13 @@ export default {
                 
                 this.categorias[indexOfCategory].cuestionarios.push(cuestionario)
             })
+        },
+        modifyUser(nombreCategoria, userModified, cleanEmail){
+            console.log(userModified, cleanEmail)
+            var indexOfCategory = this.indexCategory(nombreCategoria)
+            var userIndex = this.indexOfUser(indexOfCategory, cleanEmail)
+
+            this.categorias[indexOfCategory].usuarios[userIndex] = userModified
         }
     }
 }

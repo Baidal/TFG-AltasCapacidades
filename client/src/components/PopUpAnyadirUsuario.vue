@@ -1,8 +1,8 @@
 <template>
     <div class="fixed top-0 left-0 w-screen h-screen bg-gray-200 opacity-90 z-20">
         <div class="absolute top-1/3 left-1/2 -mt-12 -ml-80 w-1/3 border-2 border-black rounded-md shadow-md opacity-100 p-2 bg-gray-300 ">
-            <div class="absolute top-2 right-4 cursor-pointer"><XCircleIcon class="w-6 h-6" @click="$emit('closeNewUser')"/></div>
-            <p class="font-bold text-base">Nuevo usuario</p>
+            <div class="absolute top-2 right-4 cursor-pointer"><XCircleIcon class="w-6 h-6" @click="alreadyCreated ? $emit('closeModifyUser') : $emit('closeNewUser')"/></div>
+            <p class="font-bold text-base">{{alreadyCreated ? 'Modificar usuario' : 'Nuevo usuario'}}</p>
             <div class="w-3/5 mx-auto space-y-2">        
                 <!-- Email -->
                 <input  class="w-full border-2 border-black rounded-md shadow-md"
@@ -29,7 +29,7 @@
                     <p class="float-left text-red-500 font-semibold" v-for="warning in warnings" :key="warning">{{warning}}</p>
                 </div>
 
-                <AppButton :name="'Crear usuario'" @click="handleNewUser"/>
+                <AppButton :name="alreadyCreated ? 'Modificar usuario' : 'Crear usuario'" @click="handleClick"/>
             </div>
         </div>
     </div>
@@ -43,6 +43,21 @@
     export default {
     name: "PopUpAnyadirUsuario",
     components: { AppButton, XCircleIcon },
+    props: {
+        /**
+         * Este componente recibirá esta estructura cuando se esté modificando un
+         * nuevo usuario
+         */
+        createdUser: {
+            email: '',
+            nombre: '',
+            apellidos: '',
+            dni: '',
+            telefono: '',
+            fechaNac: ''
+        },
+        alreadyCreated: false //Si el usuario ya ha sido creado y se está modificando
+    },
     data(){
         return {
             newUser: {
@@ -53,7 +68,20 @@
                 telefono: '',
                 fechaNac: ''
             },
+            cleanEmail: '', //Guarda el email, en caso de ser modificado para que el componente padre sepa que usuario se ha modificado
             warnings: ['* Solo el email es obligatorio']
+        }
+    },
+    mounted() {
+        if(this.alreadyCreated){
+            this.cleanEmail = this.createdUser.email
+            
+            this.newUser.email = this.createdUser.email
+            this.newUser.nombre = this.createdUser.nombre
+            this.newUser.apellidos = this.createdUser.apellidos
+            this.newUser.dni = this.createdUser.dni
+            this.newUser.telefono = this.createdUser.telefono
+            this.newUser.fechaNac = this.createdUser.fechaNac
         }
     },
     methods: {
@@ -105,6 +133,24 @@
                 dni: '',
                 telefono: '',
                 fechaNac: ''}
+        },
+        handleModifyUser(){
+            if(!this.allInputsAreOk()){
+                return
+            }
+            this.$emit('modifyUser', this.newUser, this.cleanEmail)
+            this.newUser = {email: '',
+                nombre: '',
+                apellidos: '',
+                dni: '',
+                telefono: '',
+                fechaNac: ''}
+        },
+        handleClick(){
+            if(this.alreadyCreated)
+                this.handleModifyUser()
+            else
+                this.handleNewUser()
         }
     }
 }
