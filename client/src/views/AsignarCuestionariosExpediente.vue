@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import crypto from 'crypto'
 import initializeAppObject from '../services/daoProvider'
 
 import {PlusCircleIcon} from '@heroicons/vue/outline'
@@ -55,7 +56,8 @@ export default {
         PlusCircleIcon,
         TarjetaUsuariosCuestionarios,
         AppButton,
-        PopUpAnyadirUsuario
+        PopUpAnyadirUsuario,
+        crypto
     },
     props: {
         creandoExpediente: Boolean
@@ -64,7 +66,7 @@ export default {
         return {
             mostrarFormularioNiño: true,
             datosNiño: {
-                nombre: "",
+                nombre: '',
                 apellidos: "",
                 dni: "",
                 fechaNac: ""
@@ -191,7 +193,7 @@ export default {
                             dni: usuario.dni,
                             telefono: usuario.telefono,
                             fecha_nacimiento: usuario.fechaNac,
-                            password: '123',
+                            password: crypto.randomBytes(8).toString('hex'), //generamos una contraseña aleatoria de 16 caracteres
                             estado_id: 1,
                             rol_id: 1
                         })
