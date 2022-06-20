@@ -1,15 +1,15 @@
 <template>
-    <div class="flex justify-between bg-indigo-500 header-color p-4 w-full">
+    <div class="flex justify-between bg-indigo-600 header-color p-4 w-full">
         <!-- Nombre de la app -->
         <div>
-            <h2 class="text-2xl">Altas Capacidades</h2>
+            <router-link :to="{name: 'Home'}"><h2 class="text-2xl">Altas Capacidades</h2></router-link>
         </div>
         <div>
 
         </div>
         <!-- Botones de login, registro, etc-->
         <div class="flex justify-center space-x-4">
-            <NavBarButton :name="'Expediente'"/>
+            <NavBarButton :name="'Expedientes'"/>
             <NavBarButton :name="'Perfil'"/>
             
             <router-link :to="{name: 'Login'}"><NavBarButton :name="'Iniciar Sesión'"/></router-link>
