@@ -9,9 +9,8 @@
         </div>
         <!-- Botones de login, registro, etc-->
         <div class="flex justify-center space-x-4">
-            <NavBarButton :name="'Expedientes'"/>
+            <router-link :to="{name: 'Expedientes'}"><NavBarButton :name="'Expedientes'"/></router-link>
             <NavBarButton :name="'Perfil'"/>
-            
             <router-link :to="{name: 'Login'}"><NavBarButton :name="'Iniciar Sesión'"/></router-link>
 
             <NavBarButton :name="'Registrarse'"/>
