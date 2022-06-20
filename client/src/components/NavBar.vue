@@ -11,7 +11,9 @@
         <div class="flex justify-center space-x-4">
             <NavBarButton :name="'Expediente'"/>
             <NavBarButton :name="'Perfil'"/>
-            <NavBarButton :name="'Iniciar Sesión'"/>
+            
+            <router-link :to="{name: 'Login'}"><NavBarButton :name="'Iniciar Sesión'"/></router-link>
+
             <NavBarButton :name="'Registrarse'"/>
         </div>
     </div>
