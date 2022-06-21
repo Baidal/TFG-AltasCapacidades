@@ -3,7 +3,8 @@
 	"description": "Relación N:N entre un usuario y un expediente",
 	"properties": {
 		"usuario_id": "@integer !",
-        "expediente_id": "@integer !"
+        "expediente_id": "@integer !",
+		"id": "#"
 	},
 	"table": "usuario_expediente",
 	"urlList": "/usuario_expediente",

@@ -109,7 +109,7 @@
 				console.error("No se puede construir el path para hacer un GET");
 				return Promise.reject({ code: "MISSING_PARAMS", text: "Missing params to construct path" });
 			}
-
+			console.log(url)
 			return this.dao._rest.delete(url);
 		}
 
