@@ -4,8 +4,8 @@
             <!-- Zona superior de la vista-->
             <div class="flex mb-2">
                 <!-- Icono de expediente y nombre de expediente -->
-                <div class="flex flex-col text-center w-1/3">
-                    <ClipboardListIcon class="h-32 text-indigo-400"/>
+                <div class="flex flex-col text-center sm:w-1/2 md:w-2/5 lg:w-1/3 xl:w-1/4 2xl:w-1/5">
+                    <ClipboardListIcon class="h-32 text-green-400"/>
                     <p class="font-bold">{{expediente.nombre}}</p>
                 </div>
                 <div class="flex-1 ml-5 items-end">
@@ -23,21 +23,39 @@
             <div class="border border-gray-500 rounded-lg"></div>
 
             <!-- Zona inferior -->
-            <div class="flex">
+            <div class="flex sm:flex-col md:flex-row lg:flex-row xl:flex-row 2xl:flex-row">
                 <!-- Parte izquierda-->
-                <div class="flex flex-col text-center w-1/3 space-y-3">
+                <div class="flex flex-col text-center sm:w-1/2 md:w-2/5 lg:w-1/3 xl:w-1/4 2xl:w-1/5">
                     <!-- Bocadillo -->
-                    <div class="mx-8 mt-8 border-2 border-gray-500 rounded-md shadow-lg p-4 text-center">
+                    <div class="mx-8 mt-8 border-2 border-gray-700 rounded-md shadow-lg p-4 text-center mb-4">
                         Usuarios relacionados con el expediente
                     </div>
                     <!-- Listado de usuarios relacionados con el expediente -->
-                    <div class="mx-auto h-52 overflow-x-hidden overflow-y-auto space-y-3 w-3/4 flex items-center flex-col">
+                    <div class="mx-auto max-h-52 overflow-x-hidden overflow-y-auto space-y-3 w-3/4 flex items-center flex-col mb-8">
                         <div class="flex space-x-12 justify-between w-full" v-for="usuario in usuariosRelacionados" :key="usuario.id">
                             <UserIcon class="h-7 min-h-full"/>
                             <p class="font-semibold my-auto">{{usuario.nombre}}</p>
                             <XCircleIcon class="h-7 min-h-full cursor-pointer" v-on:click="eliminarRelacionExpedienteUsuario(usuario.id)"/>
                         </div>                     
                     </div>
+                    <!-- Usuarios nuevos a relacionar -->
+                    <div class="flex flex-col justify-center ">
+                        <p class="text-lg font-semibold">Relacionar un usuario con el expediente</p>
+                        <InputBuscar :placeHolder="'Buscar usuarios...'" v-model="inputBuscarUsuarios" class="mb-3"/>
+                        
+                        <div class="max-h-40 overflow-x-hidden overflow-y-auto">
+                            <BusquedaUsuarioTarjeta :nombre="usuario.email" class="w-3/4 mx-auto" v-for="usuario in usuariosBuscados" :key="usuario.id" v-on:click="handleSeleccionarUsuario(usuario)"/>
+                            <AppButton 
+                                :name="this.usuariosSeleccionados.length == 1 ? 'Añadir usuario' : 'Añadir usuarios'" 
+                                v-if="this.hayUsuariosSeleccionados" 
+                                v-on:click="this.handleRelacionarUsuarios()"
+                                class="mt-2"/>
+                        </div>
+                    </div>
+                </div>
+                <!-- Parte derecha -->
+                <div>
+                    <h1>hola bb</h1>
                 </div>
             </div>
         </div>
@@ -57,6 +75,8 @@ import {UserIcon} from '@heroicons/vue/solid'
 
 import initializeAppObject from '../services/daoProvider'
 import AppButton from '../components/AppButton.vue'
+import BusquedaUsuarioTarjeta from '../components/BusquedaUsuarioTarjeta.vue'
+import InputBuscar from '../components/InputBuscar.vue'
 
 export default {
     name: 'Expediente',
@@ -65,7 +85,9 @@ export default {
         AppButton,
         UserIcon,
         XCircleIcon,
-        MoonLoader
+        MoonLoader,
+        BusquedaUsuarioTarjeta,
+        InputBuscar
     },
     props: {
         id: ''
@@ -74,7 +96,10 @@ export default {
         return {
             expediente: {},
             usuariosRelacionados: [],
-            cargandoDatos: true
+            cargandoDatos: true,
+            inputBuscarUsuarios: '',
+            usuariosBuscados: [],
+            usuariosSeleccionados: []
         }
     },
     async created(){
@@ -122,8 +147,58 @@ export default {
             await app.dao.usuario_expediente.delete({id: usuario.usuario_expediente_ID})
 
             this.usuariosRelacionados = this.usuariosRelacionados.filter(usuario => usuario.id != usuarioId)
+        },
+        async buscarUsuariosARelacionar(buscador){
+            const app = await initializeAppObject()
+            const usuarios = await app.dao.usuario.read()
+
+            this.usuariosBuscados = usuarios.filter(usuario => usuario.email.includes(buscador) || usuario.nombre.includes(buscador))
+        },
+        handleSeleccionarUsuario(user){
+            //El usuario ya había sido seleccionado, lo borramos
+            if(this.usuariosSeleccionados.findIndex(usuario => usuario.id == user.id) != -1){
+                this.usuariosSeleccionados = this.usuariosSeleccionados.filter(usuario => usuario.id != user.id)
+                return
+            }
+
+            this.usuariosSeleccionados.push(user)
+        },
+        handleRelacionarUsuarios(){
+            this.usuariosSeleccionados.forEach(async usuarioSeleccionado => {
+                //Si el usuario no se ha añadido aun al expediente
+                if(this.usuariosRelacionados.findIndex(usuarioRelacionado => usuarioRelacionado.id == usuarioSeleccionado.id) == -1){
+                    const app = await initializeAppObject()
+                    app.dao.usuario_expediente.create({usuario_id: usuarioSeleccionado.id, expediente_id: this.expediente.id})
+
+                    this.usuariosRelacionados.push(usuarioSeleccionado)
+
+                    return
+                }
+            })
+
+            this.usuariosSeleccionados = []
+            this.usuariosBuscados = []
         }
     },
+    watch: {
+        inputBuscarUsuarios(new_input, _){
+            if (new_input.length == 0){
+                this.usuariosBuscados = []
+                this.usuariosSeleccionados = []
+                return
+            }
+
+            if (new_input.length < 3)
+                return
+
+            this.buscarUsuariosARelacionar(new_input)
+        }
+    },
+    computed: {
+        hayUsuariosSeleccionados(){
+            return this.usuariosSeleccionados.length !== 0
+        }
+    }
 
 }
 </script>

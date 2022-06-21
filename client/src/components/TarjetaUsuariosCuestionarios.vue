@@ -22,17 +22,7 @@
     <!-- Buscador de usuarios-->
     <div>
         <label for="users">Añadir usuarios a la categoría</label>
-        <div class="flex space-x-2 mx-auto border-2 border-black p-1 rounded-lg w-2/3">
-            <SearchIcon class="w-6 h-6" />
-            <input
-                type="search"
-                id="users"
-                placeholder="Buscar usuarios..."
-                class="w-full focus:outline-none"
-                v-model="userSearchInput"
-                v-on:change="handleUserSearch"
-            />
-        </div>
+        <InputBuscar :placeHolder="'Buscar usuarios...'" v-model="userSearchInput"/>
         <!-- Mostramos los usuarios buscados -->
         <div class="w-2/3 mx-auto mt-2 max-h-52 overflow-scroll" v-if="showSearchedUsers()">
           <BusquedaUsuarioTarjeta class="w-full" :nombre="user.nombre" v-for="user in usersSearched" :key="user.id" v-on:click="handleSelectUser(user.id)"/>
@@ -94,6 +84,7 @@ import AppButton from "./AppButton.vue";
 import BusquedaUsuarioTarjeta from "./BusquedaUsuarioTarjeta.vue";
 import PopUpAnyadirUsuario from './PopUpAnyadirUsuario.vue'
 import PopUpBuscarCuestionarios from './PopUpBuscarCuestionarios.vue';
+import InputBuscar from './InputBuscar.vue';
 
 
 export default {
@@ -126,7 +117,8 @@ export default {
     AppButton,
     BusquedaUsuarioTarjeta,
     PopUpAnyadirUsuario,
-    PopUpBuscarCuestionarios
+    PopUpBuscarCuestionarios,
+    InputBuscar
 },
   methods: {
     /**
