@@ -9,11 +9,7 @@
             </div>
             <!--Parte derecha del principio-->
             <div class="w-1/4 mt-4">
-                <div class="flex w-full space-x-2 border-2 rounded-lg border-gray-700 p-1">
-                    <SearchIcon class="w-6 h-6"/>
-                    <input v-model="inputBuscarExpediente" class="focus:outline-none" placeholder="Buscar expediente..."/>
-                </div>
-                
+                <InputBuscar :placeHolder="'Buscar expediente...'" v-model="inputBuscarExpediente" class="w-full"/>
             </div>
         </div>
         <MoonLoader :loading="loadingData" class="mt-4"/>
@@ -37,10 +33,11 @@ import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
 import AppButton from '../components/AppButton.vue'
 import TarjetaExpediente from '../components/TarjetaExpediente.vue'
+import InputBuscar from '../components/InputBuscar.vue'
 undefined
 undefined
 export default {
-    components: { AppButton, TarjetaExpediente, PlusIcon, MoonLoader, SearchIcon },
+    components: { AppButton, TarjetaExpediente, PlusIcon, MoonLoader, SearchIcon, InputBuscar },
     name: 'Expedientes',
     data() {
         return {
@@ -71,6 +68,13 @@ export default {
             })
 
             this.loadingData = false
+        },
+        filtrarExpedientes(nombre){
+            this.expedientes = this.expedientes.filter(expediente => {
+                var expedienteLowerCase = expediente.nombre.toLowerCase()
+                nombre = nombre.toLowerCase()
+                return expedienteLowerCase.includes(nombre)
+            })
         }
     },
     async mounted() {
@@ -78,19 +82,12 @@ export default {
     },
     watch: {
         inputBuscarExpediente(new_input, _){
-            console.log("AAAAAAAAA")
             if(new_input.length == 0){
                 this.cargarExpedientes()
                 return
             }
             
-            if(new_input.length < 3)
-                return
-            
-            this.expedientes = this.expedientes.filter(expediente => {
-                var expedienteLowerCase = expediente.nombre.toLowerCase()
-                return expedienteLowerCase.includes(new_input)
-            })
+            this.filtrarExpedientes(new_input)
         }
     }
 }
