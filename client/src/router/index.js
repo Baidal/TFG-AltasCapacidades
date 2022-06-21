@@ -3,6 +3,7 @@ import Home from '../views/Home.vue'
 import AsignarCuestionariosExpediente from '../views/AsignarCuestionariosExpediente.vue'
 import Login from '../views/Login'
 import Expedientes from '../views/Expedientes'
+import Expediente from '../views/Expediente'
 
 const routes = [
   {
@@ -25,6 +26,12 @@ const routes = [
     path: '/expedientes',
     name: 'Expedientes',
     component: Expedientes
+  },
+  {
+    path: '/expediente/:id',
+    name: 'Expediente',
+    component: Expediente,
+    props: true
   }
 ]
 
