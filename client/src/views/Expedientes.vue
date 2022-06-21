@@ -19,7 +19,7 @@
         <MoonLoader :loading="loadingData" class="mt-4"/>
         <!-- Listado de expedientes -->
         <div class="grid grid-rows-4 w-3/4 grid-container">
-            <TarjetaExpediente :nombre="expediente.nombre" class="cursor-pointer" v-for="expediente in expedientes" :key="expediente.id"/>
+            <TarjetaExpediente :nombre="expediente.nombre" :id="expediente.id" class="cursor-pointer" v-for="expediente in expedientes" :key="expediente.id"/>
             
             <router-link :to="{name: 'CrearCuestionario'}" class="text-gray-500 flex flex-col items-center justify-center my-2" v-if="!loadingData">
                 <PlusIcon class="w-1/3 h-1/3"/>
