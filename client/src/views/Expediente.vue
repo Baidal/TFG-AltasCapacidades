@@ -54,8 +54,30 @@
                     </div>
                 </div>
                 <!-- Parte derecha -->
-                <div>
-                    <h1>hola bb</h1>
+                <div class="ml-5 mt-6 flex flex-col w-full">
+                    <div class="flex justify-between mb-2">
+                        <div class="border-gray-700 rounded-sm flex shadow-lg p-1 space-x-4 border-2">
+                            <div class="hover:shadow-lg p-2 rounded-md cursor-pointer">
+                                <p class="font-semibold text-md text-center">Cuestionarios</p>
+                            </div>
+                            <p class="my-auto">|</p>
+                            <div class="hover:shadow-lg p-2 rounded-md cursor-pointer">
+                                <p class="font-semibold text-md text-center rounded-md">Anotaciones</p>
+                            </div>
+                        </div>    
+
+                        <div class="space-x-4 flex border-gray-700 rounded-sm border-2 px-3">
+                            <button class="px-1 font-semibold border-gray-800 rounded-sm hover:bg-gray-50 my-auto items-end">Nueva anotación</button>
+                        </div>
+
+                        <div class="w-60 flex">
+                            <InputBuscar :placeHolder="'Buscar anotación...'" class="w-full my-auto"/>
+                        </div>
+                    </div>
+                    <div class="border-2 border-gray-600 mb-2"></div>
+                    <div class="flex flex-col space-y-2">
+                        <TarjetaAnotacion/>
+                    </div>
                 </div>
             </div>
         </div>
@@ -79,18 +101,20 @@ import BusquedaUsuarioTarjeta from '../components/BusquedaUsuarioTarjeta.vue'
 import InputBuscar from '../components/InputBuscar.vue'
 
 import moment from 'moment'
+import TarjetaAnotacion from '../components/TarjetaAnotacion.vue'
 
 export default {
     name: 'Expediente',
     components: {
-        ClipboardListIcon,
-        AppButton,
-        UserIcon,
-        XCircleIcon,
-        MoonLoader,
-        BusquedaUsuarioTarjeta,
-        InputBuscar
-    },
+    ClipboardListIcon,
+    AppButton,
+    UserIcon,
+    XCircleIcon,
+    MoonLoader,
+    BusquedaUsuarioTarjeta,
+    InputBuscar,
+    TarjetaAnotacion
+},
     props: {
         id: ''
     },
