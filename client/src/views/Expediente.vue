@@ -32,7 +32,7 @@
                     </div>
                     <!-- Listado de usuarios relacionados con el expediente -->
                     <div class="mx-auto max-h-52 overflow-x-hidden overflow-y-auto space-y-3 w-3/4 flex items-center flex-col mb-8">
-                        <div class="flex space-x-12 justify-between w-full" v-for="usuario in usuariosRelacionados" :key="usuario.id">
+                        <div class="flex justify-between w-full" v-for="usuario in usuariosRelacionados" :key="usuario.id">
                             <UserIcon class="h-7 min-h-full"/>
                             <p class="font-semibold my-auto">{{usuario.nombre}}</p>
                             <XCircleIcon class="h-7 min-h-full cursor-pointer" v-on:click="eliminarRelacionExpedienteUsuario(usuario.id)"/>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <!-- Parte derecha -->
-                <div class="ml-5 mt-6 flex flex-col w-full">
+                <div class="ml-5 mt-6 flex-1 flex-col">
                     <div class="flex justify-between mb-2">
                         <div class="border-gray-700 rounded-sm flex shadow-lg p-1 space-x-4 border-2">
                             <div class="hover:shadow-lg p-2 rounded-md cursor-pointer">
@@ -66,8 +66,8 @@
                             </div>
                         </div>    
 
-                        <div class="space-x-4 flex border-gray-700 rounded-sm border-2 px-3">
-                            <button class="px-1 font-semibold border-gray-800 rounded-sm hover:bg-gray-50 my-auto items-end">Nueva anotación</button>
+                        <div class="space-x-4 flex border-gray-700 rounded-sm border-2 px-3 hover:bg-gray-50 ">
+                            <button class="px-1 font-semibold border-gray-800 rounded-sm my-auto items-end">Nueva anotación</button>
                         </div>
 
                         <div class="w-60 flex">
@@ -75,7 +75,10 @@
                         </div>
                     </div>
                     <div class="border-2 border-gray-600 mb-2"></div>
-                    <div class="flex flex-col space-y-2">
+                    <div class="flex flex-col space-y-2 ">
+                        <TarjetaAnotacion/>
+                        <TarjetaAnotacion/>
+                        <TarjetaAnotacion/>
                         <TarjetaAnotacion/>
                     </div>
                 </div>
