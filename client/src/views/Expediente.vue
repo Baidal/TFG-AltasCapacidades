@@ -11,9 +11,9 @@
                 <div class="flex-1 ml-5 items-end">
                     <div class="flex flex-col space-y-2">
                         <p class="font-bold">{{expediente.nombre_niño}}</p>
-                        <p class="text-sm font-semibold">10 años</p>
+                        <p class="text-sm font-semibold">{{obtenerEdadNiño}}</p>
                         <p class="text-sm font-semibold">{{expediente.dni_niño}}</p>
-                        <p class="text-sm text-gray-600 font-semibold">Expediente creado el {{expediente.create_time}}</p>
+                        <p class="text-sm text-gray-600 font-semibold">Expediente creado el {{formatearFechaCreacionExpediente}}</p>
                         <AppButton :name="'Modificar expediente'" class="w-52"/>
                     </div>
                 </div>
@@ -77,6 +77,8 @@ import initializeAppObject from '../services/daoProvider'
 import AppButton from '../components/AppButton.vue'
 import BusquedaUsuarioTarjeta from '../components/BusquedaUsuarioTarjeta.vue'
 import InputBuscar from '../components/InputBuscar.vue'
+
+import moment from 'moment'
 
 export default {
     name: 'Expediente',
@@ -197,6 +199,18 @@ export default {
     computed: {
         hayUsuariosSeleccionados(){
             return this.usuariosSeleccionados.length !== 0
+        },
+        formatearFechaCreacionExpediente(){
+            const date = new Date(this.expediente.create_time)
+            return date.getDay().toString().padStart(2,'0') + "/" + (date.getMonth() + 1).toString().padStart(2,'0') + "/" + date.getFullYear()
+        },
+        obtenerEdadNiño(){
+            const fechaNacimiento = moment(this.expediente.fechanacimiento_niño)
+            const ahora = moment(Date.now())
+
+            const años = ahora.diff(fechaNacimiento, 'years')
+
+            return años == 1 ? años + " año" : años + " años"
         }
     }
 
