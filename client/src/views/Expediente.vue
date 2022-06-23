@@ -71,12 +71,12 @@
                         </div>
 
                         <div class="w-60 flex items-end">
-                            <InputBuscar :placeHolder="'Buscar anotación...'" class="w-full"/>
+                            <InputBuscar :placeHolder="'Buscar anotación...'" class="w-full" v-model="buscarAnotacion"/>
                         </div>
                     </div>
                     <div class="border-2 border-gray-600 mb-2"></div>
                     <div class="flex flex-col space-y-2 overflow-y-auto main-section-height" v-if="contenidoPrincipal == 'anotaciones'">
-                        <TarjetaAnotacion v-for="anotacion in anotaciones" :key="anotacion.id"/>
+                        <TarjetaAnotacion v-for="anotacion in anotaciones" :key="anotacion.id" :anotacion="anotacion"/>
                     </div>
                     <div class="flex flex-col space-y-2 overflow-y-scroll main-section-height" v-else>
                         eyy
@@ -102,9 +102,10 @@ import initializeAppObject from '../services/daoProvider'
 import AppButton from '../components/AppButton.vue'
 import BusquedaUsuarioTarjeta from '../components/BusquedaUsuarioTarjeta.vue'
 import InputBuscar from '../components/InputBuscar.vue'
+import TarjetaAnotacion from '../components/TarjetaAnotacion.vue'
 
 import moment from 'moment'
-import TarjetaAnotacion from '../components/TarjetaAnotacion.vue'
+import utils from '../services/utils'
 
 export default {
     name: 'Expediente',
@@ -135,7 +136,8 @@ export default {
              */
             contenidoPrincipal: 'anotaciones',
             anotaciones: [],
-            cuestionarios: []
+            cuestionarios: [],
+            buscarAnotacion: ''
         }
     },
     async created(){
@@ -235,6 +237,19 @@ export default {
                 return
 
             this.buscarUsuariosARelacionar(new_input)
+        },
+        buscarAnotacion(new_input, _){
+            if(new_input.length == 0){
+                this.anotaciones = this.cargarAnotaciones()
+                return
+            }
+
+            if(new_input.length < 3)
+                return
+
+            new_input = new_input.toLowerCase()
+
+            this.anotaciones = this.anotaciones.filter(anotacion => anotacion.titulo.toLowerCase().includes(new_input))
         }
     },
     computed: {
@@ -242,8 +257,7 @@ export default {
             return this.usuariosSeleccionados.length !== 0
         },
         formatearFechaCreacionExpediente(){
-            const date = new Date(this.expediente.create_time)
-            return date.getDay().toString().padStart(2,'0') + "/" + (date.getMonth() + 1).toString().padStart(2,'0') + "/" + date.getFullYear()
+            return utils.formatearFecha(this.expediente.create_time)
         },
         obtenerEdadNiño(){
             const fechaNacimiento = moment(this.expediente.fechanacimiento_niño)
