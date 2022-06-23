@@ -76,7 +76,7 @@
                     </div>
                     <div class="border-2 border-gray-600 mb-2"></div>
                     <div class="flex flex-col space-y-2 overflow-y-auto main-section-height" v-if="contenidoPrincipal == 'anotaciones'">
-                        <TarjetaAnotacion v-for="anotacion in anotaciones" :key="anotacion.id" :anotacion="anotacion"/>
+                        <TarjetaAnotacion v-for="anotacion in anotaciones" :key="anotacion.id" :anotacion="anotacion" @modificar-anotacion="modificarAnotacion"/>
                     </div>
                     <div class="flex flex-col space-y-2 overflow-y-scroll main-section-height" v-else>
                         eyy
@@ -223,6 +223,24 @@ export default {
         },
         toggleContenidoPrincipal(contenido){
             this.contenidoPrincipal = contenido
+        },
+        async modificarAnotacion(anotacion){
+            const app = await initializeAppObject()
+
+            //Convertimos las fechas al formato de mysql
+            anotacion.create_time = new Date(anotacion.create_time).toISOString().slice(0,19).replace('T', ' ')
+            anotacion.update_time = new Date().toISOString().slice(0,19).replace('T', ' ')
+
+            //Guardamos el id de la anotacion y se lo quitamos al objeto porque no se puede modificar el id
+            const anotacion_id = anotacion.id
+            delete anotacion.id
+            
+            app.dao.anotaciones.update({id: anotacion_id}, anotacion)
+
+            //Volvemos a guardar el id para que no se pierda
+            anotacion.id = anotacion_id
+
+            this.anotaciones[this.anotaciones.findIndex(anotacionAModificar => anotacionAModificar.id == anotacion.id)] = anotacion
         }
     },
     watch: {
