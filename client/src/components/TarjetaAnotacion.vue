@@ -22,7 +22,7 @@ export default {
     },
     props: {
         titulo: '',
-        texto: '',
+        anotacion: '',
         creadaEn: '',
         modificadaEn: ''
     }

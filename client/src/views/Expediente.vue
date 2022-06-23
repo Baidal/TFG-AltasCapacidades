@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="flex flex-col mx-10 mt-5" v-if="this.expedienteEncontrado()">
+        <div class="flex flex-col mx-10 mt-5 mb-20" v-if="this.expedienteEncontrado()">
             <!-- Zona superior de la vista-->
             <div class="flex mb-2">
                 <!-- Icono de expediente y nombre de expediente -->
@@ -58,28 +58,28 @@
                     <div class="flex justify-between mb-2">
                         <div class="border-gray-700 rounded-sm flex shadow-lg p-1 space-x-4 border-2">
                             <div class="hover:shadow-lg p-2 rounded-md cursor-pointer">
-                                <p class="font-semibold text-md text-center">Cuestionarios</p>
+                                <p class="font-semibold text-md text-center" @click="toggleContenidoPrincipal('cuestionarios')">Cuestionarios</p>
                             </div>
                             <p class="my-auto">|</p>
                             <div class="hover:shadow-lg p-2 rounded-md cursor-pointer">
-                                <p class="font-semibold text-md text-center rounded-md">Anotaciones</p>
+                                <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('anotaciones')">Anotaciones</p>
                             </div>
                         </div>    
 
                         <div class="space-x-4 flex border-gray-700 rounded-sm border-2 px-3 hover:bg-gray-50 ">
-                            <button class="px-1 font-semibold border-gray-800 rounded-sm my-auto items-end">Nueva anotación</button>
+                            <button class="px-1 font-semibold border-gray-800 rounded-sm my-auto">Nueva anotación</button>
                         </div>
 
-                        <div class="w-60 flex">
-                            <InputBuscar :placeHolder="'Buscar anotación...'" class="w-full my-auto"/>
+                        <div class="w-60 flex items-end">
+                            <InputBuscar :placeHolder="'Buscar anotación...'" class="w-full"/>
                         </div>
                     </div>
                     <div class="border-2 border-gray-600 mb-2"></div>
-                    <div class="flex flex-col space-y-2 ">
-                        <TarjetaAnotacion/>
-                        <TarjetaAnotacion/>
-                        <TarjetaAnotacion/>
-                        <TarjetaAnotacion/>
+                    <div class="flex flex-col space-y-2 overflow-y-auto main-section-height" v-if="contenidoPrincipal == 'anotaciones'">
+                        <TarjetaAnotacion v-for="anotacion in anotaciones" :key="anotacion.id"/>
+                    </div>
+                    <div class="flex flex-col space-y-2 overflow-y-scroll main-section-height" v-else>
+                        eyy
                     </div>
                 </div>
             </div>
@@ -116,7 +116,7 @@ export default {
     MoonLoader,
     BusquedaUsuarioTarjeta,
     InputBuscar,
-    TarjetaAnotacion
+    TarjetaAnotacion,
 },
     props: {
         id: ''
@@ -128,7 +128,14 @@ export default {
             cargandoDatos: true,
             inputBuscarUsuarios: '',
             usuariosBuscados: [],
-            usuariosSeleccionados: []
+            usuariosSeleccionados: [],
+            /**
+             * Define cual es el contenido mostrado en el expediente
+             * Puede ser anotaciones o cuestionarios
+             */
+            contenidoPrincipal: 'anotaciones',
+            anotaciones: [],
+            cuestionarios: []
         }
     },
     async created(){
@@ -138,6 +145,7 @@ export default {
 
         if (expedienteEncontrado){
             this.cargarUsuariosRelacionados()
+            this.cargarAnotaciones()
         }
 
         this.cargandoDatos = false
@@ -168,6 +176,11 @@ export default {
                 usuario.usuario_expediente_ID = row.id //Guardamos el id de la tabla que relaciona al usuario con el expediente para luego poder acceder a el sin necesidad de tener que recurrir a la BD de nuevo
                 this.usuariosRelacionados.push(usuario)
             })
+        },
+        async cargarAnotaciones(){
+            const app = await initializeAppObject()
+            this.anotaciones = await app.dao.anotaciones.read({}, {filter: {expediente_id: this.expediente.id}})
+            
         },
         async eliminarRelacionExpedienteUsuario(usuarioId){
             const usuario = this.usuariosRelacionados.find(usuarioBuscar => usuarioBuscar.id == usuarioId)
@@ -207,6 +220,9 @@ export default {
 
             this.usuariosSeleccionados = []
             this.usuariosBuscados = []
+        },
+        toggleContenidoPrincipal(contenido){
+            this.contenidoPrincipal = contenido
         }
     },
     watch: {
@@ -262,5 +278,9 @@ export default {
     /* Handle on hover */
     ::-webkit-scrollbar-thumb:hover {
     background: #555; 
+    }
+
+    .main-section-height{
+        height: 36rem;
     }
 </style>

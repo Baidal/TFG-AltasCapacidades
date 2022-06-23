@@ -6,7 +6,9 @@
 		"titulo": "@string",
         "anotacion": "@string !",
         "create_time": "@string !",
-		"update_time": "@string !"
+		"update_time": "@string !",
+		"usuario_id": "@integer !",
+		"expediente_id": "@integer !"
 	},
 	"table": "anotaciones",
 	"urlList": "/anotaciones",
