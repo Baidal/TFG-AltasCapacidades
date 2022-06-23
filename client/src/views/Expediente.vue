@@ -167,9 +167,7 @@ export default {
         },
         async cargarUsuariosRelacionados(){
             const app = await initializeAppObject()
-            let usuario_expediente = await app.dao.usuario_expediente.read()
-
-            usuario_expediente = usuario_expediente.filter(row => row.expediente_id == this.expediente.id)
+            let usuario_expediente = await app.dao.usuario_expediente.read({}, {filter: {expediente_id: this.expediente.id}})
 
             usuario_expediente.forEach(async row => {
                 let usuario = await app.dao.usuario.read(row.usuario_id)
