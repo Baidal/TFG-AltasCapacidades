@@ -5,8 +5,8 @@
 		"id": "#",
 		"titulo": "@string",
         "anotacion": "@string !",
-        "create_time": "@string !",
-		"update_time": "@string !",
+        "create_time": "@string",
+		"update_time": "@string",
 		"usuario_id": "@integer !",
 		"expediente_id": "@integer !"
 	},

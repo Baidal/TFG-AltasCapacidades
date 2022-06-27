@@ -1,6 +1,11 @@
 <template>
     <div>
         <div class="flex flex-col mx-10 mt-5 mb-20" v-if="this.expedienteEncontrado()">
+            <PopUpNuevaAnotacion 
+                v-if="mostrarNuevaAnotacion" 
+                @close-nueva-anotacion="toggleMostrarNuevaAnotacion"
+                @nueva-anotacion="añadirNuevaAnotacion"
+                />
             <!-- Zona superior de la vista-->
             <div class="flex mb-2">
                 <!-- Icono de expediente y nombre de expediente -->
@@ -67,7 +72,7 @@
                         </div>    
 
                         <div class="space-x-4 flex border-gray-700 rounded-sm border-2 px-3 hover:bg-gray-50 ">
-                            <button class="px-1 font-semibold border-gray-800 rounded-sm my-auto">Nueva anotación</button>
+                            <button class="px-1 font-semibold border-gray-800 rounded-sm my-auto" @click="toggleMostrarNuevaAnotacion">Nueva anotación</button>
                         </div>
 
                         <div class="w-60 flex items-end">
@@ -93,19 +98,22 @@
 </template>
 
 <script>
+import initializeAppObject from '../services/daoProvider'
+
 import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
 import {ClipboardListIcon, XCircleIcon} from '@heroicons/vue/outline'
 import {UserIcon} from '@heroicons/vue/solid'
 
-import initializeAppObject from '../services/daoProvider'
 import AppButton from '../components/AppButton.vue'
 import BusquedaUsuarioTarjeta from '../components/BusquedaUsuarioTarjeta.vue'
 import InputBuscar from '../components/InputBuscar.vue'
 import TarjetaAnotacion from '../components/TarjetaAnotacion.vue'
+import NuevaAnotacion from '../components/PopUpNuevaAnotacion.vue'
 
 import moment from 'moment'
 import utils from '../services/utils'
+import PopUpNuevaAnotacion from '../components/PopUpNuevaAnotacion.vue'
 
 export default {
     name: 'Expediente',
@@ -118,6 +126,8 @@ export default {
     BusquedaUsuarioTarjeta,
     InputBuscar,
     TarjetaAnotacion,
+    NuevaAnotacion,
+    PopUpNuevaAnotacion
 },
     props: {
         id: ''
@@ -137,7 +147,8 @@ export default {
             contenidoPrincipal: 'anotaciones',
             anotaciones: [],
             cuestionarios: [],
-            buscarAnotacion: ''
+            buscarAnotacion: '',
+            mostrarNuevaAnotacion: false
         }
     },
     async created(){
@@ -179,8 +190,14 @@ export default {
         },
         async cargarAnotaciones(){
             const app = await initializeAppObject()
-            this.anotaciones = await app.dao.anotaciones.read({}, {filter: {expediente_id: this.expediente.id}})
-            
+            let anotacionesDB = await app.dao.anotaciones.read({}, {filter: {expediente_id: this.expediente.id}})
+            anotacionesDB = anotacionesDB.sort((a1, a2) => {
+                const dateA1 = new Date(a1.create_time)
+                const dateA2 = new Date(a2.create_time)
+                return dateA1 > dateA2 ? -1 : 1
+            })
+
+            this.anotaciones = anotacionesDB
         },
         async eliminarRelacionExpedienteUsuario(usuarioId){
             const usuario = this.usuariosRelacionados.find(usuarioBuscar => usuarioBuscar.id == usuarioId)
@@ -241,6 +258,27 @@ export default {
             anotacion.id = anotacion_id
 
             this.anotaciones[this.anotaciones.findIndex(anotacionAModificar => anotacionAModificar.id == anotacion.id)] = anotacion
+        },
+        toggleMostrarNuevaAnotacion(){
+            this.mostrarNuevaAnotacion = !this.mostrarNuevaAnotacion
+        },
+        async añadirNuevaAnotacion(titulo, anotacion){
+            const app = await initializeAppObject()
+
+            const nuevaAnotacion = await app.dao.anotaciones.create({
+                titulo: titulo,
+                anotacion: anotacion,
+                usuario_id: 1, //TODO: Cambiar que el id del usuario sea el id del usuario logeado
+                expediente_id: this.expediente.id
+            })
+
+            //El objeto devuelto por la BD no tiene los parámetros create_time y update por lo que se los añadimos
+            nuevaAnotacion.create_time = nuevaAnotacion.creation_time
+            nuevaAnotacion.update_time = nuevaAnotacion.creation_time
+
+            this.anotaciones.unshift(nuevaAnotacion)
+
+            this.toggleMostrarNuevaAnotacion()
         }
     },
     watch: {
