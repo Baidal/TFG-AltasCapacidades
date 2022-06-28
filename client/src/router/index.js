@@ -4,6 +4,7 @@ import AsignarCuestionariosExpediente from '../views/AsignarCuestionariosExpedie
 import Login from '../views/Login'
 import Expedientes from '../views/Expedientes'
 import Expediente from '../views/Expediente'
+import Perfil from '../views/Perfil'
 
 const routes = [
   {
@@ -31,6 +32,12 @@ const routes = [
     path: '/expediente/:id',
     name: 'Expediente',
     component: Expediente,
+    props: true
+  },
+  {
+    path: '/perfil/:id',
+    name: 'Perfil',
+    component: Perfil,
     props: true
   }
 ]

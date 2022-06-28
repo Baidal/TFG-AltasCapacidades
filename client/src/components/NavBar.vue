@@ -10,7 +10,7 @@
         <!-- Botones de login, registro, etc-->
         <div class="flex justify-center space-x-4">
             <router-link :to="{name: 'Expedientes'}"><NavBarButton :name="'Expedientes'"/></router-link>
-            <NavBarButton :name="'Perfil'"/>
+            <router-link :to="{name: 'Perfil', params: {id: 1}}"><NavBarButton :name="'Perfil'"/></router-link>
             <router-link :to="{name: 'Login'}"><NavBarButton :name="'Iniciar Sesión'"/></router-link>
 
             <NavBarButton :name="'Registrarse'"/>
