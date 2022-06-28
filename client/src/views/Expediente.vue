@@ -81,7 +81,7 @@
                     </div>
                     <div class="border-2 border-gray-600 mb-2"></div>
                     <div class="flex flex-col space-y-2 overflow-y-auto main-section-height" v-if="contenidoPrincipal == 'anotaciones'">
-                        <TarjetaAnotacion v-for="anotacion in anotaciones" :key="anotacion.id" :anotacion="anotacion" @modificar-anotacion="modificarAnotacion"/>
+                        <TarjetaAnotacion v-for="anotacion in anotaciones" :key="anotacion.id" :anotacion="anotacion" @modificar-anotacion="modificarAnotacion" @eliminar-anotacion="eliminarAnotacion"/>
                     </div>
                     <div class="flex flex-col space-y-2 overflow-y-scroll main-section-height" v-else>
                         eyy
@@ -279,6 +279,12 @@ export default {
             this.anotaciones.unshift(nuevaAnotacion)
 
             this.toggleMostrarNuevaAnotacion()
+        },
+        async eliminarAnotacion(idAnotacion){
+            const app = await initializeAppObject()
+            app.dao.anotaciones.delete({id: idAnotacion})
+
+            this.anotaciones = this.anotaciones.filter(anotacion => anotacion.id != idAnotacion)
         }
     },
     watch: {

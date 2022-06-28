@@ -1,7 +1,11 @@
 <template>
     <div class="w-full border-2 border-gray-700 bg-gray-300 p-4 text-left rounded-md">
+        <PopUpEliminarAnotacion v-if="mostrarEliminarAnotacion" @close-eliminar="toggleMostarEliminarAnotacion" @eliminar-anotacion="eliminarAnotacion"/>
         <div class="flex flex-col">
-            <input :class="claseCssInput()" v-model="anotacion.titulo" :disabled="!modificable"/>
+            <div class="flex justify-between">
+                <input :class="claseCssInput()" v-model="anotacion.titulo" :disabled="!modificable"/>
+                <XCircleIcon class="h-6 cursor-pointer" @click="toggleMostarEliminarAnotacion"/>
+            </div>
             <span role="textbox" :contenteditable="modificable" :class="claseCssTextarea()" ref="span">{{anotacion.anotacion}}</span>
             <div class="mt-4 flex space-x-3">
                 <AppButton class="" :name="modificable ? 'Aplicar modificación' : 'Modificar Anotación'" @click="modificarAnotacion"/>
@@ -12,21 +16,26 @@
 </template>
 
 <script>
+import {XCircleIcon} from '@heroicons/vue/outline'
 import AppButton from '../components/AppButton.vue'
 
 import utils from '../services/utils'
+import PopUpEliminarAnotacion from './PopUpEliminarAnotacion.vue'
 
 export default {
     name: 'Anotacion',
     components: {
-        AppButton
-    },
+    AppButton,
+    XCircleIcon,
+    PopUpEliminarAnotacion
+},
     props: {
         anotacion: {}
     },
     data(){
         return{
-            modificable: false
+            modificable: false,
+            mostrarEliminarAnotacion: false
         }
     },
     methods: {
@@ -53,6 +62,14 @@ export default {
             }
             
             this.toggleModificable()
+        },
+        eliminarAnotacion(){
+            this.toggleMostarEliminarAnotacion()
+
+            this.$emit('eliminarAnotacion', this.anotacion.id)
+        },
+        toggleMostarEliminarAnotacion(){
+            this.mostrarEliminarAnotacion = !this.mostrarEliminarAnotacion
         }
     }
 
