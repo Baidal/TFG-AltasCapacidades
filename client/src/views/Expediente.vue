@@ -5,7 +5,13 @@
                 v-if="mostrarNuevaAnotacion" 
                 @close-nueva-anotacion="toggleMostrarNuevaAnotacion"
                 @nueva-anotacion="añadirNuevaAnotacion"
-                />
+            />
+            <PopUpModificarExpediente
+                v-if="mostrarModificarExpediente"
+                @close-modificar-expediente="toggleMostrarModificarExpediente"
+                :expediente="this.expediente"
+                @modificar-expediente="modificarExpediente"
+            />
             <!-- Zona superior de la vista-->
             <div class="flex mb-2">
                 <!-- Icono de expediente y nombre de expediente -->
@@ -15,11 +21,11 @@
                 </div>
                 <div class="flex-1 ml-5 items-end">
                     <div class="flex flex-col space-y-2">
-                        <p class="font-bold">{{expediente.nombre_niño}}</p>
+                        <p class="font-bold">{{expediente.nombre_niño}} {{expediente.apellidos_niño}}</p>
                         <p class="text-sm font-semibold">{{obtenerEdadNiño}}</p>
                         <p class="text-sm font-semibold">{{expediente.dni_niño}}</p>
                         <p class="text-sm text-gray-600 font-semibold">Expediente creado el {{formatearFechaCreacionExpediente}}</p>
-                        <AppButton :name="'Modificar expediente'" class="w-52"/>
+                        <AppButton :name="'Modificar expediente'" class="w-52" @click="toggleMostrarModificarExpediente"/>
                     </div>
                 </div>
             </div>
@@ -114,21 +120,23 @@ import NuevaAnotacion from '../components/PopUpNuevaAnotacion.vue'
 import moment from 'moment'
 import utils from '../services/utils'
 import PopUpNuevaAnotacion from '../components/PopUpNuevaAnotacion.vue'
+import PopUpModificarExpediente from '../components/PopUpModificarExpediente.vue'
 
 export default {
     name: 'Expediente',
     components: {
-    ClipboardListIcon,
-    AppButton,
-    UserIcon,
-    XCircleIcon,
-    MoonLoader,
-    BusquedaUsuarioTarjeta,
-    InputBuscar,
-    TarjetaAnotacion,
-    NuevaAnotacion,
-    PopUpNuevaAnotacion
-},
+        ClipboardListIcon,
+        AppButton,
+        UserIcon,
+        XCircleIcon,
+        MoonLoader,
+        BusquedaUsuarioTarjeta,
+        InputBuscar,
+        TarjetaAnotacion,
+        NuevaAnotacion,
+        PopUpNuevaAnotacion,
+        PopUpModificarExpediente
+    },
     props: {
         id: ''
     },
@@ -148,7 +156,8 @@ export default {
             anotaciones: [],
             cuestionarios: [],
             buscarAnotacion: '',
-            mostrarNuevaAnotacion: false
+            mostrarNuevaAnotacion: false,
+            mostrarModificarExpediente: false
         }
     },
     async created(){
@@ -245,8 +254,8 @@ export default {
             const app = await initializeAppObject()
 
             //Convertimos las fechas al formato de mysql
-            anotacion.create_time = new Date(anotacion.create_time).toISOString().slice(0,19).replace('T', ' ')
-            anotacion.update_time = new Date().toISOString().slice(0,19).replace('T', ' ')
+            anotacion.create_time = utils.formatearFechaAMysql(anotacion.create_time)
+            anotacion.update_time = utils.formatearFechaAMysql()
 
             //Guardamos el id de la anotacion y se lo quitamos al objeto porque no se puede modificar el id
             const anotacion_id = anotacion.id
@@ -285,6 +294,20 @@ export default {
             app.dao.anotaciones.delete({id: idAnotacion})
 
             this.anotaciones = this.anotaciones.filter(anotacion => anotacion.id != idAnotacion)
+        },
+        toggleMostrarModificarExpediente(){
+            this.mostrarModificarExpediente = !this.mostrarModificarExpediente
+        },
+        async modificarExpediente(expediente_modificado){
+            const app = await initializeAppObject()
+
+            delete expediente_modificado.id
+            expediente_modificado.create_time = utils.formatearFechaAMysql(expediente_modificado.create_time)
+            expediente_modificado.update_time = utils.formatearFechaAMysql()
+
+            this.expediente = await app.dao.expediente.update({id: this.expediente.id}, expediente_modificado)
+
+            this.toggleMostrarModificarExpediente()
         }
     },
     watch: {
