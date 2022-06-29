@@ -77,16 +77,22 @@
                             </div>
                         </div>    
 
-                        <div class="space-x-4 flex border-gray-700 rounded-sm border-2 px-3 hover:bg-gray-50 ">
+                        <div class="space-x-4 flex border-gray-700 rounded-sm border-2 px-3 hover:bg-gray-50" v-if="contenidoPrincipalAnotaciones">
                             <button class="px-1 font-semibold border-gray-800 rounded-sm my-auto" @click="toggleMostrarNuevaAnotacion">Nueva anotación</button>
                         </div>
+                        <div v-else class="my-auto text-lg font-bold">
+                            Cuestionarios
+                        </div>
 
-                        <div class="w-60 flex items-end">
+                        <div class="w-60 flex items-end" v-if="contenidoPrincipalAnotaciones">
                             <InputBuscar :placeHolder="'Buscar anotación...'" class="w-full" v-model="buscarAnotacion"/>
+                        </div>
+                        <div class="w-60 flex items-end" v-else>
+                            <InputBuscar :placeHolder="'Buscar cuestionario...'" class="w-full"/>
                         </div>
                     </div>
                     <div class="border-2 border-gray-600 mb-2"></div>
-                    <div class="flex flex-col space-y-2 overflow-y-auto main-section-height" v-if="contenidoPrincipal == 'anotaciones'">
+                    <div class="flex flex-col space-y-2 overflow-y-auto main-section-height" v-if="contenidoPrincipalAnotaciones">
                         <TarjetaAnotacion v-for="anotacion in anotaciones" :key="anotacion.id" :anotacion="anotacion" @modificar-anotacion="modificarAnotacion" @eliminar-anotacion="eliminarAnotacion"/>
                     </div>
                     <div class="flex flex-col space-y-2 overflow-y-scroll main-section-height" v-else>
@@ -351,6 +357,12 @@ export default {
             const años = ahora.diff(fechaNacimiento, 'years')
 
             return años == 1 ? años + " año" : años + " años"
+        },
+        contenidoPrincipalAnotaciones(){
+            return this.contenidoPrincipal == 'anotaciones'
+        },
+        contenidoPrincipalCuestionarios(){
+            return this.contenidoPrincipal == 'cuestionarios'
         }
     }
 
