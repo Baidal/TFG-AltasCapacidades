@@ -36,6 +36,8 @@
 </template>
 
 <script>
+    import policies from '../services/policies';
+
     import AppButton from './AppButton.vue';
 
     import {XCircleIcon} from '@heroicons/vue/outline'
@@ -100,19 +102,19 @@
             }
 
             //Comprobamos que el email sea correcto
-            if (!this.newUser.email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)){
+            if (!policies.emailEsCorrecto(this.newUser.email)){
                 this.warnings.push('* El email es incorrecto')
                 allOk = false
             }
 
             //Comprobamos que el teléfonon sea correcto
-            if (this.newUser.telefono != '' && (this.newUser.telefono.length != 9 || !this.newUser.telefono.match(/^\d+$/))){
+            if (!policies.telefonoEsCorrecto(this.newUser.telefono)){
                 this.warnings.push('* Teléfono incorrecto')
                 allOk = false
             }
 
             //Comprobamos que el dni sea correcto (sea nif o sea nie)
-            if(this.newUser.dni != '' && !(this.newUser.dni.match(/^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKE]$/i) || this.newUser.dni.match(/^[XYZ][0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKE]$/i))){
+            if(!policies.dniNieEsCorrecto(this.newUser.dni)){
                 this.warnings.push('* Dni o Nie Incorrecto')
                 allOk = false
             }
