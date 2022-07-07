@@ -16,7 +16,7 @@
             <div class="flex mb-2">
                 <!-- Icono de expediente y nombre de expediente -->
                 <div class="flex flex-col text-center sm:w-1/2 md:w-2/5 lg:w-1/3 xl:w-1/4 2xl:w-1/5">
-                    <ClipboardListIcon class="h-32 text-green-400"/>
+                    <IdentificationIcon class="h-32 text-gray-700"/>
                     <p class="font-bold">{{expediente.nombre}}</p>
                 </div>
                 <div class="flex-1 ml-5 items-end">
@@ -88,15 +88,20 @@
                             <InputBuscar :placeHolder="'Buscar anotación...'" class="w-full" v-model="buscarAnotacion"/>
                         </div>
                         <div class="w-60 flex items-end" v-else>
-                            <InputBuscar :placeHolder="'Buscar cuestionario...'" class="w-full"/>
+                            <InputBuscar :placeHolder="'Buscar cuestionario...'" class="w-full" v-model="buscarCuestionario"/>
                         </div>
                     </div>
                     <div class="border-2 border-gray-600 mb-2"></div>
                     <div class="flex flex-col space-y-2 overflow-y-auto main-section-height" v-if="contenidoPrincipalAnotaciones">
                         <TarjetaAnotacion v-for="anotacion in anotaciones" :key="anotacion.id" :anotacion="anotacion" @modificar-anotacion="modificarAnotacion" @eliminar-anotacion="eliminarAnotacion"/>
                     </div>
-                    <div class="flex flex-col space-y-2 overflow-y-scroll main-section-height" v-else>
-                        eyy
+                    <div class="overflow-y-auto main-section-height grid grid-container" v-else>
+                        <router-link :to="{name: 'Cuestionario', params: {id: cuestionario.id}}" class="w-full h-56 flex justify-center text-center p-2" v-for="cuestionario in cuestionarios" :key="cuestionario.id">
+                            <div class="rounded-lg shadow-lg w-full mx-1 flex flex-col items-center hover:shadow-xl cursor-pointer">
+                                <ClipboardListIcon class="h-22 text-gray-800"/>
+                                <h1 class="font-semibold mb-4">{{cuestionario.nombre}}</h1>
+                            </div>
+                        </router-link>
                     </div>
                 </div>
             </div>
@@ -114,7 +119,7 @@ import initializeAppObject from '../services/daoProvider'
 
 import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
-import {ClipboardListIcon, XCircleIcon} from '@heroicons/vue/outline'
+import {ClipboardListIcon, XCircleIcon, IdentificationIcon} from '@heroicons/vue/outline'
 import {UserIcon} from '@heroicons/vue/solid'
 
 import AppButton from '../components/AppButton.vue'
@@ -127,22 +132,25 @@ import moment from 'moment'
 import utils from '../services/utils'
 import PopUpNuevaAnotacion from '../components/PopUpNuevaAnotacion.vue'
 import PopUpModificarExpediente from '../components/PopUpModificarExpediente.vue'
+import TarjetaCuestionario from '../components/TarjetaCuestionario.vue'
 
 export default {
     name: 'Expediente',
     components: {
-        ClipboardListIcon,
-        AppButton,
-        UserIcon,
-        XCircleIcon,
-        MoonLoader,
-        BusquedaUsuarioTarjeta,
-        InputBuscar,
-        TarjetaAnotacion,
-        NuevaAnotacion,
-        PopUpNuevaAnotacion,
-        PopUpModificarExpediente
-    },
+    ClipboardListIcon,
+    AppButton,
+    UserIcon,
+    XCircleIcon,
+    MoonLoader,
+    BusquedaUsuarioTarjeta,
+    InputBuscar,
+    TarjetaAnotacion,
+    NuevaAnotacion,
+    PopUpNuevaAnotacion,
+    PopUpModificarExpediente,
+    IdentificationIcon,
+    TarjetaCuestionario
+},
     props: {
         id: ''
     },
@@ -158,12 +166,14 @@ export default {
              * Define cual es el contenido mostrado en el expediente
              * Puede ser anotaciones o cuestionarios
              */
-            contenidoPrincipal: 'anotaciones',
+            contenidoPrincipal: 'cuestionarios',
             anotaciones: [],
             cuestionarios: [],
             buscarAnotacion: '',
+            buscarCuestionario: '',
             mostrarNuevaAnotacion: false,
-            mostrarModificarExpediente: false
+            mostrarModificarExpediente: false,
+            cuestionarios: []
         }
     },
     async created(){
@@ -174,6 +184,7 @@ export default {
         if (expedienteEncontrado){
             this.cargarUsuariosRelacionados()
             this.cargarAnotaciones()
+            this.cargarCuestionarios()
         }
 
         this.cargandoDatos = false
@@ -213,6 +224,13 @@ export default {
             })
 
             this.anotaciones = anotacionesDB
+        },
+        async cargarCuestionarios(){
+            //Carga todos los cuestionarios de la aplicacion
+            //TODO: Hacer que cargue solo los cuestionarios de este expediente
+
+            const app = await initializeAppObject()
+            this.cuestionarios = await app.dao.cuestionarios.read()
         },
         async eliminarRelacionExpedienteUsuario(usuarioId){
             const usuario = this.usuariosRelacionados.find(usuarioBuscar => usuarioBuscar.id == usuarioId)
@@ -341,6 +359,19 @@ export default {
             new_input = new_input.toLowerCase()
 
             this.anotaciones = this.anotaciones.filter(anotacion => anotacion.titulo.toLowerCase().includes(new_input))
+        },
+        buscarCuestionario(new_input){
+            if(new_input.length == 0){
+                this.cuestionarios = this.cargarCuestionarios()
+                return
+            }
+
+            if(new_input.length < 3)
+                return
+
+            new_input = new_input.toLowerCase()
+
+            this.cuestionarios = this.cuestionarios.filter(cuestionario => cuestionario.nombre.toLowerCase().includes(new_input))
         }
     },
     computed: {

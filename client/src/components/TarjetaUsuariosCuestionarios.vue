@@ -61,7 +61,7 @@
           :id="cuestionario.id"
           :showRemoveButton="true"
           @delete-cuestionario="(id) => $emit('deleteCuestionario', titulo, id)"
-          class="mx-1 my-1"/>
+          class="mx-1 my-1 w-1/4"/>
         <!-- Botón de añadir cuestionario-->
         <div class="flex flex-col items-center my-auto w-1/4 mx-1 cursor-pointer" @click="this.mostrarBuscarCuestionario = !this.mostrarBuscarCuestionario">
             <PlusCircleIcon class="w-14 h-14"/>
