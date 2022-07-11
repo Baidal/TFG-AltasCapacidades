@@ -5,7 +5,7 @@
             <!--Parte izquierda del principio-->
             <div class="flex space-x-6">
                 <p class="text-lg mt-6 font-bold">Listado de expedientes</p>
-                <router-link :to="{name: 'CrearCuestionario'}" class="mt-4"><app-button :name="'Nuevo expediente'"/></router-link>
+                <router-link :to="{name: 'CrearExpediente'}" class="mt-4"><app-button :name="'Nuevo expediente'"/></router-link>
             </div>
             <!--Parte derecha del principio-->
             <div class="w-1/4 mt-4">
@@ -17,7 +17,7 @@
         <div class="grid grid-rows-4 w-3/4 grid-container">
             <TarjetaExpediente :nombre="expediente.nombre" :id="expediente.id" class="cursor-pointer" v-for="expediente in expedientes" :key="expediente.id"/>
             
-            <router-link :to="{name: 'CrearCuestionario'}" class="text-gray-500 flex flex-col items-center justify-center my-2" v-if="!loadingData">
+            <router-link :to="{name: 'CrearExpediente'}" class="text-gray-500 flex flex-col items-center justify-center my-2" v-if="!loadingData">
                 <PlusIcon class="w-1/3 h-1/3"/>
                 <p>Nuevo expediente</p>
             </router-link>

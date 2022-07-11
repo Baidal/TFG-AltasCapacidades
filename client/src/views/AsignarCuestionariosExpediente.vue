@@ -1,11 +1,12 @@
 <template>
-    <div class="block text-center mt-2 space-y-2">
+    <div class="block text-center mt-2 space-y-2 mb-20">
         <p class="text-lg font-bold">{{this.creandoExpediente ? "Nuevo expediente" : "Añadir formularios al expediente"}}</p>
-        <PlusCircleIcon class="h-14 w-14 mx-auto text-green-800 cursor-pointer" @click="crearExpediente"/>
-        <AppButton v-on:click="toggleFormularioNiño" :name="mostrarFormularioNiño ? 'Esconder datos' : 'Mostrar datos'"/>
+        <div class="flex flex-col space-y-2">
+            <AppButton class="mx-auto text-green-800 cursor-pointer" @click="crearExpediente" :name="'Crear expediente'"/>
+        </div>
         <!-- Formulario con los datos del niño -->
         <div v-if="this.mostrarFormularioNiño">
-            <div class="w-2/5 border-4 border-black rounded-md mx-auto flex space-y-2 flex-col pl-4 pr-4 pb-4 pt-2 shadow-lg">
+            <div class="w-2/5 border-4 border-gray-800 rounded-md mx-auto flex space-y-2 flex-col pl-4 pr-4 pb-4 pt-2 shadow-md">
                 <p class="font-bold text-md mb-2">Nombre del expediente</p>
                 <input v-model="nombreExpediente" name="nombreExpediente" class="w-full border-2 border-black rounded-md p-1 mx-auto" placeholder="Nombre expediente..."/>
                 
@@ -19,6 +20,9 @@
                 <div class="flex space-x-2">
                     <input v-model="datosNiño.dni" name="dni" class="w-1/4 border-2 border-black rounded-md p-1" placeholder="Dni..."/>
                     <input v-model="datosNiño.fechaNac" type="date" name="fechaNac" class="w-3/4 border-2 border-black rounded-md p-1" placeholder="Fecha nacimiento..."/>
+                </div>
+                <div>
+                    <p v-for="error in erroresValidacion" :key="error" class="text-left font-semibold text-sm text-red-600">{{error}}</p>
                 </div>
             </div>
         </div>
@@ -49,6 +53,7 @@ import {PlusCircleIcon} from '@heroicons/vue/outline'
 import TarjetaUsuariosCuestionarios from '../components/TarjetaUsuariosCuestionarios.vue'
 import AppButton from '../components/AppButton.vue'
 import PopUpAnyadirUsuario from '../components/PopUpAnyadirUsuario.vue'
+import policies from '../services/policies'
 
 export default {
     name: 'AsignarCuestionariosExpediente',
@@ -81,6 +86,7 @@ export default {
              * }
              */
             categorias: [{nombre: 'Familiares', usuarios: [], cuestionarios: [{id: 1}, {id: 2}, {id: 3}]}, {nombre: 'Colegio', usuarios: [], cuestionarios: [{id: 4}]}],
+            erroresValidacion: []
         }
     },
     /**
@@ -160,23 +166,51 @@ export default {
             })
         },
         modifyUser(nombreCategoria, userModified, cleanEmail){
-            console.log(userModified, cleanEmail)
             var indexOfCategory = this.indexCategory(nombreCategoria)
             var userIndex = this.indexOfUser(indexOfCategory, cleanEmail)
 
             this.categorias[indexOfCategory].usuarios[userIndex] = userModified
         },
+        datosExpedienteCorrectos(){
+            this.erroresValidacion = []
+            let todoOk = true
+
+            if(this.nombreExpediente == ''){
+                todoOk = false
+                this.erroresValidacion.push('* El nombre del expediente no puede estar vacío')
+            }
+
+            if(this.datosNiño.nombre == ''){
+                todoOk = false
+                this.erroresValidacion.push('* El nombre del niño no puede estar vacío')
+            }
+
+            if(this.datosNiño.dni != '' && !policies.dniNieEsCorrecto(this.datosNiño.dni)){
+                todoOk = false
+                this.erroresValidacion.push('* DNI o NIE incorrecto')
+            }
+
+            return todoOk
+        },
         async crearExpediente(){
+            if(!this.datosExpedienteCorrectos())
+                return
+            
             var app = await initializeAppObject()
             //Creamos el expediente
-            var expediente = await app.dao.expediente.create(
-                {
-                    nombre_niño: this.datosNiño.nombre,
-                    apellidos_niño: this.datosNiño.apellidos,
-                    nombre: this.nombreExpediente,
-                    dni_niño: this.datosNiño.dni,
-                    fechanacimiento_niño: this.datosNiño.fechaNac,
-                })
+            var expedienteACrear = 
+            {
+                nombre_niño: this.datosNiño.nombre,
+                apellidos_niño: this.datosNiño.apellidos,
+                nombre: this.nombreExpediente,
+                dni_niño: this.datosNiño.dni,
+                fechanacimiento_niño: this.datosNiño.fechaNac,
+            }
+
+            if(expedienteACrear.fechanacimiento_niño == '')
+                delete expedienteACrear.fechanacimiento_niño
+
+            var expediente = await app.dao.expediente.create(expedienteACrear)
             
             //Usuarios cuya creación ha sido errónea
             var usuariosNoCreados = []
@@ -210,7 +244,8 @@ export default {
                 })
             })
 
-            console.log(expediente)
+            this.$router.push({name: 'Expediente', params: {id: expediente.id}})
+
         },
         relacionarUsuarioExpediente(app, usuarioId, expedienteId){
             app.dao.usuario_expediente.create({

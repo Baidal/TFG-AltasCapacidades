@@ -1,7 +1,6 @@
 <template>
   <div class="">
       home
-      <router-link :to="{name: 'CrearCuestionario'}">Expedientes</router-link>
   </div>
 </template>
 

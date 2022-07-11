@@ -14,8 +14,8 @@ const routes = [
     component: Home
   },
   {
-    path: '/crearCuestionario',
-    name: 'CrearCuestionario',
+    path: '/crearExpediente',
+    name: 'CrearExpediente',
     component: AsignarCuestionariosExpediente,
     props: {creandoExpediente: true}
   },

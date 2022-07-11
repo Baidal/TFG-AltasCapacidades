@@ -25,7 +25,7 @@
         <InputBuscar :placeHolder="'Buscar usuarios...'" v-model="userSearchInput"/>
         <!-- Mostramos los usuarios buscados -->
         <div class="w-2/3 mx-auto mt-2 max-h-52 overflow-scroll" v-if="showSearchedUsers()">
-          <BusquedaUsuarioTarjeta class="w-full" :nombre="user.nombre" v-for="user in usersSearched" :key="user.id" v-on:click="handleSelectUser(user.id)"/>
+          <BusquedaUsuarioTarjeta class="w-full" :nombre="user.email" v-for="user in usersSearched" :key="user.id" v-on:click="handleSelectUser(user.id)"/>
         </div>
 
         <AppButton :name="'Añadir usuario'" class="mt-5" @click="$emit('addUsers',this.titulo,this.selectedUsers); clearSearchData()" v-if="showSearchedUsers()"/>
@@ -130,9 +130,9 @@ export default {
       if(input.length < 3) return
       //.read({}, {filter:  {nombre: "Diego"}})
       const app = await initializeAppObject()
+      console.log(input)
       app.dao.usuario.read({}).then(usuarios => {
-        this.usersSearched = usuarios
-        console.log(usuarios)        
+        this.usersSearched = usuarios.filter(usuario => usuario.email.includes(input) || usuario.nombre.includes(input))
       })
     },
     /**

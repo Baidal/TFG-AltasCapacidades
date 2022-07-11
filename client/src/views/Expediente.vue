@@ -67,7 +67,7 @@
                 <!-- Parte derecha -->
                 <div class="ml-5 mt-6 flex-1 flex-col">
                     <div class="flex justify-between mb-2">
-                        <div class="border-gray-700 rounded-sm flex shadow-lg p-1 space-x-4 border-2">
+                        <div class="border-black rounded-sm flex shadow-lg p-1 space-x-4 border-2">
                             <div class="hover:shadow-lg p-2 rounded-md cursor-pointer">
                                 <p class="font-semibold text-md text-center" @click="toggleContenidoPrincipal('cuestionarios')">Cuestionarios</p>
                             </div>
@@ -386,8 +386,13 @@ export default {
             const ahora = moment(Date.now())
 
             const años = ahora.diff(fechaNacimiento, 'years')
+            if(isNaN(años)){
+                console.log("ELBAIDALLL")
+                return 'Edad no especificada'
+            }
 
-            return años == 1 ? años + " año" : años + " años"
+            let cadenaDevolver = años == 1 ? años + " año - " : años + " años - "
+            return cadenaDevolver + 'Nacido el ' +  utils.formatearFecha(this.expediente.fechanacimiento_niño)
         },
         contenidoPrincipalAnotaciones(){
             return this.contenidoPrincipal == 'anotaciones'
