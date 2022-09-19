@@ -4,6 +4,7 @@
 	"properties": {
 		"usuario_id": "@integer !",
         "expediente_id": "@integer !",
+		"rol_id": "@integer !",
 		"id": "#"
 	},
 	"table": "usuario_expediente",

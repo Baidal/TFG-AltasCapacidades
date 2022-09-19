@@ -1,0 +1,11 @@
+{
+	"title": "Cuestionarios_defecto_rol",
+	"description": "Cuestionarios que puede tener asignado por defecto un rol",
+	"properties": {
+		"rol_id": "@integer !",
+        "cuestionario_id": "@integer !"
+	},
+	"table": "cuestionarios_defecto_rol",
+	"urlList": "/rol/cuestionariosDefecto",
+	"urlItem": "/rol/cuestionariosDefecto/:id"
+}

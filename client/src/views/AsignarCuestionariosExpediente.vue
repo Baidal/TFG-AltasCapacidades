@@ -80,12 +80,13 @@ export default {
             /**
              * Categorías es un array de objetos con el siguiente prototipo:
              * {
+             *  id: 1,
              *  nombre: '',
              *  usuarios: [],
              *  cuestionarios: []
              * }
              */
-            categorias: [{nombre: 'Familiares', usuarios: [], cuestionarios: [{id: 1}, {id: 2}, {id: 3}]}, {nombre: 'Colegio', usuarios: [], cuestionarios: [{id: 4}]}],
+            categorias: [],
             erroresValidacion: []
         }
     },
@@ -94,12 +95,27 @@ export default {
      */
     async created(){
         var app = await initializeAppObject()
-        this.categorias.forEach((categoria, indexCategoria) => {
-            categoria.cuestionarios.forEach(async (cuestionario, indexCuestionario) => {
-                const cuestionario_db = await app.dao.cuestionarios.read(cuestionario.id)
-                this.categorias[indexCategoria].cuestionarios[indexCuestionario].nombre = cuestionario_db.nombre
-            })
-        })
+        
+        //Cargamos las categorías de la base de datos
+        let categoriasDB = await app.dao.rol.read()
+        
+        //filtramos la categoría 'admin' del expediente
+        categoriasDB = categoriasDB.filter(categoria => !categoria.rol.includes('admin'))
+        
+        //inicializamos la variable 'categorias' con los datos de la BD
+        for(const categoriaDB of categoriasDB){
+            //Extraemos de la tabla N:M los cuestionarios por defecto de una categoría
+            let cuestionariosPorDefectoEnCategoria = await app.dao.cuestionarios_defecto_rol.read({}, {filter: {rol_id: categoriaDB.id}})
+
+            //Buscamos en la base de datos la información de los cuestionarios por defecto
+            let cuestionariosDB = []
+            for (const idCuestionario of cuestionariosPorDefectoEnCategoria) {
+                const cuestionario_db = await app.dao.cuestionarios.read(idCuestionario.cuestionario_id) 
+                cuestionariosDB.push(cuestionario_db)
+            }
+
+            this.categorias.push({id: categoriaDB.id,nombre: categoriaDB.rol, usuarios: [], cuestionarios: cuestionariosDB})
+        }
     },
     methods: {
         toggleFormularioNiño(){
@@ -229,30 +245,39 @@ export default {
                             fecha_nacimiento: usuario.fechaNac,
                             password: crypto.randomBytes(8).toString('hex'), //generamos una contraseña aleatoria de 16 caracteres
                             estado_id: 1,
-                            rol_id: 1
+                            rol_id: categoria.id
                         })
                         .then(nuevoUsuario => {
                             //Relaciona el usuario creado con el expediente
-                            this.relacionarUsuarioExpediente(app, nuevoUsuario.id, expediente.id)
+                            this.relacionarUsuarioExpediente(app, nuevoUsuario.id, expediente.id, categoria.id)
                         })
                         .catch(_ => {
                             usuariosNoCreados.push(usuario)
                         })
                         return
                     }
-                    this.relacionarUsuarioExpediente(app, usuario.id, expediente.id)
+
+                    //El usuario ya estaba creado, solo lo relaciona
+                    this.relacionarUsuarioExpediente(app, usuario.id, expediente.id, categoria.id)
                 })
             })
 
             this.$router.push({name: 'Expediente', params: {id: expediente.id}})
 
         },
-        relacionarUsuarioExpediente(app, usuarioId, expedienteId){
+        /**
+         * Relaciona un usuario con un expediente. Guarda también la información de la categoría a la que pertenece el usuario
+         * @param {} app 
+         * @param {*} usuarioId 
+         * @param {*} expedienteId 
+         */
+        relacionarUsuarioExpediente(app, usuarioId, expedienteId, categoriaId){
             app.dao.usuario_expediente.create({
                 usuario_id: usuarioId,
-                expediente_id: expedienteId
+                expediente_id: expedienteId,
+                rol_id: categoriaId
             })
-        }
+        },
     }
 }
 </script>

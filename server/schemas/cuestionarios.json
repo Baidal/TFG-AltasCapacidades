@@ -5,7 +5,7 @@
 		"id": "#",
 		"nombre": "@string !"
 	},
-	"table": "cuestionarios",
-	"urlList": "/cuestionarios",
-	"urlItem": "/cuestionarios/:id"
+	"table": "cuestionario",
+	"urlList": "/cuestionario",
+	"urlItem": "/cuestionario/:id"
 }
