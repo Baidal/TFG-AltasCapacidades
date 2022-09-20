@@ -12,6 +12,12 @@
                 :expediente="this.expediente"
                 @modificar-expediente="modificarExpediente"
             />
+            <PopUpDesrelacionarUsuarioExpediente 
+                v-if="mostrarDesrelacionarExpediente"
+                @close-desrelacionar="toggleMostrarDesrelacionar"
+                @desrelacionar-usuario="eliminarRelacionExpedienteUsuario"
+                :usuarioId="usuarioADesrelacionar"
+            />
             <!-- Zona superior de la vista-->
             <div class="flex mb-2">
                 <!-- Icono de expediente y nombre de expediente -->
@@ -51,7 +57,7 @@
 
                                 <p class="italix text-gray-500 text-xs">{{usuario.rol}}</p>
                             </div>
-                            <XCircleIcon class="min-h-full max-h-2 cursor-pointer z-50" v-on:click="eliminarRelacionExpedienteUsuario(usuario.id)"/>
+                            <XCircleIcon class="min-h-full max-h-2 cursor-pointer z-10" v-on:click="toggleMostrarDesrelacionar(usuario.id)"/>
                         </div>                     
                     </div>
                     <!-- Usuarios nuevos a relacionar -->
@@ -141,6 +147,7 @@ import utils from '../services/utils'
 import PopUpNuevaAnotacion from '../components/PopUpNuevaAnotacion.vue'
 import PopUpModificarExpediente from '../components/PopUpModificarExpediente.vue'
 import TarjetaCuestionario from '../components/TarjetaCuestionario.vue'
+import PopUpDesrelacionarUsuarioExpediente from '../components/PopUpDesrelacionarUsuarioExpediente.vue'
 
 export default {
     name: 'Expediente',
@@ -157,7 +164,8 @@ export default {
     PopUpNuevaAnotacion,
     PopUpModificarExpediente,
     IdentificationIcon,
-    TarjetaCuestionario
+    TarjetaCuestionario,
+    PopUpDesrelacionarUsuarioExpediente
 },
     props: {
         id: ''
@@ -181,6 +189,8 @@ export default {
             buscarCuestionario: '',
             mostrarNuevaAnotacion: false,
             mostrarModificarExpediente: false,
+            mostrarDesrelacionarExpediente: false,
+            usuarioADesrelacionar: '',
             cuestionarios: [],
             categorias: []
         }
@@ -261,6 +271,8 @@ export default {
             await app.dao.usuario_expediente.delete({id: usuario.usuario_expediente_ID})
 
             this.usuariosRelacionados = this.usuariosRelacionados.filter(usuario => usuario.id != usuarioId)
+        
+            this.toggleMostrarDesrelacionar()
         },
         async buscarUsuariosARelacionar(buscador){
             const app = await initializeAppObject()
@@ -285,9 +297,10 @@ export default {
                     
                     const categoriaId = this.$refs.seleccionarCategoria.value
                     const categoria = this.categorias.find(categoriaBuscar => categoriaBuscar.id == categoriaId)
-                    app.dao.usuario_expediente.create({usuario_id: usuarioSeleccionado.id, expediente_id: this.expediente.id, rol_id: categoriaId})
+                    const usuario_expediente = await app.dao.usuario_expediente.create({usuario_id: usuarioSeleccionado.id, expediente_id: this.expediente.id, rol_id: categoriaId})
 
                     usuarioSeleccionado.rol = categoria.rol
+                    usuarioSeleccionado.usuario_expediente_ID = usuario_expediente.id
 
                     this.usuariosRelacionados.push(usuarioSeleccionado)
 
@@ -321,6 +334,10 @@ export default {
         },
         toggleMostrarNuevaAnotacion(){
             this.mostrarNuevaAnotacion = !this.mostrarNuevaAnotacion
+        },
+        toggleMostrarDesrelacionar(usuarioId){
+            this.usuarioADesrelacionar = usuarioId
+            this.mostrarDesrelacionarExpediente = !this.mostrarDesrelacionarExpediente 
         },
         async añadirNuevaAnotacion(titulo, anotacion){
             const app = await initializeAppObject()
