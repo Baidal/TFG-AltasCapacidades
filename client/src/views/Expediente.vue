@@ -43,10 +43,15 @@
                     </div>
                     <!-- Listado de usuarios relacionados con el expediente -->
                     <div class="mx-auto max-h-52 overflow-x-hidden overflow-y-auto space-y-3 w-3/4 flex items-center flex-col mb-8">
-                        <div class="flex justify-between w-full" v-for="usuario in usuariosRelacionados" :key="usuario.id">
+                        <div class="flex justify-between w-full h-10" v-for="usuario in usuariosRelacionados" :key="usuario.id">
                             <UserIcon class="h-7 min-h-full"/>
-                            <p class="font-semibold my-auto">{{usuario.nombre}}</p>
-                            <XCircleIcon class="h-7 min-h-full cursor-pointer" v-on:click="eliminarRelacionExpedienteUsuario(usuario.id)"/>
+                            <div class="flex flex-col w-full">
+                                <p class="font-semibold my-auto" v-if="usuario.nombre">{{usuario.nombre}}</p>
+                                <p class="italic text-gray-400 text-sm my-auto" v-else>Usuario sin nombre</p>
+
+                                <p class="italix text-gray-500 text-xs">{{usuario.rol}}</p>
+                            </div>
+                            <XCircleIcon class="min-h-full max-h-2 cursor-pointer" v-on:click="eliminarRelacionExpedienteUsuario(usuario.id)"/>
                         </div>                     
                     </div>
                     <!-- Usuarios nuevos a relacionar -->
@@ -211,7 +216,13 @@ export default {
             usuario_expediente.forEach(async row => {
                 let usuario = await app.dao.usuario.read(row.usuario_id)
                 usuario.usuario_expediente_ID = row.id //Guardamos el id de la tabla que relaciona al usuario con el expediente para luego poder acceder a el sin necesidad de tener que recurrir a la BD de nuevo
+                
+                //buscamos el rol del usuario dentro del expediente
+                const rol_usuario_expediente = await app.dao.rol.read(row.rol_id)
+                usuario.rol = rol_usuario_expediente.rol
+                console.log(rol_usuario_expediente)
                 this.usuariosRelacionados.push(usuario)
+
             })
         },
         async cargarAnotaciones(){
@@ -260,7 +271,7 @@ export default {
                 //Si el usuario no se ha añadido aun al expediente
                 if(this.usuariosRelacionados.findIndex(usuarioRelacionado => usuarioRelacionado.id == usuarioSeleccionado.id) == -1){
                     const app = await initializeAppObject()
-                    app.dao.usuario_expediente.create({usuario_id: usuarioSeleccionado.id, expediente_id: this.expediente.id})
+                    app.dao.usuario_expediente.create({usuario_id: usuarioSeleccionado.id, expediente_id: this.expediente.id, rol_id: 1})
 
                     this.usuariosRelacionados.push(usuarioSeleccionado)
 
