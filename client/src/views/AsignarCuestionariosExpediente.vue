@@ -232,38 +232,49 @@ export default {
             var usuariosNoCreados = []
 
             //Para cada categoría creamos y relacionamos todos los usuarios
-            this.categorias.forEach(categoria => {
-                categoria.usuarios.forEach(usuario => {
+            for (const categoria of this.categorias) {
+                for (const usuario of categoria.usuarios) {
                     //El usuario se ha creado en el momento de crear el expediente
                     if(usuario.nuevoUsuario){
-                        app.dao.usuario.create({
-                            email: usuario.email,
-                            nombre: usuario.nombre,
-                            apellidos: usuario.apellidos,
-                            dni: usuario.dni,
-                            telefono: usuario.telefono,
-                            fecha_nacimiento: usuario.fechaNac,
-                            password: crypto.randomBytes(8).toString('hex'), //generamos una contraseña aleatoria de 16 caracteres
-                            estado_id: 1,
-                            rol_id: categoria.id
-                        })
-                        .then(nuevoUsuario => {
-                            //Relaciona el usuario creado con el expediente
+                        try{
+                            const nuevoUsuario = await app.dao.usuario.create({
+                                email: usuario.email,
+                                nombre: usuario.nombre,
+                                apellidos: usuario.apellidos,
+                                dni: usuario.dni,
+                                telefono: usuario.telefono,
+                                fecha_nacimiento: usuario.fechaNac,
+                                password: crypto.randomBytes(8).toString('hex'), //generamos una contraseña aleatoria de 16 caracteres
+                                estado_id: 1,
+                                rol_id: categoria.id
+                            })
+
                             this.relacionarUsuarioExpediente(app, nuevoUsuario.id, expediente.id, categoria.id)
-                        })
-                        .catch(_ => {
+                        }catch(_){
                             usuariosNoCreados.push(usuario)
-                        })
-                        return
+                        }
+                    }else {
+                        //El usuario ya estaba creado, solo lo relaciona
+                        this.relacionarUsuarioExpediente(app, usuario.id, expediente.id, categoria.id)
                     }
 
-                    //El usuario ya estaba creado, solo lo relaciona
-                    this.relacionarUsuarioExpediente(app, usuario.id, expediente.id, categoria.id)
-                })
-            })
+                    
+                }
+            }
 
-            this.$router.push({name: 'Expediente', params: {id: expediente.id}})
-
+            //No ha habido ningún error, enviamos al usuario al expediente
+            if(usuariosNoCreados.length == 0){
+                this.$router.push({name: 'Expediente', params: {id: expediente.id}})
+                return
+            }
+            
+            //han habido usuarios que no se han creado, se los mostramos al usuario
+            let errores = []
+            for(const usuarioError of usuariosNoCreados){
+                console.log(usuarioError)
+                errores.push('El usuario con email ' + usuarioError.email + ' ya existía en el sistema. No ha sido creado.')
+            }
+            this.$router.push({name: 'ErroresExpediente', params: {errores, expedienteId: expediente.id}})
         },
         /**
          * Relaciona un usuario con un expediente. Guarda también la información de la categoría a la que pertenece el usuario
@@ -280,6 +291,4 @@ export default {
         },
     }
 }
-</script>
-
-  
+</script>  

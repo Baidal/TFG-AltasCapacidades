@@ -6,6 +6,7 @@ import Expedientes from '../views/Expedientes'
 import Expediente from '../views/Expediente'
 import Perfil from '../views/Perfil'
 import Cuestionario from '../views/Cuestionario'
+import ErroresExpediente from '../views/ErroresExpediente'
 
 const routes = [
   {
@@ -45,6 +46,12 @@ const routes = [
     path: '/cuestionario/:id',
     name: 'Cuestionario',
     component: Cuestionario,
+    props: true
+  },
+  {
+    path: '/expediente/errores',
+    name: 'ErroresExpediente',
+    component: ErroresExpediente,
     props: true
   }
 ]
