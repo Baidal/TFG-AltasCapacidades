@@ -45,21 +45,24 @@
                     <div class="mx-auto max-h-52 overflow-x-hidden overflow-y-auto space-y-3 w-3/4 flex items-center flex-col mb-8">
                         <div class="flex justify-between w-full h-10" v-for="usuario in usuariosRelacionados" :key="usuario.id">
                             <UserIcon class="h-7 min-h-full"/>
-                            <div class="flex flex-col w-full">
+                            <div class="flex flex-col w-full cursor-pointer" v-on:click="this.$router.push({name: 'Perfil', params: {id: usuario.id}})">
                                 <p class="font-semibold my-auto" v-if="usuario.nombre">{{usuario.nombre}}</p>
                                 <p class="italic text-gray-400 text-sm my-auto" v-else>Usuario sin nombre</p>
 
                                 <p class="italix text-gray-500 text-xs">{{usuario.rol}}</p>
                             </div>
-                            <XCircleIcon class="min-h-full max-h-2 cursor-pointer" v-on:click="eliminarRelacionExpedienteUsuario(usuario.id)"/>
+                            <XCircleIcon class="min-h-full max-h-2 cursor-pointer z-50" v-on:click="eliminarRelacionExpedienteUsuario(usuario.id)"/>
                         </div>                     
                     </div>
                     <!-- Usuarios nuevos a relacionar -->
                     <div class="flex flex-col justify-center ">
                         <p class="text-lg font-semibold">Relacionar un usuario con el expediente</p>
                         <InputBuscar :placeHolder="'Buscar usuarios...'" v-model="inputBuscarUsuarios" class="mb-3"/>
-                        
-                        <div class="max-h-40 overflow-x-hidden overflow-y-auto">
+                        <select class="w-1/2 mx-auto border-2 border-gray-900 rounded-md" ref="seleccionarCategoria">
+                            <option :value="categoria.id" v-for="categoria in categorias" :key="categoria.id">{{categoria.rol}}</option>
+                        </select>
+
+                        <div class="max-h-40 overflow-x-hidden overflow-y-auto mt-2">
                             <BusquedaUsuarioTarjeta :nombre="usuario.email" class="w-3/4 mx-auto" v-for="usuario in usuariosBuscados" :key="usuario.id" v-on:click="handleSeleccionarUsuario(usuario)"/>
                             <AppButton 
                                 :name="this.usuariosSeleccionados.length == 1 ? 'Añadir usuario' : 'Añadir usuarios'" 
@@ -178,7 +181,8 @@ export default {
             buscarCuestionario: '',
             mostrarNuevaAnotacion: false,
             mostrarModificarExpediente: false,
-            cuestionarios: []
+            cuestionarios: [],
+            categorias: []
         }
     },
     async created(){
@@ -190,6 +194,7 @@ export default {
             this.cargarUsuariosRelacionados()
             this.cargarAnotaciones()
             this.cargarCuestionarios()
+            this.cargarCategorias()
         }
 
         this.cargandoDatos = false
@@ -243,6 +248,12 @@ export default {
             const app = await initializeAppObject()
             this.cuestionarios = await app.dao.cuestionarios.read()
         },
+        async cargarCategorias(){
+            const app = await initializeAppObject()
+            let categoriasDB =  await app.dao.rol.read()
+            categoriasDB = categoriasDB.filter(categoria => !categoria.rol.includes('admin'))
+            this.categorias = categoriasDB
+        },
         async eliminarRelacionExpedienteUsuario(usuarioId){
             const usuario = this.usuariosRelacionados.find(usuarioBuscar => usuarioBuscar.id == usuarioId)
             
@@ -271,7 +282,12 @@ export default {
                 //Si el usuario no se ha añadido aun al expediente
                 if(this.usuariosRelacionados.findIndex(usuarioRelacionado => usuarioRelacionado.id == usuarioSeleccionado.id) == -1){
                     const app = await initializeAppObject()
-                    app.dao.usuario_expediente.create({usuario_id: usuarioSeleccionado.id, expediente_id: this.expediente.id, rol_id: 1})
+                    
+                    const categoriaId = this.$refs.seleccionarCategoria.value
+                    const categoria = this.categorias.find(categoriaBuscar => categoriaBuscar.id == categoriaId)
+                    app.dao.usuario_expediente.create({usuario_id: usuarioSeleccionado.id, expediente_id: this.expediente.id, rol_id: categoriaId})
+
+                    usuarioSeleccionado.rol = categoria.rol
 
                     this.usuariosRelacionados.push(usuarioSeleccionado)
 
