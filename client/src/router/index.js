@@ -7,6 +7,7 @@ import Expediente from '../views/Expediente'
 import Perfil from '../views/Perfil'
 import Cuestionario from '../views/Cuestionario'
 import ErroresExpediente from '../views/ErroresExpediente'
+import Administracion from '../views/Administracion'
 
 const routes = [
   {
@@ -53,6 +54,11 @@ const routes = [
     name: 'ErroresExpediente',
     component: ErroresExpediente,
     props: true
+  },
+  {
+    path: '/administracion',
+    name: 'Administracion',
+    component: Administracion
   }
 ]
 
