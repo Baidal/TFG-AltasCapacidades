@@ -22,6 +22,7 @@
 
 <script>
 import initializeAppObject from '../../services/daoProvider'
+import utils from '../../services/utils'
 export default {
     name: 'UserTab',
     data(){
@@ -61,23 +62,16 @@ export default {
             this.states = this.states.filter(state => state.id !== this.user.estado.id) 
         },
         getCategoryClass(category){
-            switch(category){
-                case 'Psicólogos':
-                    return 'bg-purple-600 bg-opacity-70 rounded px-1 font-semibold w-28'
-                case 'Tutores':
-                    return 'bg-pink-600 bg-opacity-70 rounded px-1 font-semibold w-28'
-                case 'admin':
-                    return 'bg-blue-600 bg-opacity-70 rounded px-1 font-semibold w-28'
-            }
+            return utils.getCategoryClass(category)
         },
         getStateClass(state){
             switch(state){
                 case 'activo':
-                    return 'bg-green-600 bg-opacity-70 rounded px-1 font-semibold'
+                    return 'bg-green-600 bg-opacity-70 rounded px-1 font-semibold text-center'
                 case 'inactivo':
-                    return 'bg-yellow-600 bg-opacity-70 rounded px-1 font-semibold'
+                    return 'bg-yellow-600 bg-opacity-70 rounded px-1 font-semibold text-center'
                 case 'vetado':
-                    return 'bg-red-600 bg-opacity-70 rounded px-1 font-semibold'
+                    return 'bg-red-600 bg-opacity-70 rounded px-1 font-semibold text-center'
             }
         },
         userIsAdmin(){
@@ -91,6 +85,8 @@ export default {
 
             app.dao.usuario.update(this.user.id, {rol_id: nuevoRolId})
             this.user.categoria = nuevoRolBD
+
+            this.getAllCategories()
         },
         async onChangeSelectState(event){
             const nuevoEstadoId = event.target.value

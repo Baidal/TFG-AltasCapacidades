@@ -31,5 +31,20 @@ export default {
             return new Date(fecha).toISOString().slice(0,19).replace('T', ' ')
 
         return new Date().toISOString().slice(0,19).replace('T', ' ')
-    }
+    },
+    /** Devuelve el css pertinente a cada categoría
+     * 
+     * @param {String} category 
+     * @returns String
+     */
+    getCategoryClass(category){
+        switch(category){
+            case 'Psicólogos':
+                return 'bg-purple-600 bg-opacity-70 rounded px-1 font-semibold w-28 text-center'
+            case 'Tutores':
+                return 'bg-pink-600 bg-opacity-70 rounded px-1 font-semibold w-28 text-center'
+            case 'admin':
+                return 'bg-blue-600 bg-opacity-70 rounded px-1 font-semibold w-28 text-center'
+        }
+    },
 }

@@ -8,16 +8,18 @@
         </div>
 
         <UsersTab v-if="this.selectedTab === 'Usuarios'" class="mb-6"/>
+        <CategoriesTab v-if="this.selectedTab === 'Categorías'"/>
     </div>
 </template>
 
 <script>
 import AppButton from '../components/AppButton.vue';
 import UsersTab from '../components/administracion/UsersTab.vue';
+import CategoriesTab from '../components/administracion/CategoriesTab.vue';
 
 export default {
     name: "Administracion",
-    components: { AppButton, UsersTab },
+    components: { AppButton, UsersTab, CategoriesTab },
     data(){
         return {
             selectedTab: 'Usuarios'
