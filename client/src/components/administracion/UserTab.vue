@@ -1,0 +1,112 @@
+<template>
+    <div class="border-2 border-black border-opacity-80 rounded-lg p-2 w-full">
+        <div class="flex justify-between bg-">
+            <p class="cursor-pointer font-semibold ml-2 hover:bg-gray-100 rounded-md px-2" @click="this.$router.push({name: 'Perfil', params: {id: user.id}})">{{user.email}}</p>
+            <div class="flex space-x-2">
+                <!-- Dropdown de categoria-->
+                <select :class="getCategoryClass(user.categoria?.rol)" v-if="!userIsAdmin()" @change="onChangeSelectCategory">
+                    <option :value="user.categoria?.id">{{user.categoria?.rol}}</option>
+                    <option v-for="category in categories" :key="category?.id" :value="category?.id">{{category?.rol}}</option>
+                </select>
+                <p :class="getCategoryClass(user.categoria?.rol)" v-else>{{user.categoria?.rol}}</p>
+                
+                <!-- Dropdown de estado del usuario-->
+                <select :class="getStateClass(user.estado?.estado)" @change="onChangeSelectState">
+                    <option :value="user.estado?.id">{{user.estado?.estado}}</option>
+                    <option v-for="state in states" :key="state.id" :value="state?.id">{{state.estado}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import initializeAppObject from '../../services/daoProvider'
+export default {
+    name: 'UserTab',
+    data(){
+        return {
+            categories: [],
+            states: []
+        }
+    },
+    props: {
+        user: {}
+    },
+    async mounted(){
+        await this.getUserCategory()
+        await this.getUserState()
+        this.getAllCategories()
+        this.getAllStates()
+    },
+    methods: {
+        async getUserCategory(){
+            const app = await initializeAppObject()
+
+            this.user.categoria = await app.dao.rol.read(this.user.rol_id)
+        },
+        async getUserState(){
+            const app = await initializeAppObject()
+
+            this.user.estado = await app.dao.estado.read(this.user.estado_id)
+        },
+        async getAllCategories(){
+            const app = await initializeAppObject()
+            this.categories = await app.dao.rol.read()
+            this.categories = this.categories.filter(category => category.rol != 'admin' && category.id !== this.user.categoria.id) 
+        },
+        async getAllStates(){
+            const app = await initializeAppObject()
+            this.states = await app.dao.estado.read()
+            this.states = this.states.filter(state => state.id !== this.user.estado.id) 
+        },
+        getCategoryClass(category){
+            switch(category){
+                case 'Psicólogos':
+                    return 'bg-purple-600 bg-opacity-70 rounded px-1 font-semibold w-28'
+                case 'Tutores':
+                    return 'bg-pink-600 bg-opacity-70 rounded px-1 font-semibold w-28'
+                case 'admin':
+                    return 'bg-blue-600 bg-opacity-70 rounded px-1 font-semibold w-28'
+            }
+        },
+        getStateClass(state){
+            switch(state){
+                case 'activo':
+                    return 'bg-green-600 bg-opacity-70 rounded px-1 font-semibold'
+                case 'inactivo':
+                    return 'bg-yellow-600 bg-opacity-70 rounded px-1 font-semibold'
+                case 'vetado':
+                    return 'bg-red-600 bg-opacity-70 rounded px-1 font-semibold'
+            }
+        },
+        userIsAdmin(){
+            return this.user.categoria?.rol == 'admin'
+        },
+        async onChangeSelectCategory(event){
+            const nuevoRolId = event.target.value
+            const app = await initializeAppObject()
+            
+            const nuevoRolBD = await app.dao.rol.read(parseInt(nuevoRolId))
+
+            app.dao.usuario.update(this.user.id, {rol_id: nuevoRolId})
+            this.user.categoria = nuevoRolBD
+        },
+        async onChangeSelectState(event){
+            const nuevoEstadoId = event.target.value
+            const app = await initializeAppObject()
+            
+            const nuevoEstadoBD = await app.dao.estado.read(parseInt(nuevoEstadoId))
+
+            app.dao.usuario.update(this.user.id, {estado_id: nuevoEstadoId})
+            this.user.estado = nuevoEstadoBD
+        }
+    }
+}
+</script>
+
+<style>
+    select option{
+        background: rgba(255, 255, 255);
+    }
+</style>
