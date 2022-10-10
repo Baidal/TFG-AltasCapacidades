@@ -196,11 +196,10 @@ module.exports.create = (config, dao) => {
 			}, err);
 		}, err);
 	}
-
-	var levels = {};
-	dao.aclLevel.staticData(true).then(() => { levels = dao.aclLevel.staticData("code"); });
-	var elementTypes = {};
-	dao.elementType.staticData(true).then(() => { elementTypes = dao.elementType.staticData("schema"); });	
+	// var levels = {};
+	// dao.aclLevel.staticData(true).then(() => { levels = dao.aclLevel.staticData("code"); });
+	// var elementTypes = {};
+	// dao.elementType.staticData(true).then(() => { elementTypes = dao.elementType.staticData("schema"); });	
 
 	return {
         /**
@@ -209,11 +208,13 @@ module.exports.create = (config, dao) => {
          * @param {Function} callback Función que se invoca con el id de usuario autenticado o null si la autenticación falla
          */
 		authentication: (credentials, callback) => {
+			console.warn(credentials)
+
 			if (!credentials.email || !credentials.password) {
 				console.warn("auth: Faltan credenciales:", credentials);
 				return callback(null);
 			}
-			dao.user.read({ email: credentials.email }, { fields: ["password", "id"] }, (err, user) => {
+			dao.usuario.read({ email: credentials.email }, { fields: ["password", "id"] }, (err, user) => {
 				if (err || !user || !user.length) {
 					console.warn("auth: No se ha encontrado el usuario con email:", credentials.email, user);
 					return callback(null);
@@ -237,32 +238,33 @@ module.exports.create = (config, dao) => {
 		 * @param {Function} callback Función de finalización: callback(err, {read, create, write, delete, auth, lists:{}})
 		 */
 		authorization: (userId, schema, params, callback) => {
-			var authAll = { read: true, create: true, write: true, delete: true, auth: true, lists: {} };
+			// var authAll = { read: true, create: true, write: true, delete: true, auth: true, lists: {} };
 
-			var elementType = elementTypes[schema.name]; // obtener el tipo de entidad
+			// var elementType = elementTypes[schema.name]; // obtener el tipo de entidad
 
-			if (!elementType) return callback(authAll); // si no el tipo no está definido en entityTypes no tiene control de acceso
+			// if (!elementType) return callback(authAll); // si no el tipo no está definido en entityTypes no tiene control de acceso
 
-			debug("authorization", "usuario:", userId, "schema:", schema.name, "id:", params.id);
+			// debug("authorization", "usuario:", userId, "schema:", schema.name, "id:", params.id);
 
-			authLevel(userId, params.id, elementType, (level, typeLevels) => {
-				function levelToAuth(level) {
-					return {
-						read: level >= levels.READ.id,
-						create: level >= levels.CREATE.id,
-						write: level >= levels.WRITE.id,
-						delete: level >= levels.DELETE.id,
-						auth: level >= levels.AUTH.id,
-					};
-				}
-				var auth = levelToAuth(level);
-				auth.lists = {};
-				for (let t in typeLevels) {
-					auth.lists[t] = levelToAuth(typeLevels[t]);
-				}
-				debug("authorization", "level:", level, auth);
-				callback(auth);
-			});
+			// authLevel(userId, params.id, elementType, (level, typeLevels) => {
+			// 	function levelToAuth(level) {
+			// 		return {
+			// 			read: level >= levels.READ.id,
+			// 			create: level >= levels.CREATE.id,
+			// 			write: level >= levels.WRITE.id,
+			// 			delete: level >= levels.DELETE.id,
+			// 			auth: level >= levels.AUTH.id,
+			// 		};
+			// 	}
+			// 	var auth = levelToAuth(level);
+			// 	auth.lists = {};
+			// 	for (let t in typeLevels) {
+			// 		auth.lists[t] = levelToAuth(typeLevels[t]);
+			// 	}
+			// 	debug("authorization", "level:", level, auth);
+			// 	callback(auth);
+			// });
+			callback(1)
 		}
 	}
 }

@@ -1,0 +1,12 @@
+{
+	"title": "Cuestionario_usuario_expediente",
+	"description": "Representa los cuestionarios que tiene que realizar un usuario en un expediente",
+	"properties": {
+		"cuestionario_id": "@integer !",
+        "usuario_expediente_id": "@integer !",
+        "completado": "@integer"
+	},
+	"table": "cuestionario_usuario_expediente",
+	"urlList": "/cuestionario_usuario_expediente",
+	"urlItem": "/cuestionario_usuario_expediente/:id"
+}

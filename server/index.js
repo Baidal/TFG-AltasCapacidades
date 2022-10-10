@@ -17,10 +17,10 @@ var config = app.config("./profiles");
 app.dao(config, (err, dao) => {
 	if (err) return;
 
-	//var auth = require("./auth").create(config, dao);
-	var auth = {
-		authentication: function (credentials, callback) { callback(1); }, // siempre retorno que el usuario es el 1
-	}
+	var auth = require("./auth").create(config, dao);
+	// var auth = {
+	// 	authentication: function (credentials, callback) { callback(1); }, // siempre retorno que el usuario es el 1
+	// }
 
 	app.server(config, dao, auth, function (err, server) {
 		if (err) return;
