@@ -5,6 +5,8 @@
 	var wsClient = null;
 	var daoClient = null;
 
+	const jwt = require('jwt-simple')
+
 	/**
 	 * Aplicación Cliente
 	 */
@@ -61,7 +63,14 @@
 								console.log("login: OK:", userId);
 								this.dao.addSchemas(schemas);
 								this.userId = userId;
-								return userId;
+								console.log("CONFIG: ", this.config)
+
+								const configJWT = require('../server/profiles/default.json').web.rest.jwt
+
+								const secret = configJWT.secretKey
+								const token = jwt.encode(credentials, secret)
+
+								return {userId, token};
 							}, () => {
 								console.error("Unable to obtain schemas from server");
 								return Promise.reject("Unable to obtain schemas from server");

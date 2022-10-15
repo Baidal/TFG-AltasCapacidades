@@ -11,7 +11,7 @@
         <div class="flex justify-center space-x-4">
             <router-link :to="{name: 'Expedientes'}"><NavBarButton :name="'Expedientes'"/></router-link>
             <router-link :to="{name: 'Administracion'}"><NavBarButton :name="'Administración'"/></router-link>
-            <router-link :to="{name: 'Perfil', params: {id: 1}}"><NavBarButton :name="'Perfil'"/></router-link>
+            <router-link :to="{name: 'Perfil', params: {id: 2}}"><NavBarButton :name="'Perfil'"/></router-link>
             <router-link :to="{name: 'Login'}"><NavBarButton :name="'Iniciar Sesión'"/></router-link>
 
             <NavBarButton :name="'Registrarse'"/>

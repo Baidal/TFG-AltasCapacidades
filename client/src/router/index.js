@@ -8,6 +8,7 @@ import Perfil from '../views/Perfil'
 import Cuestionario from '../views/Cuestionario'
 import ErroresExpediente from '../views/ErroresExpediente'
 import Administracion from '../views/Administracion'
+import NoAutorizado from '../views/NoAutorizado'
 
 const routes = [
   {
@@ -59,6 +60,11 @@ const routes = [
     path: '/administracion',
     name: 'Administracion',
     component: Administracion
+  },
+  {
+    path: '/noAutorizado',
+    name: 'NoAutorizado',
+    component: NoAutorizado
   }
 ]
 

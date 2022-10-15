@@ -57,10 +57,12 @@
 </template>
 
 <script>
-import initializeAppObject from '../services/daoProvider'
-import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
+import {mapStores} from 'pinia'
+import {useAuthStore} from '../stores/Auth.js'
 
+import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 import {UserIcon} from '@heroicons/vue/outline'
+
 import AppButton from '../components/AppButton.vue'
 import utils from '../services/utils'
 import policies from '../services/policies'
@@ -87,6 +89,13 @@ export default {
         }
     },
     async created(){
+        if(!this.loggedIn)
+            return this.$router.push({name: 'Login'})
+
+        if(!this.userHasAccess)
+            return this.$router.push({name: 'NoAutorizado'})
+
+
         this.cargandoDatos = true
         await this.cargarUsuario()
         
@@ -99,12 +108,14 @@ export default {
     },
     methods: {
         async cargarUsuario(){
-            console.log(this.id)
             if(this.id == '')
                 return false
 
-            const app = await initializeAppObject()
-
+            const app = await this.AuthStore.App
+            console.log("APP: ", app)
+            if(!app)
+                this.$router.push({name: 'Login'})
+            
             try{
                 this.usuario = await app.dao.usuario.read({id: this.id})
                 this.existeUsuario = true
@@ -114,7 +125,10 @@ export default {
             }
         },
         async cargarRolUsuario(){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app)
+                this.$router.push({name: 'Login'})
+                
             this.rolUsuario = await app.dao.rol.read({id: this.usuario.rol_id})
         },
         async toggleModificando(opcion){
@@ -175,7 +189,9 @@ export default {
             return allOk
         },
         async modificarUsuario(){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app)
+                this.$router.push({name: 'Login'})
 
             //Comprobamos si existe un usuario con el nuevo email (si se ha modificado este)
             if(this.usuario.email != this.usuarioModificado.email){
@@ -197,10 +213,17 @@ export default {
         }
     },
     computed: {
+        ...mapStores(useAuthStore),
         obtenerStringNacimiento(){
             const fechaNac = new Date(this.usuario.fecha_nacimiento)
 
             return "Nació el " + fechaNac.getUTCDate().toString().padStart(2,'0') + "/" + (fechaNac.getMonth() + 1).toString().padStart(2,'0') + "/" + fechaNac.getFullYear()
+        },
+        loggedIn(){
+            return this.AuthStore.userIsLoggedIn
+        },
+        userHasAccess(){
+            return this.loggedIn && this.AuthStore.getUser.id == this.id
         }
     }
 }

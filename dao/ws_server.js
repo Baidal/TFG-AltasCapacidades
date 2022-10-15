@@ -75,7 +75,7 @@ class WSServer extends Evented {
 
 				auth(data.credentials, (userId) => {
 					if (!userId) {
-						console.warn("Error de autenticación con:", credential);
+						console.warn("Error de autenticación con:", /*credential*/);
 						connection.close();
 						return;
 					}

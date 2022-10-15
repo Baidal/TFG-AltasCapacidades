@@ -29,9 +29,8 @@ export default {
     },
     methods: {
         async login(){
-            const result = await this.AuthStore.login(this.email, this.password)
-            console.log("result: ", result)
-            if(result){
+            const loginOK = await this.AuthStore.login(this.email, this.password)
+            if(loginOK){
                 this.$router.push({name: 'Perfil', params: {id: this.AuthStore.user.id}})
                 return
             }
@@ -39,6 +38,10 @@ export default {
             this.errorLogin = 'Login incorrecto'
 
         }
+    },
+    created(){
+        if(this.AuthStore.userIsLoggedIn)
+            this.$router.push({name: 'Home'})
     }
 }
 </script>

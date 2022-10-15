@@ -210,24 +210,58 @@ module.exports.create = (config, dao) => {
 		authentication: (credentials, callback) => {
 			console.warn(credentials)
 
-			if (!credentials.email || !credentials.password) {
-				console.warn("auth: Faltan credenciales:", credentials);
-				return callback(null);
+			//Si el inicio de sesion es mediante un token
+			if(credentials.token){
+				console.log("ESTAMOS EN CREDENTIALS")
+				const jwt = require('jwt-simple')
+				const jwtSecret = require('./profiles/default.json').web.rest.jwt.secretKey
+
+				try{
+					const jwtDecoded = jwt.decode(credentials.token, jwtSecret)
+					dao.usuario.read({email: jwtDecoded.email}, { fields: ['password', 'id']}, (err, user) => {
+						if (err || !user || !user.length) {
+							console.warn("auth: No se ha encontrado el usuario con email:", jwtDecoded.email, user);
+							return callback(null);
+						}
+
+						user = user[0];
+						
+						if (!bCrypt.compareSync(jwtDecoded.password, user.password)) {
+							console.warn("auth: El password '" + jwtDecoded.password + "' no es el correcto para '" + jwtDecoded.email + "'");
+							return callback(null);
+						}
+
+						return callback(user.id)
+					})
+				}catch(e){
+					console.warn("Error al desencriptar el token")
+					return callback(null)
+				}
+			}else{
+				if (!credentials.email || !credentials.password) {
+					console.warn("auth: Faltan credenciales:", credentials);
+					return callback(null);
+				}
+	
+				
+	
+				dao.usuario.read({ email: credentials.email }, { fields: ["password", "id"] }, (err, user) => {
+					if (err || !user || !user.length) {
+						console.warn("auth: No se ha encontrado el usuario con email:", credentials.email, user);
+						return callback(null);
+					}
+					user = user[0];
+	
+					if (!bCrypt.compareSync(credentials.password, user.password)) {
+						console.warn("auth: El password '" + credentials.password + "' no es el correcto para '" + credentials.email + "'");
+						return callback(null);
+					}
+	
+					return callback(user.id);
+				});
 			}
-			dao.usuario.read({ email: credentials.email }, { fields: ["password", "id"] }, (err, user) => {
-				if (err || !user || !user.length) {
-					console.warn("auth: No se ha encontrado el usuario con email:", credentials.email, user);
-					return callback(null);
-				}
-				user = user[0];
-
-				if (!bCrypt.compareSync(credentials.password, user.password)) {
-					console.warn("auth: El password '" + credentials.password + "' no es el correcto para '" + credentials.email + "'");
-					return callback(null);
-				}
-
-				return callback(user.id);
-			});
+			
+			
 		},
 
 		/**
