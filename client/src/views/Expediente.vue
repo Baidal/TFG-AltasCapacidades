@@ -42,7 +42,7 @@
             <!-- Zona inferior -->
             <div class="flex sm:flex-col md:flex-row lg:flex-row xl:flex-row 2xl:flex-row">
                 <!-- Parte izquierda-->
-                <div class="flex flex-col text-center sm:w-1/2 md:w-2/5 lg:w-1/3 xl:w-1/4 2xl:w-1/5">
+                <div v-if="userIsPsicologo" class="flex flex-col text-center sm:w-1/2 md:w-2/5 lg:w-1/3 xl:w-1/4 2xl:w-1/5">
                     <!-- Bocadillo -->
                     <div class="mx-8 mt-8 border-2 border-gray-700 rounded-md shadow-lg p-4 text-center mb-4">
                         Usuarios relacionados con el expediente
@@ -57,7 +57,7 @@
 
                                 <p class="italix text-gray-500 text-xs">{{usuario.rol}}</p>
                             </div>
-                            <XCircleIcon class="min-h-full max-h-2 cursor-pointer z-10" v-on:click="toggleMostrarDesrelacionar(usuario.id)"/>
+                            <XCircleIcon :class="'min-h-full max-h-2 z-10' + (userIsPsicologo ? ' cursor-pointer' : ' cursor-not-allowed')" v-on:click="userIsPsicologo && toggleMostrarDesrelacionar(usuario.id)"/>
                         </div>                     
                     </div>
                     <!-- Usuarios nuevos a relacionar -->
@@ -85,9 +85,13 @@
                             <div class="hover:shadow-lg p-2 rounded-md cursor-pointer">
                                 <p class="font-semibold text-md text-center" @click="toggleContenidoPrincipal('cuestionarios')">Cuestionarios</p>
                             </div>
-                            <p class="my-auto">|</p>
-                            <div class="hover:shadow-lg p-2 rounded-md cursor-pointer">
+                            <p v-if="userIsPsicologo" class="my-auto">|</p>
+                            <div v-if="userIsPsicologo" class="hover:shadow-lg p-2 rounded-md cursor-pointer">
                                 <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('anotaciones')">Anotaciones</p>
+                            </div>
+                            <p v-if="userIsPsicologo" class="my-auto">|</p>
+                            <div v-if="userIsPsicologo" class="hover:shadow-lg p-2 rounded-md cursor-pointer">
+                                <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('cuestionariosrealizados')">Cuestionarios realizados</p>
                             </div>
                         </div>    
 
@@ -109,13 +113,16 @@
                     <div class="flex flex-col space-y-2 overflow-y-auto main-section-height" v-if="contenidoPrincipalAnotaciones">
                         <TarjetaAnotacion v-for="anotacion in anotaciones" :key="anotacion.id" :anotacion="anotacion" @modificar-anotacion="modificarAnotacion" @eliminar-anotacion="eliminarAnotacion"/>
                     </div>
-                    <div class="overflow-y-auto main-section-height grid grid-container" v-else>
+                    <div class="overflow-y-auto main-section-height grid grid-container" v-if="contenidoPrincipalCuestionarios">
                         <router-link :to="{name: 'Cuestionario', params: {id: cuestionario.id}}" class="w-full h-56 flex justify-center text-center p-2" v-for="cuestionario in cuestionarios" :key="cuestionario.id">
                             <div class="rounded-lg shadow-lg w-full mx-1 flex flex-col items-center hover:shadow-xl cursor-pointer">
                                 <ClipboardListIcon class="h-22 text-gray-800"/>
                                 <h1 class="font-semibold mb-4">{{cuestionario.nombre}}</h1>
                             </div>
                         </router-link>
+                    </div>
+                    <div class="" v-if="contenidoPrincipalCuestionariosRealizados">
+                        <CuestionariosRealizadosUsuarios :expedienteId="this.id"/>
                     </div>
                 </div>
             </div>
@@ -129,8 +136,6 @@
 </template>
 
 <script>
-import initializeAppObject from '../services/daoProvider'
-
 import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
 import {ClipboardListIcon, XCircleIcon, IdentificationIcon} from '@heroicons/vue/outline'
@@ -149,6 +154,10 @@ import PopUpModificarExpediente from '../components/PopUpModificarExpediente.vue
 import TarjetaCuestionario from '../components/TarjetaCuestionario.vue'
 import PopUpDesrelacionarUsuarioExpediente from '../components/PopUpDesrelacionarUsuarioExpediente.vue'
 
+import {mapStores} from 'pinia'
+import {useAuthStore} from '../stores/Auth'
+import CuestionariosRealizadosUsuarios from '../components/CuestionariosUsuariosEnExpediente/CuestionariosRealizadosUsuarios.vue'
+
 export default {
     name: 'Expediente',
     components: {
@@ -165,7 +174,8 @@ export default {
     PopUpModificarExpediente,
     IdentificationIcon,
     TarjetaCuestionario,
-    PopUpDesrelacionarUsuarioExpediente
+    PopUpDesrelacionarUsuarioExpediente,
+    CuestionariosRealizadosUsuarios
 },
     props: {
         id: ''
@@ -196,8 +206,14 @@ export default {
         }
     },
     async created(){
-        this.cargandoDatos = true
+        if(!this.loggedIn)
+            return this.$router.push({name: 'Login'})
 
+        if(!(await this.userHasAccess))
+            return this.$router.push({name: 'NoAutorizado'})
+        
+        this.cargandoDatos = true
+        console.log("TEST: ", this.AuthStore.getUser)
         const expedienteEncontrado = await this.cargarExpediente()
 
         if (expedienteEncontrado){
@@ -214,7 +230,12 @@ export default {
             if(this.id == '')
                 return false
             
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app){
+                this.$router.push({name: 'Login'})
+                return
+            }
+
             const expedientes = await app.dao.expediente.read()
 
             this.expediente = expedientes.find(expedienteDB => expedienteDB.id == this.id) || {}
@@ -225,7 +246,12 @@ export default {
             return Object.keys(this.expediente).length !== 0
         },
         async cargarUsuariosRelacionados(){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app){
+                this.$router.push({name: 'Login'})
+                return
+            }
+            
             let usuario_expediente = await app.dao.usuario_expediente.read({}, {filter: {expediente_id: this.expediente.id}})
 
             usuario_expediente.forEach(async row => {
@@ -241,7 +267,12 @@ export default {
             })
         },
         async cargarAnotaciones(){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app){
+                this.$router.push({name: 'Login'})
+                return
+            }
+
             let anotacionesDB = await app.dao.anotaciones.read({}, {filter: {expediente_id: this.expediente.id}})
             anotacionesDB = anotacionesDB.sort((a1, a2) => {
                 const dateA1 = new Date(a1.create_time)
@@ -252,14 +283,29 @@ export default {
             this.anotaciones = anotacionesDB
         },
         async cargarCuestionarios(){
-            //Carga todos los cuestionarios de la aplicacion
-            //TODO: Hacer que cargue solo los cuestionarios de este expediente
+            const app = await this.AuthStore.App
+            if(!app){
+                this.$router.push({name: 'Login'})
+                return
+            }
+            
+            let usuario_expediente = await app.dao.usuario_expediente.read({}, {filter: {usuario_id: this.AuthStore.getUser.id, expediente_id: this.id}})
+            usuario_expediente = usuario_expediente[0]
+            
+            let cuestionario_usuario_expediente = await app.dao.cuestionario_usuario_expediente.read({}, {filter: {usuario_expediente_id: usuario_expediente.id}})
 
-            const app = await initializeAppObject()
-            this.cuestionarios = await app.dao.cuestionarios.read()
+            for(let cuestionarioRelacionado of cuestionario_usuario_expediente){
+                const cuestionario = await app.dao.cuestionarios.read(cuestionarioRelacionado.cuestionario_id)
+                this.cuestionarios.push(cuestionario)
+            }
         },
         async cargarCategorias(){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app){
+                this.$router.push({name: 'Login'})
+                return
+            }
+
             let categoriasDB =  await app.dao.rol.read()
             categoriasDB = categoriasDB.filter(categoria => !categoria.rol.includes('admin'))
             this.categorias = categoriasDB
@@ -267,7 +313,12 @@ export default {
         async eliminarRelacionExpedienteUsuario(usuarioId){
             const usuario = this.usuariosRelacionados.find(usuarioBuscar => usuarioBuscar.id == usuarioId)
             
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app){
+                this.$router.push({name: 'Login'})
+                return
+            }
+
             await app.dao.usuario_expediente.delete({id: usuario.usuario_expediente_ID})
 
             this.usuariosRelacionados = this.usuariosRelacionados.filter(usuario => usuario.id != usuarioId)
@@ -275,7 +326,12 @@ export default {
             this.toggleMostrarDesrelacionar()
         },
         async buscarUsuariosARelacionar(buscador){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app){
+                this.$router.push({name: 'Login'})
+                return
+            }
+            
             const usuarios = await app.dao.usuario.read()
 
             this.usuariosBuscados = usuarios.filter(usuario => usuario.email.includes(buscador) || usuario.nombre.includes(buscador))
@@ -293,7 +349,11 @@ export default {
             this.usuariosSeleccionados.forEach(async usuarioSeleccionado => {
                 //Si el usuario no se ha añadido aun al expediente
                 if(this.usuariosRelacionados.findIndex(usuarioRelacionado => usuarioRelacionado.id == usuarioSeleccionado.id) == -1){
-                    const app = await initializeAppObject()
+                    const app = await this.AuthStore.App
+                    if(!app){
+                        this.$router.push({name: 'Login'})
+                        return
+                    }
                     
                     const categoriaId = this.$refs.seleccionarCategoria.value
                     const categoria = this.categorias.find(categoriaBuscar => categoriaBuscar.id == categoriaId)
@@ -315,7 +375,11 @@ export default {
             this.contenidoPrincipal = contenido
         },
         async modificarAnotacion(anotacion){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app){
+                this.$router.push({name: 'Login'})
+                return
+            }
 
             //Convertimos las fechas al formato de mysql
             anotacion.create_time = utils.formatearFechaAMysql(anotacion.create_time)
@@ -340,12 +404,16 @@ export default {
             this.mostrarDesrelacionarExpediente = !this.mostrarDesrelacionarExpediente 
         },
         async añadirNuevaAnotacion(titulo, anotacion){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app){
+                this.$router.push({name: 'Login'})
+                return
+            }
 
             const nuevaAnotacion = await app.dao.anotaciones.create({
                 titulo: titulo,
                 anotacion: anotacion,
-                usuario_id: 1, //TODO: Cambiar que el id del usuario sea el id del usuario logeado
+                usuario_id: this.AuthStore.getUser.id,
                 expediente_id: this.expediente.id
             })
 
@@ -358,7 +426,12 @@ export default {
             this.toggleMostrarNuevaAnotacion()
         },
         async eliminarAnotacion(idAnotacion){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app){
+                this.$router.push({name: 'Login'})
+                return
+            }
+
             app.dao.anotaciones.delete({id: idAnotacion})
 
             this.anotaciones = this.anotaciones.filter(anotacion => anotacion.id != idAnotacion)
@@ -367,7 +440,11 @@ export default {
             this.mostrarModificarExpediente = !this.mostrarModificarExpediente
         },
         async modificarExpediente(expediente_modificado){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app){
+                this.$router.push({name: 'Login'})
+                return
+            }
 
             delete expediente_modificado.id
             expediente_modificado.create_time = utils.formatearFechaAMysql(expediente_modificado.create_time)
@@ -419,6 +496,7 @@ export default {
         }
     },
     computed: {
+        ...mapStores(useAuthStore),
         hayUsuariosSeleccionados(){
             return this.usuariosSeleccionados.length !== 0
         },
@@ -431,7 +509,6 @@ export default {
 
             const años = ahora.diff(fechaNacimiento, 'years')
             if(isNaN(años)){
-                console.log("ELBAIDALLL")
                 return 'Edad no especificada'
             }
 
@@ -443,6 +520,27 @@ export default {
         },
         contenidoPrincipalCuestionarios(){
             return this.contenidoPrincipal == 'cuestionarios'
+        },
+        contenidoPrincipalCuestionariosRealizados(){
+            return this.contenidoPrincipal == 'cuestionariosrealizados'
+
+        },
+        loggedIn(){
+            return this.AuthStore.userIsLoggedIn
+        },
+        async userHasAccess(){
+            const app = await this.AuthStore.App
+            if(!app){
+                this.$router.push({name: 'Login'})
+                return
+            }
+            
+            const usuario_expediente = await app.dao.usuario_expediente.read({}, {filter: {expediente_id: this.id, usuario_id: this.AuthStore.getUser.id}})
+            
+            return this.loggedIn && usuario_expediente.length !== 0
+        },
+        userIsPsicologo(){
+            return this.AuthStore.getUser.rol_id == 1
         }
     }
 

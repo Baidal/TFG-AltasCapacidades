@@ -112,7 +112,6 @@ export default {
                 return false
 
             const app = await this.AuthStore.App
-            console.log("APP: ", app)
             if(!app)
                 this.$router.push({name: 'Login'})
             

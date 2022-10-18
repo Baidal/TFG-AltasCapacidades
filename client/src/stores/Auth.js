@@ -27,7 +27,7 @@ export const useAuthStore = defineStore('Auth', {
                 
                 if(App !== null && userId !== null){
                     this.user = await App.dao.usuario.read(userId)
-                    
+                    this.user.categoria = await App.dao.rol.read(this.user.rol_id)
                     localStorage.setItem('user', JSON.stringify(this.user))
                     localStorage.setItem('token', this.token)
                     return true
