@@ -98,8 +98,11 @@
                         <div class="space-x-4 flex border-gray-700 rounded-sm border-2 px-3 hover:bg-gray-50" v-if="contenidoPrincipalAnotaciones">
                             <button class="px-1 font-semibold border-gray-800 rounded-sm my-auto" @click="toggleMostrarNuevaAnotacion">Nueva anotación</button>
                         </div>
-                        <div v-else class="my-auto text-lg font-bold">
+                        <div v-if="contenidoPrincipalCuestionarios" class="my-auto text-lg font-bold">
                             Cuestionarios
+                        </div>
+                        <div v-if="contenidoPrincipalCuestionariosRealizados" class="my-auto text-lg font-bold">
+                            Cuestionarios Realizados
                         </div>
 
                         <div class="w-60 flex items-end" v-if="contenidoPrincipalAnotaciones">

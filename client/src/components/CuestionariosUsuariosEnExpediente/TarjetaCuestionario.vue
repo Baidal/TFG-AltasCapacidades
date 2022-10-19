@@ -1,5 +1,5 @@
 <template>
-    <div class="border-2 border-black flex flex-col m-2 rounded-md">
+    <router-link class="border-2 border-black flex flex-col m-2 rounded-md cursor-pointer hover:shadow-xl" :to="{name: 'Cuestionario', params: {id: cuestionario?.cuestionario.id}}">
         <ClipboardListIcon class="h-28"/>
         <p class="text-center text-gray-800 font-bold">{{cuestionario?.cuestionario.nombre}}</p>
         <div class="flex space-x-1 justify-center">
@@ -9,7 +9,7 @@
             <XIcon v-if="!cuestionarioCompletado" class="h-4 my-auto"/>
             <p v-if="!cuestionarioCompletado">No realizado</p>
         </div>
-    </div>
+    </router-link>
 </template>
 
 <script>
