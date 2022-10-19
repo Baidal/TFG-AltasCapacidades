@@ -38,6 +38,13 @@ export const useAuthStore = defineStore('Auth', {
                 console.log("Error: ", err)
                 return false
             }
+        },
+        logout(){
+            this.user = {}
+            localStorage.setItem('user', '')
+            
+            this.token = {}
+            localStorage.setItem('token', '')
         }
     },
     getters: {
