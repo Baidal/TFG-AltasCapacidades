@@ -93,7 +93,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
     .grid-container{
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     }

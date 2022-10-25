@@ -41,10 +41,10 @@ export const useAuthStore = defineStore('Auth', {
         },
         logout(){
             this.user = {}
-            localStorage.setItem('user', '')
+            localStorage.removeItem('user')
             
             this.token = {}
-            localStorage.setItem('token', '')
+            localStorage.setItem('token')
         }
     },
     getters: {

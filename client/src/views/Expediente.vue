@@ -93,6 +93,10 @@
                             <div v-if="userIsPsicologo" class="hover:shadow-lg p-2 rounded-md cursor-pointer">
                                 <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('cuestionariosrealizados')">Cuestionarios realizados</p>
                             </div>
+                            <p v-if="userIsPsicologo" class="my-auto">|</p>
+                            <div v-if="userIsPsicologo" class="hover:shadow-lg p-2 rounded-md cursor-pointer">
+                                <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('estadisticasexpediente')">Estadísticas del expediente</p>
+                            </div>
                         </div>    
 
                         <div class="space-x-4 flex border-gray-700 rounded-sm border-2 px-3 hover:bg-gray-50" v-if="contenidoPrincipalAnotaciones">
@@ -104,13 +108,19 @@
                         <div v-if="contenidoPrincipalCuestionariosRealizados" class="my-auto text-lg font-bold">
                             Cuestionarios Realizados
                         </div>
+                        <div v-if="contenidoPrincipalEstadisticasExpediente" class="my-auto text-lg font-bold">
+                            Estadísticas
+                        </div>
 
                         <div class="w-60 flex items-end" v-if="contenidoPrincipalAnotaciones">
                             <InputBuscar :placeHolder="'Buscar anotación...'" class="w-full" v-model="buscarAnotacion"/>
                         </div>
-                        <div class="w-60 flex items-end" v-else>
+                        <div class="w-60 flex items-end" v-if="contenidoPrincipalCuestionarios">
                             <InputBuscar :placeHolder="'Buscar cuestionario...'" class="w-full" v-model="buscarCuestionario"/>
                         </div>
+                        <!-- <div v-if="contenidoPrincipalCuestionariosRealizados || contenidoPrincipalEstadisticasExpediente">
+
+                        </div> -->
                     </div>
                     <div class="border-2 border-gray-600 mb-2"></div>
                     <div class="flex flex-col space-y-2 overflow-y-auto main-section-height" v-if="contenidoPrincipalAnotaciones">
@@ -124,8 +134,11 @@
                             </div>
                         </router-link>
                     </div>
-                    <div class="" v-if="contenidoPrincipalCuestionariosRealizados">
+                    <div v-if="contenidoPrincipalCuestionariosRealizados">
                         <CuestionariosRealizadosUsuarios :expedienteId="this.id"/>
+                    </div>
+                    <div v-if="contenidoPrincipalEstadisticasExpediente">
+                        <EstadisticasExpediente :idExpediente="this.id"/>
                     </div>
                 </div>
             </div>
@@ -160,6 +173,7 @@ import PopUpDesrelacionarUsuarioExpediente from '../components/PopUpDesrelaciona
 import {mapStores} from 'pinia'
 import {useAuthStore} from '../stores/Auth'
 import CuestionariosRealizadosUsuarios from '../components/CuestionariosUsuariosEnExpediente/CuestionariosRealizadosUsuarios.vue'
+import EstadisticasExpediente from '../components/EstadisticasExpediente/EstadisticasExpediente.vue'
 
 export default {
     name: 'Expediente',
@@ -178,7 +192,8 @@ export default {
     IdentificationIcon,
     TarjetaCuestionario,
     PopUpDesrelacionarUsuarioExpediente,
-    CuestionariosRealizadosUsuarios
+    CuestionariosRealizadosUsuarios,
+    EstadisticasExpediente
 },
     props: {
         id: ''
@@ -526,7 +541,9 @@ export default {
         },
         contenidoPrincipalCuestionariosRealizados(){
             return this.contenidoPrincipal == 'cuestionariosrealizados'
-
+        },
+        contenidoPrincipalEstadisticasExpediente(){
+            return this.contenidoPrincipal == 'estadisticasexpediente'
         },
         loggedIn(){
             return this.AuthStore.userIsLoggedIn

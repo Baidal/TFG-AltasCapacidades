@@ -28,8 +28,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
     .grid-container{
-        grid-template-columns: repeat(auto-fill, minmax(40px, 50px));
+        grid-template-columns: repeat(auto-fill, minmax(100px, 140px));
     }
 </style>
