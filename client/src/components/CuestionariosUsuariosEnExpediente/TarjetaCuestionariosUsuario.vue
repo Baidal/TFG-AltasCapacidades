@@ -4,7 +4,7 @@
         <div class="grid grid-cols-3 w-full grid-container" v-if="sinCuestionarios">
             <TarjetaCuestionario v-for="cuestionario in this.cuestionarios" :key="cuestionario.cuestionario.id" :cuestionario="cuestionario"/>
         </div>
-        <router-link :to="{name: 'Home'}" class="text-blue-700  w-full" v-if="sinCuestionarios">Ver estadísticas</router-link>
+        <router-link :to="{name: 'EstadisticasIndividuales', params: {idExpediente: idExpediente, idUsuario: usuario?.id}}" class="text-blue-700  w-full" v-if="sinCuestionarios">Ver estadísticas</router-link>
         <div v-else>
             <p class="font-bold text-center mt-4">Sin cuestionarios asignados</p>
         </div>
@@ -17,7 +17,8 @@ export default {
     name: "CuestionariosRealizadosUsuarios",
     props: {
         usuario: Object,
-        cuestionarios: Array
+        cuestionarios: Array,
+        idExpediente: ''
     },
     components: { TarjetaCuestionario },
     computed: {

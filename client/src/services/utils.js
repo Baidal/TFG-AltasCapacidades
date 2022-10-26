@@ -47,4 +47,7 @@ export default {
                 return 'bg-blue-600 bg-opacity-70 rounded px-1 font-semibold w-28 text-center'
         }
     },
+    userIsPsicologo(userId){
+        return userId == 1
+    }
 }

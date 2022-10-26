@@ -560,7 +560,7 @@ export default {
             return this.loggedIn && usuario_expediente.length !== 0
         },
         userIsPsicologo(){
-            return this.AuthStore.getUser.rol_id == 1
+            return utils.userIsPsicologo(this.AuthStore.getUser.rol_id)
         }
     }
 

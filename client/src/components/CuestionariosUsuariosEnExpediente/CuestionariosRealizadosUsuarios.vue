@@ -1,6 +1,6 @@
 <template>
     <div class="grid grid-rows-4 w-full grid-container">
-        <TarjetaCuestionariosUsuario v-for="usuario in this.usuarios" :key="usuario.usuario.id" :usuario="usuario.usuario" :cuestionarios="usuario.cuestionarios"/>
+        <TarjetaCuestionariosUsuario v-for="usuario in this.usuarios" :key="usuario.usuario.id" :usuario="usuario.usuario" :cuestionarios="usuario.cuestionarios" :idExpediente="expedienteId"/>
     </div>
 </template>
 

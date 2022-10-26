@@ -9,7 +9,7 @@ import Cuestionario from '../views/Cuestionario'
 import ErroresExpediente from '../views/ErroresExpediente'
 import Administracion from '../views/Administracion'
 import NoAutorizado from '../views/NoAutorizado'
-
+import EstadisticasIndividuales from '../views/EstadisticasIndividuales/EstadisticasIndividuales'
 const routes = [
   {
     path: '/',
@@ -65,6 +65,12 @@ const routes = [
     path: '/noAutorizado',
     name: 'NoAutorizado',
     component: NoAutorizado
+  },
+  {
+    path: '/estadisticasIndividuales/:idExpediente/:idUsuario',
+    name: 'EstadisticasIndividuales',
+    component: EstadisticasIndividuales,
+    props: true
   }
 ]
 
