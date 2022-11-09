@@ -1,36 +1,38 @@
 const appClient = require('../../../dao/app_client')
 
-let App = null
-let userId = -1
-let token = ''
+
 
 export default async function initializeAppObject(email, password, token){
-    if(App === null){
-        App = appClient.appClient()
-        await App.getConfig("http://localhost:8080")
+    let App = null  
+    let userId = -1
+    console.log(email, password, token)
+    console.log("ESTAMOS EN APP ES DIFERENTE DE NULL")
+    App = appClient.appClient()
+    await App.getConfig("http://localhost:8080")
+    
+    try{
+        let response = null
+        console.log("INICIAMOS SESION")
         
-        try{
-            let response = null
-            
-            if(token)
-                response= await App.login({token})
-            else{
-                response = await App.login({email, password})
-                token = response.token
-            }
-
-            userId = response.userId
-            
-            return {App, userId, token}
-        }catch(err){
-            console.log("ERROR: ", err)
-            App = null
-            userId = -1
-            return {App, userId, token: null}
+        if(token)
+            response= await App.login({token})
+        else{
+            console.log("INICIAMOS SESION CON LOS DATOS")
+            response = await App.login({email, password})
+            console.log(response)
+            token = response.token
         }
+
+        userId = response.userId
+        
+        return {App, userId, token}
+    }catch(err){
+        console.log("ERROR: ", err)
+        App = null
+        userId = -1
+        return {App, userId, token: null}
     }
 
-    return {App, userId}
     
 }
 
