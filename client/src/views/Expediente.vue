@@ -124,9 +124,11 @@
                     </div>
                     <div class="border-2 border-gray-600 mb-2"></div>
                     <div class="flex flex-col space-y-2 overflow-y-auto main-section-height" v-if="contenidoPrincipalAnotaciones">
+                        <p v-if="this.anotaciones.length === 0" class="text-2xl font-semibold text-gray-700">Aún no existen anotaciones</p>
                         <TarjetaAnotacion v-for="anotacion in anotaciones" :key="anotacion.id" :anotacion="anotacion" @modificar-anotacion="modificarAnotacion" @eliminar-anotacion="eliminarAnotacion"/>
                     </div>
                     <div class="overflow-y-auto main-section-height grid grid-container" v-if="contenidoPrincipalCuestionarios">
+                        <p v-if="this.cuestionarios.length === 0" class="text-2xl font-semibold text-gray-700">No hay cuestionarios por realizar</p>
                         <router-link :to="{name: 'Cuestionario', params: {id: cuestionario.id}}" class="w-full h-56 flex justify-center text-center p-2" v-for="cuestionario in cuestionarios" :key="cuestionario.id">
                             <div class="rounded-lg shadow-lg w-full mx-1 flex flex-col items-center hover:shadow-xl cursor-pointer">
                                 <ClipboardListIcon class="h-22 text-gray-800"/>
@@ -588,6 +590,6 @@ export default {
     }
 
     .main-section-height{
-        height: 36rem;
+        height: 56rem;
     }
 </style>
