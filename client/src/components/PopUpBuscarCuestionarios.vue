@@ -23,48 +23,48 @@
 </template>
 
 <script>
-    import initializeAppObject from '../services/daoProvider'
-
-    import {XCircleIcon} from '@heroicons/vue/outline'
-    import TarjetaCuestionario from './TarjetaCuestionario.vue'
+import {XCircleIcon} from '@heroicons/vue/outline'
+import TarjetaCuestionario from './TarjetaCuestionario.vue'
 import AppButton from './AppButton.vue'
 
+import {mapStores} from 'pinia'
+import {useAuthStore} from '../stores/Auth.js'
 
-    export default {
-        name:'PopUpBuscarCuestionario',
-        components: {
-    XCircleIcon,
-    TarjetaCuestionario,
-    AppButton
-},
-        data(){
-            return {
-                cuestionarios: Array,
-                cuestionariosSeleccionados: []
+export default {
+    name:'PopUpBuscarCuestionario',
+    components: {
+        XCircleIcon,
+        TarjetaCuestionario,
+        AppButton
+    },
+    data(){
+        return {
+            cuestionarios: Array,
+            cuestionariosSeleccionados: []
+        }
+    },
+    async created(){
+        //Inicializamos los cuestionarios
+        var app = await this.AuthStore.App
+        this.cuestionarios = await app.dao.cuestionarios.read()
+    },
+    computed: {
+        ...mapStores(useAuthStore)
+    },
+    methods: {
+        cuestionarioSeleccionado(id){
+            return this.cuestionariosSeleccionados.findIndex(cuestionario => cuestionario.id == id) != -1
+        },
+        anyadirCuestionarioASeleccionados(nuevoCuestionario){
+            //El cuestionario está seleccionado, lo deseleccionamos
+            if (this.cuestionarioSeleccionado(nuevoCuestionario.id)){
+                this.cuestionariosSeleccionados = this.cuestionariosSeleccionados.filter(cuestionario => cuestionario.id != nuevoCuestionario.id)
+                return
             }
-        },
-        async created(){
-            //Inicializamos los cuestionarios
-            var app = await initializeAppObject()
-            this.cuestionarios = await app.dao.cuestionarios.read()
-        },
-        computed: {
-            
-        },
-        methods: {
-            cuestionarioSeleccionado(id){
-                return this.cuestionariosSeleccionados.findIndex(cuestionario => cuestionario.id == id) != -1
-            },
-            anyadirCuestionarioASeleccionados(nuevoCuestionario){
-                //El cuestionario está seleccionado, lo deseleccionamos
-                if (this.cuestionarioSeleccionado(nuevoCuestionario.id)){
-                    this.cuestionariosSeleccionados = this.cuestionariosSeleccionados.filter(cuestionario => cuestionario.id != nuevoCuestionario.id)
-                    return
-                }
 
-                //El cuestionario no está seleccionado, lo seleccionamos
-                this.cuestionariosSeleccionados.push(nuevoCuestionario)
-            }
+            //El cuestionario no está seleccionado, lo seleccionamos
+            this.cuestionariosSeleccionados.push(nuevoCuestionario)
         }
     }
+}
 </script>

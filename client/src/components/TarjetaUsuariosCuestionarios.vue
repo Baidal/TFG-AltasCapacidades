@@ -75,7 +75,6 @@
 </template>
 
 <script>
-import initializeAppObject from '../services/daoProvider'
 
 import { SearchIcon, PlusCircleIcon } from "@heroicons/vue/outline";
 import TarjetaUsuario from '../components/TarjetaUsuario.vue'
@@ -85,6 +84,9 @@ import BusquedaUsuarioTarjeta from "./BusquedaUsuarioTarjeta.vue";
 import PopUpAnyadirUsuario from './PopUpAnyadirUsuario.vue'
 import PopUpBuscarCuestionarios from './PopUpBuscarCuestionarios.vue';
 import InputBuscar from './InputBuscar.vue';
+
+import {mapStores} from 'pinia'
+import {useAuthStore} from '../stores/Auth.js'
 
 
 export default {
@@ -119,7 +121,10 @@ export default {
     PopUpAnyadirUsuario,
     PopUpBuscarCuestionarios,
     InputBuscar
-},
+  },
+  computed: {
+    ...mapStores(useAuthStore)
+  },
   methods: {
     /**
      * Cada vez que el usuario escriba algo en el input esta función buscará
@@ -129,7 +134,7 @@ export default {
     async handleUserSearch(input){
       if(input.length < 3) return
       //.read({}, {filter:  {nombre: "Diego"}})
-      const app = await initializeAppObject()
+      const app = await this.AuthStore.App
       console.log(input)
       app.dao.usuario.read({}).then(usuarios => {
         this.usersSearched = usuarios.filter(usuario => usuario.email.includes(input) || usuario.nombre.includes(input))

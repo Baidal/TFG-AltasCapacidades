@@ -55,6 +55,10 @@ import AppButton from '../components/AppButton.vue'
 import PopUpAnyadirUsuario from '../components/PopUpAnyadirUsuario.vue'
 import policies from '../services/policies'
 
+import {mapStores} from 'pinia'
+import {useAuthStore} from '../stores/Auth.js'
+import utils from '../services/utils'
+
 export default {
     name: 'AsignarCuestionariosExpediente',
     components: {
@@ -90,12 +94,30 @@ export default {
             erroresValidacion: []
         }
     },
+    computed: {
+        ...mapStores(useAuthStore),
+        loggedIn(){
+            return this.AuthStore.userIsLoggedIn
+        },
+        userIsPsicologo(){
+            return utils.userIsPsicologo(this.AuthStore.getUser.id)
+        }
+    },
     /**
      * Se encarga de cargar los cuestionarios predefinicidos en cada categoría de la base de datos
      */
     async created(){
-        var app = await initializeAppObject()
+        if(!this.loggedIn)
+            return this.$router.push({name: 'Login'})
         
+        if(!this.userIsPsicologo)
+            return this.$router.push({name: 'NoAutorizado'})
+
+        var app = await this.AuthStore.App
+        if(!app)
+            return this.$router.push({name: 'Login'})
+            
+
         //Cargamos las categorías de la base de datos
         let categoriasDB = await app.dao.rol.read()
         
@@ -212,7 +234,11 @@ export default {
             if(!this.datosExpedienteCorrectos())
                 return
             
-            var app = await initializeAppObject()
+
+            var app = await this.AuthStore.App
+            if(!app)
+                return this.$router.push({name: 'Login'})
+
             //Creamos el expediente
             var expedienteACrear = 
             {
@@ -228,6 +254,9 @@ export default {
 
             var expediente = await app.dao.expediente.create(expedienteACrear)
             
+            //Se relaciona al psicólogo que loggeado con el expediente
+            this.relacionarUsuarioExpediente(app, this.AuthStore.getUser.id, expediente.id, 1)
+
             //Usuarios cuya creación ha sido errónea
             var usuariosNoCreados = []
 
