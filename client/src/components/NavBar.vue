@@ -9,11 +9,11 @@
         </div>
         <!-- Botones de login, registro, etc-->
         <div class="flex justify-center space-x-4">
-            <router-link :to="{name: 'Expedientes'}"><NavBarButton :name="'Expedientes'"/></router-link>
+            <router-link :to="{name: 'Expedientes'}" v-if="this.loggedIn"><NavBarButton :name="'Expedientes'"/></router-link>
             
             <router-link :to="{name: 'Administracion'}" v-if="this.userIsAdmin"><NavBarButton :name="'Administración'"/></router-link>
             
-            <router-link :to="{name: 'Perfil', params: {id: this.userId}}" v-if="!this.loggedIn"><NavBarButton :name="'Perfil'"/></router-link>
+            <router-link :to="{name: 'Perfil', params: {id: this.userId}}" v-if="this.loggedIn"><NavBarButton :name="'Perfil'"/></router-link>
             <router-link :to="{name: 'Login'}" v-if="!this.loggedIn"><NavBarButton :name="'Iniciar Sesión'"/></router-link>
             <NavBarButton :name="'Cerrar sesión'" v-else @click="this.logout"/>
         </div>

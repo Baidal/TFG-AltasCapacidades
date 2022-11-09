@@ -62,7 +62,7 @@ export default {
 
             for(const usuarioExpediente of usuario_expediente){
                 let usuario = await app.dao.usuario.read(usuarioExpediente.usuario_id)
-                let categoria_usuario = await app.dao.rol.read(usuario.rol_id)
+                let categoria_usuario = await app.dao.rol.read(usuarioExpediente.rol_id)
                 usuario.categoria = categoria_usuario
 
                 //Cargamos todos los cuestionarios que un usuario tiene relacionados en un expediente
