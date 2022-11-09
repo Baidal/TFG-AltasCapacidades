@@ -13,7 +13,7 @@
             
             <router-link :to="{name: 'Administracion'}" v-if="this.userIsAdmin"><NavBarButton :name="'Administración'"/></router-link>
             
-            <router-link :to="{name: 'Perfil', params: {id: 2}}"><NavBarButton :name="'Perfil'"/></router-link>
+            <router-link :to="{name: 'Perfil', params: {id: this.userId}}"><NavBarButton :name="'Perfil'"/></router-link>
             <router-link :to="{name: 'Login'}" v-if="!this.loggedIn"><NavBarButton :name="'Iniciar Sesión'"/></router-link>
             <NavBarButton :name="'Cerrar sesión'" v-else @click="this.logout"/>
         </div>
@@ -41,6 +41,9 @@ export default {
         },
         userIsPsicologo(){
             return this.AuthStore.getUser.rol_id == 1
+        },
+        userId(){
+            return this.AuthStore.getUser.id
         }
     },
     methods: {

@@ -5,7 +5,7 @@
             <!--Parte izquierda del principio-->
             <div class="flex space-x-6">
                 <p class="text-lg mt-6 font-bold">Listado de expedientes</p>
-                <router-link :to="{name: 'CrearExpediente'}" class="mt-4"><app-button :name="'Nuevo expediente'"/></router-link>
+                <router-link v-if="this.userIsPsicologo" :to="{name: 'CrearExpediente'}" class="mt-4"><app-button :name="'Nuevo expediente'"/></router-link>
             </div>
             <!--Parte derecha del principio-->
             <div class="w-1/4 mt-4">
@@ -26,7 +26,8 @@
 </template>
 
 <script>
-import initializeAppObject from '../services/daoProvider' 
+import {mapStores} from 'pinia'
+import {useAuthStore} from '../stores/Auth.js'
 
 import {PlusIcon, SearchIcon} from '@heroicons/vue/outline'
 import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
@@ -34,8 +35,9 @@ import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 import AppButton from '../components/AppButton.vue'
 import TarjetaExpediente from '../components/TarjetaExpediente.vue'
 import InputBuscar from '../components/InputBuscar.vue'
-undefined
-undefined
+
+import utils from '../services/utils'
+
 export default {
     components: { AppButton, TarjetaExpediente, PlusIcon, MoonLoader, SearchIcon, InputBuscar },
     name: 'Expedientes',
@@ -46,6 +48,15 @@ export default {
             inputBuscarExpediente: ''
         }
     },
+    computed: {
+        ...mapStores(useAuthStore),
+        loggedIn(){
+            return this.AuthStore.userIsLoggedIn
+        },
+        userIsPsicologo(){
+            return utils.userIsPsicologo(this.AuthStore.getUser.id)
+        }
+    },
     methods: {
         async cargarExpedientes(){
             this.loadingData = true
@@ -53,19 +64,19 @@ export default {
 
             const userLoggedId = 1
             
-            const app = await initializeAppObject()
+            if(!this.loggedIn)
+                return this.$router.push({name: 'Login'})
 
-            const expedientesDB = await app.dao.expediente.read()
+            const app = await this.AuthStore.App
+            if(!app)
+                this.$router.push({name: 'Login'})
 
-            //Buscamos los expedientes relacionados con el usuario
-            const idExpedientes = await app.dao.usuario_expediente.read()
+            const usuario_expediente = await app.dao.usuario_expediente.read({}, {filter: {usuario_id: this.AuthStore.getUser.id}})    
             
-            //Recorremos los expedientes y nos quedamos con los que pertenezcan al usuario
-            idExpedientes.forEach(row => {
-                if(row.usuario_id == userLoggedId){
-                    this.expedientes.push(expedientesDB.find(expedienteDB => expedienteDB.id == row.expediente_id))
-                }
-            })
+            for(const usuarioExpediente of usuario_expediente){
+                const expediente = await app.dao.expediente.read(usuarioExpediente.expediente_id)
+                this.expedientes.push(expediente)
+            }
 
             this.loadingData = false
         },
