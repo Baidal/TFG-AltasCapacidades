@@ -587,8 +587,8 @@ export default {
             }
             
             const usuario_expediente = await app.dao.usuario_expediente.read({}, {filter: {expediente_id: this.id, usuario_id: this.AuthStore.getUser.id}})
-            
-            return this.loggedIn && usuario_expediente.length !== 0
+            console.log(!usuario_expediente[0].usuario_eliminado)
+            return this.loggedIn && usuario_expediente.length !== 0 && !usuario_expediente[0].usuario_eliminado
         },
         userIsPsicologo(){
             return utils.userIsPsicologo(this.AuthStore.getUser.rol_id)

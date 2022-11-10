@@ -17,7 +17,7 @@
         <div class="grid grid-rows-4 w-3/4 grid-container">
             <TarjetaExpediente :nombre="expediente.nombre" :id="expediente.id" class="cursor-pointer" v-for="expediente in expedientes" :key="expediente.id"/>
             
-            <router-link :to="{name: 'CrearExpediente'}" class="text-gray-500 flex flex-col items-center justify-center my-2" v-if="!loadingData">
+            <router-link :to="{name: 'CrearExpediente'}" class="text-gray-500 flex flex-col items-center justify-center my-2" v-if="!loadingData && userIsPsicologo">
                 <PlusIcon class="w-1/3 h-1/3"/>
                 <p>Nuevo expediente</p>
             </router-link>
@@ -61,8 +61,6 @@ export default {
         async cargarExpedientes(){
             this.loadingData = true
             this.expedientes = []
-
-            const userLoggedId = 1
             
             if(!this.loggedIn)
                 return this.$router.push({name: 'Login'})
@@ -71,7 +69,7 @@ export default {
             if(!app)
                 this.$router.push({name: 'Login'})
 
-            const usuario_expediente = await app.dao.usuario_expediente.read({}, {filter: {usuario_id: this.AuthStore.getUser.id}})    
+            const usuario_expediente = await app.dao.usuario_expediente.read({}, {filter: {usuario_id: this.AuthStore.getUser.id, usuario_eliminado: 0}})    
             
             for(const usuarioExpediente of usuario_expediente){
                 const expediente = await app.dao.expediente.read(usuarioExpediente.expediente_id)
