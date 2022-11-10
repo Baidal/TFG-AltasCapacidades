@@ -5,6 +5,7 @@
 		"usuario_id": "@integer !",
         "expediente_id": "@integer !",
 		"rol_id": "@integer !",
+		"usuario_eliminado": "@integer",
 		"id": "#"
 	},
 	"table": "usuario_expediente",

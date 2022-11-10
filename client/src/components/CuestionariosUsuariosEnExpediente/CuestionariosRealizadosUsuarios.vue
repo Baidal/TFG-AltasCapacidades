@@ -1,5 +1,5 @@
 <template>
-    <div class="grid grid-rows-4 w-full grid-container">
+    <div class="grid grid-rows-4 w-full grid-container-cuestionarios">
         <TarjetaCuestionariosUsuario 
             v-for="usuario in this.usuarios" 
             :key="usuario.usuario.id" 
@@ -103,7 +103,7 @@ export default {
 </script>
 
 <style scoped>
-    .grid-container{
+    .grid-container-cuestionarios{
         grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
     }
 </style>

@@ -49,15 +49,18 @@
                     </div>
                     <!-- Listado de usuarios relacionados con el expediente -->
                     <div class="mx-auto max-h-52 overflow-x-hidden overflow-y-auto space-y-3 w-3/4 flex items-center flex-col mb-8">
-                        <div class="flex justify-between w-full h-10" v-for="usuario in usuariosRelacionados" :key="usuario.id">
-                            <UserIcon class="h-7 min-h-full"/>
+                        <div class="flex justify-between w-full" v-for="usuario in usuariosRelacionados" :key="usuario.id">
+                            <UserIcon class="h-11 my-auto"/>
                             <div class="flex flex-col w-full cursor-pointer" v-on:click="this.$router.push({name: 'Perfil', params: {id: usuario.id}})">
                                 <p class="font-semibold my-auto" v-if="usuario.nombre">{{usuario.nombre}}</p>
                                 <p class="italic text-gray-400 text-sm my-auto" v-else>Usuario sin nombre</p>
+                                <p v-if="usuario.usuario_eliminado" class="text-sm italic text-gray-700">usuario eliminado</p>
 
                                 <p class="italix text-gray-500 text-xs">{{usuario.rol}}</p>
                             </div>
-                            <XCircleIcon :class="'min-h-full max-h-2 z-10' + (userIsPsicologo ? ' cursor-pointer' : ' cursor-not-allowed')" v-on:click="userIsPsicologo && toggleMostrarDesrelacionar(usuario.id)"/>
+                            <XCircleIcon 
+                                :class="'h-11 my-auto z-10' + (userIsPsicologo && usuarioSePuedeDesrelacionar(usuario.id) ? ' cursor-pointer' : ' cursor-not-allowed') + (usuario.usuario_eliminado ? ' cursor-not-allowed' : '')" 
+                                v-on:click="userIsPsicologo && !usuario.usuario_eliminado && usuarioSePuedeDesrelacionar(usuario.id) && toggleMostrarDesrelacionar(usuario.id)"/>
                         </div>                     
                     </div>
                     <!-- Usuarios nuevos a relacionar -->
@@ -127,7 +130,7 @@
                         <p v-if="this.anotaciones.length === 0" class="text-2xl font-semibold text-gray-700">Aún no existen anotaciones</p>
                         <TarjetaAnotacion v-for="anotacion in anotaciones" :key="anotacion.id" :anotacion="anotacion" @modificar-anotacion="modificarAnotacion" @eliminar-anotacion="eliminarAnotacion"/>
                     </div>
-                    <div class="overflow-y-auto main-section-height grid grid-container" v-if="contenidoPrincipalCuestionarios">
+                    <div class="overflow-y-auto main-section-height grid grid-rows-4 grid-container" v-if="contenidoPrincipalCuestionarios">
                         <p v-if="this.cuestionarios.length === 0" class="text-2xl font-semibold text-gray-700">No hay cuestionarios por realizar</p>
                         <router-link :to="{name: 'Cuestionario', params: {id: cuestionario.id}}" class="w-full h-56 flex justify-center text-center p-2" v-for="cuestionario in cuestionarios" :key="cuestionario.id">
                             <div class="rounded-lg shadow-lg w-full mx-1 flex flex-col items-center hover:shadow-xl cursor-pointer">
@@ -276,8 +279,10 @@ export default {
 
             usuario_expediente.forEach(async row => {
                 let usuario = await app.dao.usuario.read(row.usuario_id)
+
                 usuario.usuario_expediente_ID = row.id //Guardamos el id de la tabla que relaciona al usuario con el expediente para luego poder acceder a el sin necesidad de tener que recurrir a la BD de nuevo
-                
+                usuario.usuario_eliminado = row.usuario_eliminado == 1 ? true : false
+
                 //buscamos el rol del usuario dentro del expediente
                 const rol_usuario_expediente = await app.dao.rol.read(row.rol_id)
                 usuario.rol = rol_usuario_expediente.rol
@@ -563,6 +568,9 @@ export default {
         },
         userIsPsicologo(){
             return utils.userIsPsicologo(this.AuthStore.getUser.rol_id)
+        },
+        usuarioSePuedeDesrelacionar(){
+            return idUsuario => idUsuario != this.AuthStore.getUser.id
         }
     }
 
