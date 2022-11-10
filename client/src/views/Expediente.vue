@@ -339,7 +339,7 @@ export default {
                 return
             }
 
-            await app.dao.usuario_expediente.delete({id: usuario.usuario_expediente_ID})
+            await app.dao.usuario_expediente.update({id: usuario.usuario_expediente_ID}, {usuario_eliminado: 1})
 
             this.usuariosRelacionados = this.usuariosRelacionados.filter(usuario => usuario.id != usuarioId)
         
@@ -591,5 +591,9 @@ export default {
 
     .main-section-height{
         height: 56rem;
+    }
+
+    .grid-container{
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     }
 </style>
