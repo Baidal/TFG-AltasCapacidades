@@ -345,9 +345,10 @@ export default {
             }
 
             await app.dao.usuario_expediente.update({id: usuario.usuario_expediente_ID}, {usuario_eliminado: 1})
-
-            this.usuariosRelacionados = this.usuariosRelacionados.filter(usuario => usuario.id != usuarioId)
         
+            const indexUsuario = this.usuariosRelacionados.findIndex(usuarioBuscar => usuarioBuscar.id == usuarioId)
+            this.usuariosRelacionados[indexUsuario].usuario_eliminado = true
+
             this.toggleMostrarDesrelacionar()
         },
         async buscarUsuariosARelacionar(buscador){
@@ -372,14 +373,35 @@ export default {
         },
         handleRelacionarUsuarios(){
             this.usuariosSeleccionados.forEach(async usuarioSeleccionado => {
-                //Si el usuario no se ha añadido aun al expediente
-                if(this.usuariosRelacionados.findIndex(usuarioRelacionado => usuarioRelacionado.id == usuarioSeleccionado.id) == -1){
-                    const app = await this.AuthStore.App
-                    if(!app){
-                        this.$router.push({name: 'Login'})
-                        return
-                    }
+                const app = await this.AuthStore.App
+                if(!app){
+                    this.$router.push({name: 'Login'})
+                    return
+                }
+                
+                //Si el usuario ya había sido eliminado, ahora lo volvemos a añadir. Como el usuario no se elimina nunca,
+                //sino que se marca como 'eliminado', modificamos este valor en la base de datos
+                let usuario_expediente_existe = await app.dao.usuario_expediente.read({}, {filter: {usuario_id: usuarioSeleccionado.id, expediente_id: this.expediente.id}})
+                if(usuario_expediente_existe.length !== 0 && usuario_expediente_existe[0].usuario_eliminado === 1){
+                    usuario_expediente_existe = usuario_expediente_existe[0]
+
+                    //Buscamos la categoría del usuario
+                    const categoriaId = this.$refs.seleccionarCategoria.value
+                    const categoria = this.categorias.find(categoriaBuscar => categoriaBuscar.id == categoriaId)
+
+                    app.dao.usuario_expediente.update({id: usuario_expediente_existe.id}, {usuario_eliminado: 0, rol_id: categoriaId})
                     
+                    usuarioSeleccionado.usuario_eliminado = false
+                    usuarioSeleccionado.rol = categoria.rol
+                    usuarioSeleccionado.usuario_expediente_ID = usuario_expediente_existe.id
+
+                    const indexUsuario = this.usuariosRelacionados.findIndex(usuario => usuario.id == usuarioSeleccionado.id)
+                    this.usuariosRelacionados[indexUsuario] = usuarioSeleccionado
+                    return
+                }
+
+                //Si el usuario no se ha añadido aun al expediente
+                if(this.usuariosRelacionados.findIndex(usuarioRelacionado => usuarioRelacionado.id == usuarioSeleccionado.id) == -1){    
                     const categoriaId = this.$refs.seleccionarCategoria.value
                     const categoria = this.categorias.find(categoriaBuscar => categoriaBuscar.id == categoriaId)
                     const usuario_expediente = await app.dao.usuario_expediente.create({usuario_id: usuarioSeleccionado.id, expediente_id: this.expediente.id, rol_id: categoriaId})
@@ -391,6 +413,8 @@ export default {
 
                     return
                 }
+
+                this.inputBuscarUsuarios = ''
             })
 
             this.usuariosSeleccionados = []
