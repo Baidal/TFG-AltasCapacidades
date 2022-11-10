@@ -6,7 +6,13 @@
             @anyadir-cuestionarios="relacionarCuestionarios"/>
         <p class="font-bold text-left">{{usuario.nombre}} - {{usuario.categoria.rol}}</p>
         <div class="grid grid-cols-3 w-full grid-container" v-if="sinCuestionarios">
-            <TarjetaCuestionario v-for="cuestionario in this.cuestionarios" :key="cuestionario.cuestionario.id" :cuestionario="cuestionario"/>
+            <TarjetaCuestionario 
+                v-for="cuestionario in this.cuestionarios" 
+                :key="cuestionario.cuestionario.id" 
+                :cuestionario="cuestionario" 
+                :usuario="this.usuario" 
+                :idExpediente="this.idExpediente"
+                @eliminarRelacionCuestionario="eliminarRelacionCuestionario"/>
         </div>
         <router-link :to="{name: 'EstadisticasIndividuales', params: {idExpediente: idExpediente, idUsuario: usuario?.id}}" class="text-blue-700  w-full" v-if="sinCuestionarios">Ver estadísticas</router-link>
         <div v-else>
@@ -56,22 +62,24 @@ export default {
             
             for(const cuestionario of cuestionariosSeleccionados){
                 //Eliminamos los cuestionarios que el usuario ya tenga asignados
-                if(this.cuestionarios.findIndex(cuestionarioYaAsignado => cuestionarioYaAsignado.cuestionario.id == cuestionario.id) !== -1)
-                    return
-                
-                app.dao.cuestionario_usuario_expediente.create({
-                    cuestionario_id: cuestionario.id,
-                    usuario_expediente_id: usuarioExpediente.id,
-                    completado: 0
-                })
+                if(this.cuestionarios.findIndex(cuestionarioYaAsignado => cuestionarioYaAsignado.cuestionario.id == cuestionario.id) === -1){
+                    app.dao.cuestionario_usuario_expediente.create({
+                        cuestionario_id: cuestionario.id,
+                        usuario_expediente_id: usuarioExpediente.id,
+                        completado: 0
+                    })
 
-                this.cuestionarios.push({
-                    completado: false,
-                    cuestionario: cuestionario
-                })
+                    this.cuestionarios.push({
+                        completado: false,
+                        cuestionario: cuestionario
+                    })
+                }
             }
 
             this.toggleBuscarCuestionario()
+        },
+        eliminarRelacionCuestionario(idCuestionario){
+            this.$emit('eliminarRelacionCuestionario', idCuestionario, this.usuario.id)
         }
     },
     

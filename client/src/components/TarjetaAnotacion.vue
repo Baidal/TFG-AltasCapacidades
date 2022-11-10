@@ -1,6 +1,12 @@
 <template>
     <div class="w-full border-2 border-gray-700 bg-gray-300 p-4 text-left rounded-md">
-        <PopUpEliminarAnotacion v-if="mostrarEliminarAnotacion" @close-eliminar="toggleMostarEliminarAnotacion" @eliminar-anotacion="eliminarAnotacion"/>
+        <PopUpEliminar 
+            v-if="mostrarEliminarAnotacion" 
+            @close-eliminar="toggleMostarEliminarAnotacion" 
+            @eliminar="eliminarAnotacion" 
+            :textoPrincipal="'Seguro que deseas eliminar la anotación?'"
+            :textoBotonDer="'Mejor no'"
+            :textoBotonIzq="'Eliminar anotación'"/>
         <div class="flex flex-col">
             <div class="flex justify-between">
                 <input :class="claseCssInput()" v-model="anotacion.titulo" :disabled="!modificable"/>
@@ -20,14 +26,14 @@ import {XCircleIcon} from '@heroicons/vue/outline'
 import AppButton from '../components/AppButton.vue'
 
 import utils from '../services/utils'
-import PopUpEliminarAnotacion from './PopUpEliminarAnotacion.vue'
+import PopUpEliminar from './PopUpEliminar.vue'
 
 export default {
     name: 'Anotacion',
     components: {
     AppButton,
     XCircleIcon,
-    PopUpEliminarAnotacion
+    PopUpEliminar
 },
     props: {
         anotacion: {}

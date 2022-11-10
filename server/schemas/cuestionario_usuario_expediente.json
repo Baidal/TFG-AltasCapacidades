@@ -4,7 +4,8 @@
 	"properties": {
 		"cuestionario_id": "@integer !",
         "usuario_expediente_id": "@integer !",
-        "completado": "@integer"
+        "completado": "@integer",
+		"id": "#"
 	},
 	"table": "cuestionario_usuario_expediente",
 	"urlList": "/cuestionario_usuario_expediente",

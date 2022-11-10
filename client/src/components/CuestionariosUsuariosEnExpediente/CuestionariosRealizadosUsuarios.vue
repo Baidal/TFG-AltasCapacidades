@@ -1,6 +1,12 @@
 <template>
     <div class="grid grid-rows-4 w-full grid-container">
-        <TarjetaCuestionariosUsuario v-for="usuario in this.usuarios" :key="usuario.usuario.id" :usuario="usuario.usuario" :cuestionarios="usuario.cuestionarios" :idExpediente="expedienteId"/>
+        <TarjetaCuestionariosUsuario 
+            v-for="usuario in this.usuarios" 
+            :key="usuario.usuario.id" 
+            :usuario="usuario.usuario" 
+            :cuestionarios="usuario.cuestionarios" 
+            :idExpediente="expedienteId"
+            @eliminarRelacionCuestionario="eliminarRelacionCuestionario"/>
     </div>
 </template>
 
@@ -81,6 +87,16 @@ export default {
             }
 
             return Usuarios
+        },
+        eliminarRelacionCuestionario(idCuestionario, idUsuario){
+            //this.usuario.cuestionarios = this.usuario.cuestionarios.filter(objetoCuestionario => objetoCuestionario.cuestionario.id == idCuestionario)
+            const indexUsuario = this.usuarios.findIndex(usuario => usuario.usuario.id == idUsuario)
+            if(indexUsuario === -1)
+                return
+
+            console.log(this.usuarios[indexUsuario])
+            
+            this.usuarios[indexUsuario].cuestionarios = this.usuarios[indexUsuario].cuestionarios.filter(objetoCuestionario => objetoCuestionario.cuestionario.id != idCuestionario)
         }
     }   
 }
