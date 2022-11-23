@@ -273,7 +273,7 @@ export default {
                                 dni: usuario.dni,
                                 telefono: usuario.telefono,
                                 fecha_nacimiento: usuario.fechaNac,
-                                password: utils.generarContrasenyaAleatoria, //generamos una contraseña aleatoria de 16 caracteres
+                                password: utils.generarContrasenyaAleatoria(), //generamos una contraseña aleatoria de 16 caracteres
                                 estado_id: 1,
                                 rol_id: categoria.id
                             })

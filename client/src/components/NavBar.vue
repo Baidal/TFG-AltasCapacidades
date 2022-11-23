@@ -11,6 +11,7 @@
         <div class="flex justify-center space-x-4">
             <router-link :to="{name: 'Expedientes'}" v-if="this.loggedIn"><NavBarButton :name="'Expedientes'"/></router-link>
             <router-link :to="{name: 'CrearUsuario' }" v-if="this.loggedIn && (this.userIsAdmin || this.userIsPsicologo)"><NavBarButton :name="'Nuevo usuario'"/></router-link>
+            <router-link :to="{name: 'Cuestionarios' }" v-if="this.loggedIn && (this.userIsAdmin || this.userIsPsicologo)"><NavBarButton :name="'Cuestionarios'"/></router-link>
             <router-link :to="{name: 'Administracion'}" v-if="this.userIsAdmin"><NavBarButton :name="'Administración'"/></router-link>
             
             <router-link :to="{name: 'Perfil', params: {id: this.userId}}" v-if="this.loggedIn"><NavBarButton :name="'Perfil'"/></router-link>

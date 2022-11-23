@@ -11,6 +11,7 @@ import Administracion from '../views/Administracion'
 import NoAutorizado from '../views/NoAutorizado'
 import EstadisticasIndividuales from '../views/EstadisticasIndividuales/EstadisticasIndividuales'
 import CrearUsuario from '../views/CrearUsuario'
+import Cuestionarios from '../views/Cuestionarios/Cuestionarios'
 
 const routes = [
   {
@@ -78,6 +79,11 @@ const routes = [
     path: '/crearUsuario',
     name: 'CrearUsuario',
     component: CrearUsuario
+  },
+  {
+    path: '/cuestionarios',
+    name: 'Cuestionarios',
+    component: Cuestionarios
   }
 ]
 

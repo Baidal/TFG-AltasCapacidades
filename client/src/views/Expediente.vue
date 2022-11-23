@@ -132,12 +132,7 @@
                     </div>
                     <div class="overflow-y-auto main-section-height grid grid-rows-4 grid-container" v-if="contenidoPrincipalCuestionarios">
                         <p v-if="this.cuestionarios.length === 0" class="text-2xl font-semibold text-gray-700">No hay cuestionarios por realizar</p>
-                        <router-link :to="{name: 'Cuestionario', params: {id: cuestionario.id}}" class="w-full h-56 flex justify-center text-center p-2" v-for="cuestionario in cuestionarios" :key="cuestionario.id">
-                            <div class="rounded-lg shadow-lg w-full mx-1 flex flex-col items-center hover:shadow-xl cursor-pointer">
-                                <ClipboardListIcon class="h-22 text-gray-800"/>
-                                <h1 class="font-semibold mb-4">{{cuestionario.nombre}}</h1>
-                            </div>
-                        </router-link>
+                        <tarjeta-listado-cuestionario v-for="cuestionario in cuestionarios" :key="cuestionario.id" :cuestionario="cuestionario"/>
                     </div>
                     <div v-if="contenidoPrincipalCuestionariosRealizados">
                         <CuestionariosRealizadosUsuarios :expedienteId="this.id"/>
@@ -159,7 +154,7 @@
 <script>
 import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
-import {ClipboardListIcon, XCircleIcon, IdentificationIcon} from '@heroicons/vue/outline'
+import {XCircleIcon, IdentificationIcon} from '@heroicons/vue/outline'
 import {UserIcon} from '@heroicons/vue/solid'
 
 import AppButton from '../components/AppButton.vue'
@@ -167,39 +162,41 @@ import BusquedaUsuarioTarjeta from '../components/BusquedaUsuarioTarjeta.vue'
 import InputBuscar from '../components/InputBuscar.vue'
 import TarjetaAnotacion from '../components/TarjetaAnotacion.vue'
 import NuevaAnotacion from '../components/PopUpNuevaAnotacion.vue'
-
-import moment from 'moment'
-import utils from '../services/utils'
 import PopUpNuevaAnotacion from '../components/PopUpNuevaAnotacion.vue'
 import PopUpModificarExpediente from '../components/PopUpModificarExpediente.vue'
 import TarjetaCuestionario from '../components/TarjetaCuestionario.vue'
 import PopUpDesrelacionarUsuarioExpediente from '../components/PopUpDesrelacionarUsuarioExpediente.vue'
+import CuestionariosRealizadosUsuarios from '../components/CuestionariosUsuariosEnExpediente/CuestionariosRealizadosUsuarios.vue'
+import EstadisticasExpediente from '../components/EstadisticasExpediente/EstadisticasExpediente.vue'
+import TarjetaListadoCuestionario from '../components/TarjetaListadoCuestionario.vue'
+
+import moment from 'moment'
+import utils from '../services/utils'
 
 import {mapStores} from 'pinia'
 import {useAuthStore} from '../stores/Auth'
-import CuestionariosRealizadosUsuarios from '../components/CuestionariosUsuariosEnExpediente/CuestionariosRealizadosUsuarios.vue'
-import EstadisticasExpediente from '../components/EstadisticasExpediente/EstadisticasExpediente.vue'
+
 
 export default {
     name: 'Expediente',
     components: {
-    ClipboardListIcon,
-    AppButton,
-    UserIcon,
-    XCircleIcon,
-    MoonLoader,
-    BusquedaUsuarioTarjeta,
-    InputBuscar,
-    TarjetaAnotacion,
-    NuevaAnotacion,
-    PopUpNuevaAnotacion,
-    PopUpModificarExpediente,
-    IdentificationIcon,
-    TarjetaCuestionario,
-    PopUpDesrelacionarUsuarioExpediente,
-    CuestionariosRealizadosUsuarios,
-    EstadisticasExpediente
-},
+        AppButton,
+        UserIcon,
+        XCircleIcon,
+        MoonLoader,
+        BusquedaUsuarioTarjeta,
+        InputBuscar,
+        TarjetaAnotacion,
+        NuevaAnotacion,
+        PopUpNuevaAnotacion,
+        PopUpModificarExpediente,
+        IdentificationIcon,
+        TarjetaCuestionario,
+        PopUpDesrelacionarUsuarioExpediente,
+        CuestionariosRealizadosUsuarios,
+        EstadisticasExpediente,
+        TarjetaListadoCuestionario
+    },
     props: {
         id: ''
     },
