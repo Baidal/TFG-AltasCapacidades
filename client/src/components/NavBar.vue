@@ -10,7 +10,7 @@
         <!-- Botones de login, registro, etc-->
         <div class="flex justify-center space-x-4">
             <router-link :to="{name: 'Expedientes'}" v-if="this.loggedIn"><NavBarButton :name="'Expedientes'"/></router-link>
-            
+            <router-link :to="{name: 'CrearUsuario' }" v-if="this.loggedIn && (this.userIsAdmin || this.userIsPsicologo)"><NavBarButton :name="'Nuevo usuario'"/></router-link>
             <router-link :to="{name: 'Administracion'}" v-if="this.userIsAdmin"><NavBarButton :name="'Administración'"/></router-link>
             
             <router-link :to="{name: 'Perfil', params: {id: this.userId}}" v-if="this.loggedIn"><NavBarButton :name="'Perfil'"/></router-link>
@@ -26,6 +26,8 @@ import {useAuthStore} from '../stores/Auth.js'
 
 import NavBarButton from './NavBarButton.vue'
 
+import utils from '../services/utils'
+
 export default {
     name: 'NavBar',
     components: {
@@ -37,10 +39,10 @@ export default {
             return this.AuthStore.userIsLoggedIn
         },
         userIsAdmin(){
-            return this.AuthStore.getUser.rol_id == 3
+            return utils.userIsAdmin(this.AuthStore.getUser.rol_id)
         },
         userIsPsicologo(){
-            return this.AuthStore.getUser.rol_id == 1
+            return utils.userIsPsicologo(this.AuthStore.getUser.rol_id)
         },
         userId(){
             return this.AuthStore.getUser.id || 0

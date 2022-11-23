@@ -1,3 +1,5 @@
+import {Entropy, charset32} from 'entropy-string'
+
 export default {
     /**
      * Devuelve un string obtenido del objeto fecha pasado por parámetro
@@ -49,5 +51,13 @@ export default {
     },
     userIsPsicologo(userId){
         return userId == 1
+    },
+    userIsAdmin(userId){
+        return userId == 3
+    },
+    generarContrasenyaAleatoria(){
+        const random = new Entropy({ bits: 60, charset: charset32 })
+        const string = random.string()
+        return string
     }
 }

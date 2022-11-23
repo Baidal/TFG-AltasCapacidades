@@ -1,3 +1,4 @@
+
 export default {
     emailEsCorrecto(email){
         return email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
@@ -7,5 +8,9 @@ export default {
     },
     dniNieEsCorrecto(dni){
         return !(dni != '' && !(dni.match(/^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKE]$/i) || dni.match(/^[XYZ][0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKE]$/i)))
+    },
+    contraseñaEsCorrecta(constraseña){
+        let strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})')
+        return strongPassword.test(constraseña)
     }
 }

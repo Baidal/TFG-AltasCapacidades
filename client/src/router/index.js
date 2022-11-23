@@ -10,6 +10,8 @@ import ErroresExpediente from '../views/ErroresExpediente'
 import Administracion from '../views/Administracion'
 import NoAutorizado from '../views/NoAutorizado'
 import EstadisticasIndividuales from '../views/EstadisticasIndividuales/EstadisticasIndividuales'
+import CrearUsuario from '../views/CrearUsuario'
+
 const routes = [
   {
     path: '/',
@@ -71,6 +73,11 @@ const routes = [
     name: 'EstadisticasIndividuales',
     component: EstadisticasIndividuales,
     props: true
+  },
+  {
+    path: '/crearUsuario',
+    name: 'CrearUsuario',
+    component: CrearUsuario
   }
 ]
 
