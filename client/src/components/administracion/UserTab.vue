@@ -21,8 +21,11 @@
 </template>
 
 <script>
-import initializeAppObject from '../../services/daoProvider'
 import utils from '../../services/utils'
+
+import {mapStores} from 'pinia'
+import {useAuthStore} from '../../stores/Auth.js'
+
 export default {
     name: 'UserTab',
     data(){
@@ -40,24 +43,37 @@ export default {
         this.getAllCategories()
         this.getAllStates()
     },
+    computed: {
+        ...mapStores(useAuthStore)
+    },
     methods: {
         async getUserCategory(){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app)
+                this.$router.push({name: 'Login'})
 
             this.user.categoria = await app.dao.rol.read(this.user.rol_id)
         },
         async getUserState(){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app)
+                this.$router.push({name: 'Login'})
 
             this.user.estado = await app.dao.estado.read(this.user.estado_id)
         },
         async getAllCategories(){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app)
+                this.$router.push({name: 'Login'})
+            
             this.categories = await app.dao.rol.read()
             this.categories = this.categories.filter(category => category.rol != 'admin' && category.id !== this.user.categoria.id) 
         },
         async getAllStates(){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app)
+                this.$router.push({name: 'Login'})
+
             this.states = await app.dao.estado.read()
             this.states = this.states.filter(state => state.id !== this.user.estado.id) 
         },
@@ -79,7 +95,9 @@ export default {
         },
         async onChangeSelectCategory(event){
             const nuevoRolId = event.target.value
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app)
+                this.$router.push({name: 'Login'})
             
             const nuevoRolBD = await app.dao.rol.read(parseInt(nuevoRolId))
 
@@ -90,7 +108,9 @@ export default {
         },
         async onChangeSelectState(event){
             const nuevoEstadoId = event.target.value
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app)
+                this.$router.push({name: 'Login'})
             
             const nuevoEstadoBD = await app.dao.estado.read(parseInt(nuevoEstadoId))
 

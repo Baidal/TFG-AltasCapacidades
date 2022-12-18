@@ -7,8 +7,10 @@
 </template>
 
 <script>
-import initializeAppObject from '../../services/daoProvider'
 import utils from '../../services/utils'
+
+import {mapStores} from 'pinia'
+import {useAuthStore} from '../../stores/Auth.js'
 
 export default {
     name: 'CategoriesTab',
@@ -20,9 +22,15 @@ export default {
     mounted(){
         this.getAllCategories()
     },
+    computed: {
+        ...mapStores(useAuthStore)
+    },
     methods: {
         async getAllCategories(){
-            const app = await initializeAppObject()
+            const app = await this.AuthStore.App
+            if(!app)
+                this.$router.push({name: 'Login'})
+
             this.categories = await app.dao.rol.read()
         },
         getCategoryClass(category){

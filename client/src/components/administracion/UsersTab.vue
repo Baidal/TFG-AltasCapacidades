@@ -7,8 +7,11 @@
 </template>
 
 <script>
-import initializeAppObject from '../../services/daoProvider'
 import UserTab from './UserTab.vue'
+
+import {mapStores} from 'pinia'
+import {useAuthStore} from '../../stores/Auth.js'
+
 export default {
     name: "UsersTab",
     data() {
@@ -19,9 +22,15 @@ export default {
     async mounted() {
         this.getAllUsers();
     },
+    computed: {
+        ...mapStores(useAuthStore)
+    },
     methods: {
         async getAllUsers() {
-            const app = await initializeAppObject();
+            const app = await this.AuthStore.App
+            if(!app)
+                this.$router.push({name: 'Login'})
+
             this.users = await app.dao.usuario.read();
         }
     },

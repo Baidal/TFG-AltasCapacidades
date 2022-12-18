@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import {toRaw} from 'vue'
 
 import initializeAppObject from '../services/daoProvider'
+import utils from '../services/utils';
 
 const actualUser = JSON.parse(localStorage.getItem("user"));
 const User = actualUser ? actualUser : {}
@@ -27,8 +28,16 @@ export const useAuthStore = defineStore('Auth', {
                 
                 if(App !== null && userId !== null){
                     this.user = await App.dao.usuario.read(userId)
-                    console.log("USER: ", this.user)
                     this.user.categoria = await App.dao.rol.read(this.user.rol_id)
+
+                    //Si el usuario está vetado en el sistema
+                    if(utils.usuarioEstaVetado(this.user.estado_id))
+                        return false
+
+                    //Si el usuarion está inactivo, vuelve a estar activo
+                    if(utils.usuarioEstaInactivo(this.user.estado_id))
+                        App.dao.usuario.update(this.user.id, {estado_id: 1})
+
                     localStorage.setItem('user', JSON.stringify(this.user))
                     localStorage.setItem('token', this.token)
                     return true

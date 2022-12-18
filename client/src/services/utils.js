@@ -43,6 +43,8 @@ export default {
         switch(category){
             case 'Psicólogos':
                 return 'bg-purple-600 bg-opacity-70 rounded px-1 font-semibold w-28 text-center'
+            case 'Psicologos':
+                return 'bg-purple-600 bg-opacity-70 rounded px-1 font-semibold w-28 text-center'
             case 'Tutores':
                 return 'bg-pink-600 bg-opacity-70 rounded px-1 font-semibold w-28 text-center'
             case 'admin':
@@ -59,5 +61,11 @@ export default {
         const random = new Entropy({ bits: 60, charset: charset32 })
         const string = random.string()
         return string
+    },
+    usuarioEstaVetado(idUsuario){
+        return idUsuario == 3
+    },
+    usuarioEstaInactivo(idUsuario){
+        return idUsuario == 2
     }
 }
