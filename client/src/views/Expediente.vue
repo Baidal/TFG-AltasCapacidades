@@ -85,34 +85,41 @@
                 <div class="ml-5 mt-6 flex-1 flex-col">
                     <div class="flex justify-between mb-2">
                         <div class="border-black rounded-sm flex shadow-lg p-1 space-x-4 border-2">
-                            <div class="hover:shadow-lg p-2 rounded-md cursor-pointer">
+                            <div :class="'hover:shadow-lg p-2 rounded-md cursor-pointer ' + (contenidoPrincipalCuestionarios ? 'bg-indigo-600 text-white opacity-90' : '')">
                                 <p class="font-semibold text-md text-center" @click="toggleContenidoPrincipal('cuestionarios')">Cuestionarios</p>
                             </div>
                             <p v-if="userIsPsicologo" class="my-auto">|</p>
-                            <div v-if="userIsPsicologo" class="hover:shadow-lg p-2 rounded-md cursor-pointer">
+                            <div v-if="userIsPsicologo" :class="'hover:shadow-lg p-2 rounded-md cursor-pointer ' + (contenidoPrincipalAnotaciones ? 'bg-indigo-600 text-white opacity-90' : '')">
                                 <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('anotaciones')">Anotaciones</p>
                             </div>
                             <p v-if="userIsPsicologo" class="my-auto">|</p>
-                            <div v-if="userIsPsicologo" class="hover:shadow-lg p-2 rounded-md cursor-pointer">
+                            <div v-if="userIsPsicologo" :class="'hover:shadow-lg p-2 rounded-md cursor-pointer ' + (contenidoPrincipalCuestionariosRealizados ? 'bg-indigo-600 text-white opacity-90' : '')">
                                 <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('cuestionariosrealizados')">Cuestionarios realizados</p>
                             </div>
                             <p v-if="userIsPsicologo" class="my-auto">|</p>
-                            <div v-if="userIsPsicologo" class="hover:shadow-lg p-2 rounded-md cursor-pointer">
+                            <div v-if="userIsPsicologo" :class="'hover:shadow-lg p-2 rounded-md cursor-pointer ' + (contenidoPrincipalEstadisticasExpediente ? 'bg-indigo-600 text-white opacity-90' : '')">
                                 <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('estadisticasexpediente')">Estadísticas del expediente</p>
+                            </div>
+                            <p class="my-auto">|</p>
+                            <div :class="'hover:shadow-lg p-2 rounded-md cursor-pointer ' + (contenidoPrincipalObservaciones ? 'bg-indigo-600 text-white opacity-90' : '')">
+                                <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('observaciones')">Observaciones previas</p>
                             </div>
                         </div>    
 
                         <div class="space-x-4 flex border-gray-700 rounded-sm border-2 px-3 hover:bg-gray-50" v-if="contenidoPrincipalAnotaciones">
                             <button class="px-1 font-semibold border-gray-800 rounded-sm my-auto" @click="toggleMostrarNuevaAnotacion">Nueva anotación</button>
                         </div>
-                        <div v-if="contenidoPrincipalCuestionarios" class="my-auto text-lg font-bold">
+                        <div v-if="contenidoPrincipalCuestionarios" class="my-auto text-xl font-bold">
                             Cuestionarios
                         </div>
-                        <div v-if="contenidoPrincipalCuestionariosRealizados" class="my-auto text-lg font-bold">
+                        <div v-if="contenidoPrincipalCuestionariosRealizados" class="my-auto text-xl font-bold">
                             Cuestionarios Realizados
                         </div>
-                        <div v-if="contenidoPrincipalEstadisticasExpediente" class="my-auto text-lg font-bold">
+                        <div v-if="contenidoPrincipalEstadisticasExpediente" class="my-auto text-xl font-bold">
                             Estadísticas
+                        </div>
+                        <div v-if="contenidoPrincipalObservaciones" class="my-auto text-xl font-bold">
+                            Observaciones previas
                         </div>
 
                         <div class="w-60 flex items-end" v-if="contenidoPrincipalAnotaciones">
@@ -139,6 +146,9 @@
                     </div>
                     <div v-if="contenidoPrincipalEstadisticasExpediente">
                         <EstadisticasExpediente :idExpediente="this.id"/>
+                    </div>
+                    <div v-if="contenidoPrincipalObservaciones">
+                        <Observaciones :expedienteId="this.id"/>
                     </div>
                 </div>
             </div>
@@ -169,6 +179,7 @@ import PopUpDesrelacionarUsuarioExpediente from '../components/PopUpDesrelaciona
 import CuestionariosRealizadosUsuarios from '../components/CuestionariosUsuariosEnExpediente/CuestionariosRealizadosUsuarios.vue'
 import EstadisticasExpediente from '../components/EstadisticasExpediente/EstadisticasExpediente.vue'
 import TarjetaListadoCuestionario from '../components/TarjetaListadoCuestionario.vue'
+import Observaciones from '../components/Observaciones.vue'
 
 import moment from 'moment'
 import utils from '../services/utils'
@@ -195,7 +206,8 @@ export default {
         PopUpDesrelacionarUsuarioExpediente,
         CuestionariosRealizadosUsuarios,
         EstadisticasExpediente,
-        TarjetaListadoCuestionario
+        TarjetaListadoCuestionario,
+        Observaciones
     },
     props: {
         id: ''
@@ -572,6 +584,9 @@ export default {
         },
         contenidoPrincipalEstadisticasExpediente(){
             return this.contenidoPrincipal == 'estadisticasexpediente'
+        },
+        contenidoPrincipalObservaciones(){
+            return this.contenidoPrincipal == 'observaciones'
         },
         loggedIn(){
             return this.AuthStore.userIsLoggedIn

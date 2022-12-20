@@ -1,0 +1,16 @@
+{
+	"title": "Respuesta a observación",
+	"description": "Respuesta a una observación en un expediente",
+	"properties": {
+		"respuesta": "@string !",
+        "observaciones_id": "@integer !",
+        "expediente_id": "@integer !",
+        "usuario_id": "@integer !",
+        "create_time": "@string",
+		"update_time": "@string",
+		"id": "#"
+	},
+	"table": "respuesta_observacion",
+	"urlList": "/respuesta_observacion",
+	"urlItem": "/respuesta_observacion/:id"
+}

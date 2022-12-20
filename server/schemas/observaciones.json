@@ -1,0 +1,13 @@
+{
+	"title": "Observaciones",
+	"description": "Observaciones previas que se realizan en un cuestionario",
+	"properties": {
+		"observacion": "@string !",
+        "create_time": "@string",
+		"update_time": "@string",
+		"id": "#"
+	},
+	"table": "observaciones",
+	"urlList": "/observaciones",
+	"urlItem": "/observaciones/:id"
+}

@@ -369,3 +369,19 @@ VALUES
 (
 	1, 6
 );
+
+INSERT INTO `altascapacidades`.`observaciones`
+(
+`observacion`
+)
+VALUES
+(
+'¿Ha habido algún caso de altas capacidades previo en la familia?');
+
+INSERT INTO `altascapacidades`.`observaciones`
+(
+`observacion`
+)
+VALUES
+(
+'¿Alguna observación adicional?');
