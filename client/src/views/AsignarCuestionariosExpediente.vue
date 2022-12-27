@@ -28,7 +28,7 @@
         </div>
         <!-- Tarjetas que contienen los usuarios y los cuestionarios a asignar al expediente-->
         <div class="flex justify-center flex-wrap space-x-4">
-            <TarjetaUsuariosCuestionarios 
+            <TarjetaUsuariosCuestionarios class="mb-4"
                 :titulo="categoria.nombre" 
                 :usuarios="categoria.usuarios"
                 :cuestionarios="categoria.cuestionarios" 

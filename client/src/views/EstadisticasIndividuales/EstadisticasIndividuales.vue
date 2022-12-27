@@ -4,8 +4,8 @@
             <div class="w-2/5 text-center">
                 <p class="font-semibold text-2xl">Estadísticas obtenidas de los cuestionarios realizados por <b>{{nombreUsuario}}</b> en el expediente <b>{{expediente.nombre}}</b></p>
             </div>
-            <div class="w-1/2 flex mt-8">
-                <div class="w-1/4 text-center flex flex-col items-center justify-center mx-8">
+            <div class="w-1/2 flex flex-col items-center mt-8">
+                <div class="w-full text-center flex flex-col items-center justify-start mx-8 mb-10">
                     <p class="font-bold text-3xl">
                         69% Aptitud*
                     </p>
@@ -13,11 +13,14 @@
                         *Datos obtenidos de calcular la media de todos los informes generados a partir de los resultados de los usuarios
                     </p>
                 </div>
+                <p class="font-bold text-3xl mb-2">
+                        Estadísticas obtenidas para cada cuestionario
+                    </p>
                 <div class="w-3/4">
-                    <StatsBar :color="'#f87979'" :data="[65,67,70,85,79]" :label="'% Aptitud obtenida para cada ámbito'"></StatsBar>
+                    <Graficas class="border-2 rounded-md p-10 border-black"/>
                 </div>
             </div>
-            <app-button :name="'Volver'" class="mt-4" @click="this.$router.push({name: 'Expediente', params: {id: this.idExpediente}})"/>
+            <app-button :name="'Volver'" class="my-10" @click="this.$router.push({name: 'Expediente', params: {id: this.idExpediente}})"/>
         </div>
         <div v-else class="mt-10 text-3xl text-center">
             No existe la relación entre los usuarios indicados.
@@ -30,7 +33,7 @@
 import {mapStores} from 'pinia'
 import {useAuthStore} from '../../stores/Auth'
 
-import StatsBar from '../../components/StatsBar.vue'
+import Graficas from './Graficas.vue'
 
 import utils from '../../services/utils'
 import AppButton from '../../components/AppButton.vue'
@@ -42,8 +45,8 @@ export default {
         idUsuario: ''
     },
     components: {
-        StatsBar,
-        AppButton
+        AppButton,
+        Graficas
     },
     data(){
         return {

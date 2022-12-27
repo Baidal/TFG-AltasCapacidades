@@ -5,7 +5,8 @@
 		"observacion": "@string !",
         "create_time": "@string",
 		"update_time": "@string",
-		"id": "#"
+		"id": "#",
+		"rol_id": "@integer"
 	},
 	"table": "observaciones",
 	"urlList": "/observaciones",

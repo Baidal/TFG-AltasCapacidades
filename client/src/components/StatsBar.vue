@@ -16,27 +16,7 @@ export default {
         Bar
     },
     props: {
-        data: Array,
-        label: '',
-        color: ''
-    },
-    data(){
-        return {
-            chartData: {
-                labels: [ 'Visión espacial', 'Capacidad psicomotriz', 'Inteligencia Emocional', 'Capacidad Resolutiva', 'Inteligencia' ],
-                datasets: 
-                [ 
-                    { 
-                        data: this.data,
-                        label: this.label,
-                        backgroundColor: this.color,
-                    } 
-                ]
-            },
-            chartOptions: {
-                responsive: true
-            }
-        }
+        chartData: {}
     }
 }
 </script>

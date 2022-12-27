@@ -1,21 +1,37 @@
 INSERT INTO `altascapacidades`.`rol`
-(`rol`
+(`rol`,
+`id`
 ) VALUES (
-	'Psicologos'
+	'Psicologos',
+    `1`
 );
 
 INSERT INTO `altascapacidades`.`rol`
-(`rol`
+(`rol`,
+`id`
 ) VALUES (
-	'Tutores'
+	'Tutores',
+    `2`
 );
 
 INSERT INTO `altascapacidades`.`rol`
 (
-`rol`
+`rol`,
+`id`
 ) 
 VALUES (
-	'admin'
+	'admin',
+    `1`
+);
+
+INSERT INTO `altascapacidades`.`rol`
+(
+`rol`,
+`id`
+) 
+VALUES (
+	'centro',
+    `4`
 );
 
 INSERT INTO `altascapacidades`.`estado`
@@ -376,7 +392,7 @@ INSERT INTO `altascapacidades`.`observaciones`
 )
 VALUES
 (
-'¿Ha habido algún caso de altas capacidades previo en la familia?');
+'¿Ha habido algún antecedente de altas capacidades previo en la familia?');
 
 INSERT INTO `altascapacidades`.`observaciones`
 (

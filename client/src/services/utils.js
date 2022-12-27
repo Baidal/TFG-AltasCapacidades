@@ -57,6 +57,12 @@ export default {
     userIsAdmin(userId){
         return userId == 3
     },
+    userIsTutor(userId){
+        return userId == 2
+    },
+    userIsCentro(userId){
+        return userId == 4
+    },
     generarContrasenyaAleatoria(){
         const random = new Entropy({ bits: 60, charset: charset32 })
         const string = random.string()
