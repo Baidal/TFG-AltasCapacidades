@@ -6,6 +6,7 @@
         "expediente_id": "@integer !",
 		"rol_id": "@integer !",
 		"usuario_eliminado": "@integer",
+		"datos_adicionales_usuario_id": "@integer",
 		"id": "#"
 	},
 	"table": "usuario_expediente",

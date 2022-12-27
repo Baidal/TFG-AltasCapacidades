@@ -10,6 +10,8 @@
 		"dni": "@string !",
 		"telefono": "@string",
 		"fecha_nacimiento": "@datetime",
+		"estado_civil": "@string",
+		"genero": "@string",
 		"create_time": "@string",
 		"update_time": "@string",
 		"estado_id": "@integer !",

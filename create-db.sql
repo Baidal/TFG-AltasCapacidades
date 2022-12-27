@@ -54,6 +54,8 @@ CREATE TABLE IF NOT EXISTS `altascapacidades`.`usuario` (
   `dni` VARCHAR(25) NOT NULL,
   `telefono` VARCHAR(20) NULL,
   `fecha_nacimiento` DATE NULL,
+  `estado_civil` VARCHAR(100) NULL,
+  `genero` VARCHAR(100) NULL,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `estado_id` INT NOT NULL,
@@ -88,6 +90,29 @@ CREATE TABLE IF NOT EXISTS `altascapacidades`.`expediente` (
   `nombre` VARCHAR(150) NOT NULL,
   `dni_niño` VARCHAR(25) NULL,
   `fechanacimiento_niño` DATE NULL,
+  `genero` VARCHAR(100) NULL,
+  `curso_escolar` VARCHAR(200) NULL,
+  `ciudad_natal` VARCHAR(200) NULL,
+  `ciudad_residencia` VARCHAR(200) NULL,
+  `lengua_materna` VARCHAR(200) NULL,
+  `tipo_familia` VARCHAR(200) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `altascapacidades`.`datos_adicionales_usuario`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `altascapacidades`.`datos_adicionales_usuario` ;
+
+CREATE TABLE IF NOT EXISTS `altascapacidades`.`datos_adicionales_usuario` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `create_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` TIMESTAMP NULL,
+  `profesion` VARCHAR(200) NULL,
+  `relacion_niño` VARCHAR(100) NULL,
+  `fecha_conoce` DATE NULL,
+  `colaboracion` LONGTEXT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -103,11 +128,13 @@ CREATE TABLE IF NOT EXISTS `altascapacidades`.`usuario_expediente` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `rol_id` INT NOT NULL,
   `usuario_eliminado` TINYINT NULL DEFAULT 0,
+  `datos_adicionales_usuario_id` INT NULL,
   INDEX `fk_user_has_expediente_expediente1_idx` (`expediente_id` ASC) VISIBLE,
   INDEX `fk_user_has_expediente_user1_idx` (`usuario_id` ASC) VISIBLE,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `UNIQUE_usuarioid_expedienteid` (`expediente_id` ASC, `usuario_id` ASC) VISIBLE,
   INDEX `fk_usuario_expediente_rol1_idx` (`rol_id` ASC) VISIBLE,
+  INDEX `fk_usuario_expediente_datos_adicionales_usuario1_idx` (`datos_adicionales_usuario_id` ASC) VISIBLE,
   CONSTRAINT `fk_user_has_expediente_user`
     FOREIGN KEY (`usuario_id`)
     REFERENCES `altascapacidades`.`usuario` (`id`)
@@ -121,6 +148,11 @@ CREATE TABLE IF NOT EXISTS `altascapacidades`.`usuario_expediente` (
   CONSTRAINT `fk_usuario_expediente_rol1`
     FOREIGN KEY (`rol_id`)
     REFERENCES `altascapacidades`.`rol` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_usuario_expediente_datos_adicionales_usuario1`
+    FOREIGN KEY (`datos_adicionales_usuario_id`)
+    REFERENCES `altascapacidades`.`datos_adicionales_usuario` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
@@ -227,7 +259,14 @@ CREATE TABLE IF NOT EXISTS `altascapacidades`.`observaciones` (
   `observacion` LONGTEXT NULL,
   `create_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`))
+  `rol_id` INT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_observaciones_rol1_idx` (`rol_id` ASC) VISIBLE,
+  CONSTRAINT `fk_observaciones_rol1`
+    FOREIGN KEY (`rol_id`)
+    REFERENCES `altascapacidades`.`rol` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 

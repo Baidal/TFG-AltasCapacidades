@@ -1,0 +1,16 @@
+{
+	"title": "datos_adicionales_usuario",
+	"description": "Datos adicionales de un usuario dentro de un expediente",
+	"properties": {
+		"id": "#",
+        "profesion": "@string",
+        "relacion_niño": "@string",
+        "colaboracion": "@string",
+        "fecha_conoce": "@string",
+		"create_time": "@string",
+		"update_time": "@string"
+	},
+	"table": "datos_adicionales_usuario",
+	"urlList": "/datos_adicionales_usuario",
+	"urlItem": "datos_adicionales_usuario/:id"
+}
