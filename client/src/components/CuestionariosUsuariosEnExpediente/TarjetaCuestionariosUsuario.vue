@@ -4,7 +4,7 @@
             v-if="mostrarBuscarCuestionario" 
             @close-buscar-cuestionario="toggleBuscarCuestionario"
             @anyadir-cuestionarios="relacionarCuestionarios"/>
-        <p class="font-bold text-left">{{usuario.nombre}} - {{usuario.categoria.rol}}</p>
+        <p class="font-bold text-left">{{usuario.nombre ? usuario.nombre : 'Usuario sin nombre'}} - {{usuario.categoria.rol}}</p>
         <div class="grid grid-cols-3 w-full grid-container" v-if="sinCuestionarios">
             <TarjetaCuestionario 
                 v-for="cuestionario in this.cuestionarios" 

@@ -18,6 +18,12 @@
                 @desrelacionar-usuario="eliminarRelacionExpedienteUsuario"
                 :usuarioId="usuarioADesrelacionar"
             />
+            <PopUpMostrarDatosUsuarioEnExpediente 
+                v-if="this.mostrarDatosUsuarioEnExpediente" 
+                @closePopUpMostrarDatosUsuario="toggleMostrarDatosUsuarioEnExpediente"
+                :idExpediente="this.id"
+                :idUsuario="this.idUsuarioMostrarDatos"
+                />
             <!-- Zona superior de la vista-->
             <div class="flex mb-2">
                 <!-- Icono de expediente y nombre de expediente -->
@@ -32,6 +38,7 @@
                         <p class="text-sm font-semibold">{{expediente.dni_niño}}</p>
                         <p class="text-sm text-gray-600 font-semibold">Expediente creado el {{formatearFechaCreacionExpediente}}</p>
                         <AppButton :name="'Modificar expediente'" class="w-52" @click="toggleMostrarModificarExpediente"/>
+                        
                     </div>
                 </div>
             </div>
@@ -51,12 +58,14 @@
                     <div class="mx-auto max-h-52 overflow-x-hidden overflow-y-auto space-y-3 w-3/4 flex items-center flex-col mb-8">
                         <div class="flex justify-between w-full" v-for="usuario in usuariosRelacionados" :key="usuario.id">
                             <UserIcon class="h-11 my-auto"/>
-                            <div class="flex flex-col w-full cursor-pointer" v-on:click="this.$router.push({name: 'Perfil', params: {id: usuario.id}})">
+                            <div class="flex flex-col w-full">
                                 <p class="font-semibold my-auto" v-if="usuario.nombre">{{usuario.nombre}}</p>
                                 <p class="italic text-gray-400 text-sm my-auto" v-else>Usuario sin nombre</p>
                                 <p v-if="usuario.usuario_eliminado" class="text-sm italic text-gray-700">usuario eliminado</p>
 
                                 <p class="italix text-gray-500 text-xs">{{usuario.rol}}</p>
+                                <p class="italix text-gray-500 text-xs hover:bg-gray-200 block w-1/3 mx-auto cursor-pointer" @click="toggleMostrarDatosUsuarioEnExpediente(usuario.id)">Ver datos</p>
+
                             </div>
                             <XCircleIcon 
                                 :class="'h-11 my-auto z-10' + (userIsPsicologo && usuarioSePuedeDesrelacionar(usuario.id) ? ' cursor-pointer' : ' cursor-not-allowed') + (usuario.usuario_eliminado ? ' cursor-not-allowed' : '')" 
@@ -180,6 +189,7 @@ import CuestionariosRealizadosUsuarios from '../components/CuestionariosUsuarios
 import EstadisticasExpediente from '../components/EstadisticasExpediente/EstadisticasExpediente.vue'
 import TarjetaListadoCuestionario from '../components/TarjetaListadoCuestionario.vue'
 import Observaciones from '../components/Observaciones.vue'
+import PopUpMostrarDatosUsuarioEnExpediente from '../components/PopUpMostrarDatosUsuarioEnExpediente'
 
 import moment from 'moment'
 import utils from '../services/utils'
@@ -207,7 +217,8 @@ export default {
         CuestionariosRealizadosUsuarios,
         EstadisticasExpediente,
         TarjetaListadoCuestionario,
-        Observaciones
+        Observaciones,
+        PopUpMostrarDatosUsuarioEnExpediente
     },
     props: {
         id: ''
@@ -232,9 +243,11 @@ export default {
             mostrarNuevaAnotacion: false,
             mostrarModificarExpediente: false,
             mostrarDesrelacionarExpediente: false,
+            mostrarDatosUsuarioEnExpediente: false,
             usuarioADesrelacionar: '',
             cuestionarios: [],
-            categorias: []
+            categorias: [],
+            idUsuarioMostrarDatos: ''
         }
     },
     async created(){
@@ -442,6 +455,13 @@ export default {
         toggleContenidoPrincipal(contenido){
             this.contenidoPrincipal = contenido
         },
+        toggleMostrarDatosUsuarioEnExpediente(idUsuario){
+            if(idUsuario)
+                this.idUsuarioMostrarDatos = idUsuario
+
+            this.mostrarDatosUsuarioEnExpediente = !this.mostrarDatosUsuarioEnExpediente
+            
+        },
         async modificarAnotacion(anotacion){
             const app = await this.AuthStore.App
             if(!app){
@@ -521,7 +541,10 @@ export default {
             this.expediente = await app.dao.expediente.update({id: this.expediente.id}, expediente_modificado)
 
             this.toggleMostrarModificarExpediente()
-        }
+        },
+        mostrarDatosUsuarioEnExpediente(){
+            console.log("eyyyy")
+        },
     },
     watch: {
         inputBuscarUsuarios(new_input, _){

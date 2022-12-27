@@ -38,7 +38,6 @@ export default {
     methods: {
         closePopUp(){
             this.$emit('closePopUp')
-            console.log("eyyy")
         },
         async crearCuestionario(){
             this.errores = []

@@ -12,5 +12,5 @@
 	},
 	"table": "datos_adicionales_usuario",
 	"urlList": "/datos_adicionales_usuario",
-	"urlItem": "datos_adicionales_usuario/:id"
+	"urlItem": "/datos_adicionales_usuario/:id"
 }
