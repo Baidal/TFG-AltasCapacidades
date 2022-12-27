@@ -1,0 +1,1 @@
+export default ['Masculino', 'Femenino', 'Prefiero no decirlo']

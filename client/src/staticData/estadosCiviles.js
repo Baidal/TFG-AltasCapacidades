@@ -1,0 +1,1 @@
+export default ['Soltero', 'Casado', 'Divorciado', 'Prefiero no decirlo']

@@ -81,6 +81,9 @@ import AppButton from '../components/AppButton.vue'
 import utils from '../services/utils'
 import policies from '../services/policies'
 
+import generos from '../staticData/generos'
+import estadosCiviles from '../staticData/estadosCiviles'
+
 export default {
     name: 'Perfil',
     components: {
@@ -100,11 +103,12 @@ export default {
             cargandoDatos: true,
             modificando: false,
             erroresAlModificar: [],
-            estadosCiviles: ['Soltero', 'Casado', 'Divorciado', 'Prefiero no decirlo'],
-            generos: ['Masculino', 'Femenino', 'Prefiero no decirlo']
+            estadosCiviles: estadosCiviles,
+            generos: generos
         }
     },
     async created(){
+        console.log(generos)
         if(!this.loggedIn)
             return this.$router.push({name: 'Login'})
 

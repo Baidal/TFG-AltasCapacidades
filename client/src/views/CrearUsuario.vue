@@ -20,10 +20,31 @@
                 <input class="border-2 border-gray-800 focus:border-gray-900 rounded-md w-1/2" placeholder=" Teléfono" autocomplete="name" v-model="this.telefono"/>
                 <input class="border-2 border-gray-800 focus:border-gray-900 rounded-md w-1/2 ml-2" placeholder=" DNI/NIE" autocomplete="name" v-model="this.dni"/>
             </div>
-            <input type="date" class="border-2 border-gray-800 w-1/2 rounded-md mt-3 mx-auto" v-model="this.fechaNac"/>
-            <select class="border-2 border-gray-800 rounded-md w-1/2 mx-auto mt-3" ref="seleccionarCategoria">
-                <option v-for="categoria in categorias" :key="categoria.id" :value="categoria.id">{{categoria.rol}}</option>
-            </select>
+            <div class="flex mt-2">
+                <div class="flex flex-col w-1/2">
+                    <label class="text-gray-500">Género</label>
+                    <select class="border-2 border-gray-800 rounded-md" v-model="genero">
+                        <option v-for="genero in generos" :key="genero" :value="genero">{{genero}}</option>
+                    </select>
+                </div>
+                <div class="flex flex-col w-1/2 ml-2">
+                    <label class="text-gray-500">Estado civil</label>
+                    <select class="border-2 border-gray-800 rounded-md" v-model="estadoCivil">
+                        <option v-for="estadoCivil in estadosCiviles" :key="estadoCivil" :value="estadoCivil">{{estadoCivil}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="w-full flex flex-col items-center justify-center mt-2">
+                <label class="text-gray-500">Fecha de nacimiento</label>
+                <input type="date" class="border-2 border-gray-800 w-1/2 rounded-md mx-auto" v-model="this.fechaNac"/>
+            </div>
+            <div class="w-full flex flex-col items-center justify-center mt-2">
+                <label class="text-gray-500">Categoría</label>
+                <select class="border-2 border-gray-800 rounded-md w-1/2 mx-auto" ref="seleccionarCategoria">
+                    <option v-for="categoria in categorias" :key="categoria.id" :value="categoria.id">{{categoria.rol}}</option>
+                </select>
+            </div>
+
             <app-button :name="'Crear usuario'" class="w-1/3 mx-auto mt-3 mb-2" @click="crearUsuario"/>
             <p class="text-green-700 text-center">{{usuarioCreado}}</p>
             <ul class="text-center">
@@ -42,6 +63,9 @@ import policies from '../services/policies'
 
 import AppButton from '../components/AppButton.vue'
 
+import generos from '../staticData/generos'
+import estadosCiviles from '../staticData/estadosCiviles'
+
 export default {
     name: 'CrearUsuario',
     components: {
@@ -56,6 +80,10 @@ export default {
             telefono: '',
             dni: '',
             fechaNac: '',
+            genero: '',
+            estadoCivil: '',
+            generos,
+            estadosCiviles,
             categorias: [],
             erroresValidacion: [],
             usuarioCreado: ''
@@ -144,6 +172,8 @@ export default {
                     dni: this.dni,
                     telefono: this.telefono,
                     fecha_nacimiento: this.fechaNac,
+                    genero: this.genero,
+                    estado_civil: this.estadoCivil,
                     estado_id: 1,
                     rol_id: this.$refs.seleccionarCategoria.value
                 })
