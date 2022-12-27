@@ -6,12 +6,15 @@ async function initializeAppObject(){
     if (app == null){
         app = appClient.appClient()
         await app.getConfig("http://localhost:8080")
-        app.login({email: 'luis@gmail.com', password: '12345678'}).then(user => {
+        await app.login({email: 'luis@gmail.com', password: '12345678'}).then(user => {
             console.log("login correcto")
             console.log(user)
         }).catch(err => 
             console.log("ERROR ", err)    
         )
+
+        let datos_adicionales = await app.dao.datos_adicionales_usuario.create()
+        console.log(datos_adicionales)
         
     }
 }

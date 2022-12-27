@@ -7,14 +7,16 @@
                     <h1 class="font-bold mt-2 text-xl">Perfil</h1>
                     <UserIcon class="text-gray-800 h-28 mt-2" />
                     <div v-if="!modificando">
-                        <h1 class="font-semibold mt-2 text-lg text-gray-800">{{usuario.nombre}} {{usuario.apellidos}}</h1>
+                        <h1 class="font-semibold mt-2 text-lg text-gray-800">{{obtenerNombreUsuario}}</h1>
                         <div class="flex justify-center space-x-2">
                             <h1 class="text-blue-500">{{usuario.email}}</h1>
                             <p class="font-semibold text-gray-800">-</p>
                             <h1 class="text-gray-800">{{rolUsuario.rol}}</h1>
                         </div>
-                        <h1 class="text-gray-700 mt-2 font-semibold">{{usuario.telefono}}</h1>
+                        <h1 class="text-gray-700 mt-2 font-semibold">{{usuario.telefono ? usuario.telefono : 'Usuario sin teléfono'}}</h1>
                         <h1 class="text-gray-700 font-semibold">{{obtenerStringNacimiento}}</h1>
+                        <h1 class="text-gray-700 font-semibold">Estado civil: {{ usuario.estado_civil ? usuario.estado_civil : 'Prefiero no decirlo' }}</h1>
+                        <h1 class="text-gray-700 font-semibold">Género: {{ usuario.genero ? usuario.genero : 'Prefiero no decirlo' }}</h1>
                     </div>
                     <div v-else class="w-1/2">
                         <!-- Nombre -->
@@ -39,8 +41,20 @@
                         </div>
                         <!-- fecha Nacimiento -->
                         <div class="flex flex-col items-center">
-                            <div class="w-2/3 text-left"><label for="telefono" class="text-sm font-bold pl-1">Fecha de nacimiento</label></div>
-                            <input class="w-2/3 border-2 border-gray-800 rounded-md font-semibold" name="telefono" placeholder="telefono..." v-model="usuarioModificado.fecha_nacimiento" type="date"/>
+                            <div class="w-2/3 text-left"><label for="fechanacimiento" class="text-sm font-bold pl-1">Fecha de nacimiento</label></div>
+                            <input class="w-2/3 border-2 border-gray-800 rounded-md font-semibold" name="fechanacimiento" placeholder="Fecha de nacimiento..." v-model="usuarioModificado.fecha_nacimiento" type="date"/>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-2/3 text-left"><label for="estadocivil" class="text-sm font-bold pl-1">Estado civil</label></div>
+                            <select class="border-2 border-gray-800 rounded-md w-2/3 mx-auto" ref="seleccionarEstadoCivil" name="estadocivil" v-model="usuarioModificado.estado_civil">
+                                <option v-for="estadoCivil in estadosCiviles" :key="estadoCivil" :value="estadoCivil" :selected="usuario.estado_civil == estadoCivil">{{estadoCivil}}</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-2/3 text-left"><label for="genero" class="text-sm font-bold pl-1">Género</label></div>
+                            <select class="border-2 border-gray-800 rounded-md w-2/3 mx-auto" ref="seleccionarGenero" name="genero" v-model="usuarioModificado.genero">
+                                <option v-for="genero in generos" :key="genero" :value="genero" :selected="usuario.genero == genero">{{genero}}</option>
+                            </select>
                         </div>
                         <p v-for="error in erroresAlModificar" :key="error" class="text-sm text-red-500">{{error}}</p>
 
@@ -85,7 +99,9 @@ export default {
             existeUsuario: false,
             cargandoDatos: true,
             modificando: false,
-            erroresAlModificar: []
+            erroresAlModificar: [],
+            estadosCiviles: ['Soltero', 'Casado', 'Divorciado', 'Prefiero no decirlo'],
+            generos: ['Masculino', 'Femenino', 'Prefiero no decirlo']
         }
     },
     async created(){
@@ -214,9 +230,18 @@ export default {
     computed: {
         ...mapStores(useAuthStore),
         obtenerStringNacimiento(){
+            if(!this.usuario.fecha_nacimiento)
+                return "Sin fecha de nacimiento"
+
             const fechaNac = new Date(this.usuario.fecha_nacimiento)
 
             return "Nació el " + fechaNac.getUTCDate().toString().padStart(2,'0') + "/" + (fechaNac.getMonth() + 1).toString().padStart(2,'0') + "/" + fechaNac.getFullYear()
+        },
+        obtenerNombreUsuario(){
+            if(this.usuario.nombre)
+                return this.usuario.nombre + " " + this.usuario.apellidos
+
+            return "Usuario sin nombre"
         },
         loggedIn(){
             return this.AuthStore.userIsLoggedIn

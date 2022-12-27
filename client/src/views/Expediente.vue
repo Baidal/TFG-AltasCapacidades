@@ -413,7 +413,17 @@ export default {
                 if(this.usuariosRelacionados.findIndex(usuarioRelacionado => usuarioRelacionado.id == usuarioSeleccionado.id) == -1){    
                     const categoriaId = this.$refs.seleccionarCategoria.value
                     const categoria = this.categorias.find(categoriaBuscar => categoriaBuscar.id == categoriaId)
-                    const usuario_expediente = await app.dao.usuario_expediente.create({usuario_id: usuarioSeleccionado.id, expediente_id: this.expediente.id, rol_id: categoriaId})
+                    
+                    //creamos los datos adicionales del usuario en el expediente
+                    const datos_adicionales_usuario = await app.dao.datos_adicionales_usuario.create()
+                    
+                    const usuario_expediente = await app.dao.usuario_expediente.create(
+                        {
+                            usuario_id: usuarioSeleccionado.id, 
+                            expediente_id: this.expediente.id, 
+                            rol_id: categoriaId,
+                            datos_adicionales_usuario_id: datos_adicionales_usuario.id
+                        })
 
                     usuarioSeleccionado.rol = categoria.rol
                     usuarioSeleccionado.usuario_expediente_ID = usuario_expediente.id

@@ -311,11 +311,15 @@ export default {
          * @param {*} usuarioId 
          * @param {*} expedienteId 
          */
-        relacionarUsuarioExpediente(app, usuarioId, expedienteId, categoriaId){
+        async relacionarUsuarioExpediente(app, usuarioId, expedienteId, categoriaId){
+            //creamos los datos adicionales del usuario en el expediente
+            let datos_adicionales_usuario = await app.dao.datos_adicionales_usuario.create()
+            
             app.dao.usuario_expediente.create({
                 usuario_id: usuarioId,
                 expediente_id: expedienteId,
-                rol_id: categoriaId
+                rol_id: categoriaId,
+                datos_adicionales_usuario_id: datos_adicionales_usuario.id
             })
         },
     }
