@@ -21,6 +21,7 @@
                     <h1 class="text-gray-700 font-semibold">Relación con el niño: {{ datosUsuarioExpediente.relacion_niño ? datosUsuarioExpediente.relacion_niño : 'Sin especificar' }}</h1>
                     <h1 class="text-gray-700 font-semibold">Fecha desde que se conoce al niño: {{ datosUsuarioExpediente.fecha_conoce ? utils.formatearFecha(datosUsuarioExpediente.fecha_conoce) : 'Sin especificar' }}</h1>
                     <h1 class="text-gray-700 font-semibold">Colaboración: {{ datosUsuarioExpediente.colaboración ?datosUsuarioExpediente.colaboración : 'Sin especificar' }}</h1>
+                    <h1 class="text-gray-700 font-semibold" v-if="usuarioEsCentro">Especialidad: {{ datosUsuarioExpediente.profesion ? datosUsuarioExpediente.profesion : 'Sin especificar' }}</h1>
                     <h1 class="text-gray-700 font-semibold">Categoría en el expediente: {{ usuario.categoriaEnExpediente ? usuario.categoriaEnExpediente.rol : 'Sin especificar' }}</h1>
                 </div>
             </div>
@@ -68,6 +69,9 @@ export default {
                 return "Sin fecha de nacimiento"
 
             return "Nació el " + utils.formatearFecha(this.usuario.fecha_nacimiento)
+        },
+        usuarioEsCentro(){
+            return utils.userIsCentro(this.usuario.id)
         }
     },
     methods: {
