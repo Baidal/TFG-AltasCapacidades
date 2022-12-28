@@ -1,0 +1,1 @@
+export default ['Familia biparental con hijos', 'Familia homoparental', 'Familia reconstituida o compuesta', 'Familia monoparental', 'Familia de acogida', 'Familia adoptiva', 'Familia extensa']

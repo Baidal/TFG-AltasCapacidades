@@ -346,7 +346,7 @@ export default {
                 return
             }
             
-            let usuario_expediente = await app.dao.usuario_expediente.read({}, {filter: {usuario_id: this.AuthStore.getUser.id, expediente_id: this.id}})
+            let usuario_expediente = await app.dao.usuario_expediente.read({}, {filter: {usuario_id: this.AuthStore.getUser.id, expediente_id: parseInt(this.id)}})
             usuario_expediente = usuario_expediente[0]
             
             let cuestionario_usuario_expediente = await app.dao.cuestionario_usuario_expediente.read({}, {filter: {usuario_expediente_id: usuario_expediente.id}})
@@ -647,8 +647,8 @@ export default {
                 return
             }
             
-            const usuario_expediente = await app.dao.usuario_expediente.read({}, {filter: {expediente_id: this.id, usuario_id: this.AuthStore.getUser.id}})
-            console.log(!usuario_expediente[0].usuario_eliminado)
+            const usuario_expediente = await app.dao.usuario_expediente.read({}, {filter: {expediente_id: parseInt(this.id), usuario_id: this.AuthStore.getUser.id}})
+            console.log("USUARIO EXPEDIENTE", usuario_expediente)
             return this.loggedIn && usuario_expediente.length !== 0 && !usuario_expediente[0].usuario_eliminado
         },
         userIsPsicologo(){

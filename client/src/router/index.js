@@ -54,7 +54,7 @@ const routes = [
     props: true
   },
   {
-    path: '/expediente/errores',
+    path: '/expediente/:expedienteId/errores/:errores',
     name: 'ErroresExpediente',
     component: ErroresExpediente,
     props: true

@@ -3,7 +3,8 @@
         <div class="flex justify-center">
             <div class="w-2/5 text-center flex flex-col space-y-2">
                 <h1 class="text-3xl font-bold">Errores al crear el expediente</h1>
-                <TarjetaError v-for="error in errores" :key="error" :error="error"/>
+                <TarjetaError v-for="error in erroresArray" :key="error" :error="error"/>
+                
                 <AppButton class="w-1/3 mx-auto" :name="'Continuar al expediente'" v-on:click="this.$router.push({name: 'Expediente', params: {id: expedienteId}})"/>
             </div>
         </div>
@@ -20,18 +21,16 @@ export default {
         AppButton
     },
     props: {
-        errores: {
-            type: Array
-        },
-        expedienteId: ''
+        errores: '',
+        expedienteId: 0
     },
     data() {
-        return {};
+        return {
+            erroresArray: []
+        };
     },
-    methods: {
-        prueba() {
-            this.$router.push({ name: "ErroresExpediente", props: { errores: ["eyy", "adios"] } });
-        }
+    mounted() {
+        this.erroresArray = this.errores.split('&')
     },
     components: { TarjetaError, AppButton }
 }

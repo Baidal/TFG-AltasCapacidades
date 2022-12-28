@@ -2,24 +2,71 @@
     <div class="block text-center mt-2 space-y-2 mb-20">
         <p class="text-lg font-bold">{{this.creandoExpediente ? "Nuevo expediente" : "Añadir formularios al expediente"}}</p>
         <div class="flex flex-col space-y-2">
-            <AppButton class="mx-auto text-green-800 cursor-pointer" @click="crearExpediente" :name="'Crear expediente'"/>
+            <AppButton class="mx-auto cursor-pointer" @click="crearExpediente" :name="'Crear expediente'"/>
         </div>
         <!-- Formulario con los datos del niño -->
         <div v-if="this.mostrarFormularioNiño">
-            <div class="w-2/5 border-4 border-gray-800 rounded-md mx-auto flex space-y-2 flex-col pl-4 pr-4 pb-4 pt-2 shadow-md">
+            <div class="w-2/5 border-4 border-gray-800 rounded-md mx-auto flex flex-col pl-4 pr-4 pb-4 pt-2 shadow-md">
                 <p class="font-bold text-md mb-2">Nombre del expediente</p>
                 <input v-model="nombreExpediente" name="nombreExpediente" class="w-full border-2 border-black rounded-md p-1 mx-auto" placeholder="Nombre expediente..."/>
                 
                 <!-- Nombre y apellidos-->
-                <p class="font-bold text-md mb-2">Datos del niño/a</p>
-                <div class="flex space-x-2">
-                    <input v-model="datosNiño.nombre" name="nombre" class="w-1/3 border-2 border-black rounded-md p-1" placeholder="Nombre..."/>
-                    <input v-model="datosNiño.apellidos" name="apellidos" class="w-2/3 border-2 border-black rounded-md p-1" placeholder="Apellidos..."/>
+                <p class="font-bold text-md mt-3">Datos del niño/a</p>
+                <div class="flex space-x-2 mt-3">
+                    <div class="flex flex-col w-1/3">
+                        <p class="font-semibold text-gray-600 text-left">Nombre</p>
+                        <input v-model="datosNiño.nombre" name="nombre" class="border-2 border-black rounded-md p-1" placeholder="Nombre..."/>
+                    </div>
+                    <div class="flex flex-col w-2/3">
+                        <p class="font-semibold text-gray-600 text-left">Apellidos</p>
+                        <input v-model="datosNiño.apellidos" name="apellidos" class="border-2 border-black rounded-md p-1" placeholder="Apellidos..."/>
+                    </div>
                 </div>
                 <!-- Dni y Fecha nacimiento-->
-                <div class="flex space-x-2">
-                    <input v-model="datosNiño.dni" name="dni" class="w-1/4 border-2 border-black rounded-md p-1" placeholder="Dni..."/>
-                    <input v-model="datosNiño.fechaNac" type="date" name="fechaNac" class="w-3/4 border-2 border-black rounded-md p-1" placeholder="Fecha nacimiento..."/>
+                <div class="flex space-x-2 mt-3">
+                    <div class="flex flex-col w-1/4">
+                        <p class="font-semibold text-gray-600 text-left">DNI</p>
+                        <input v-model="datosNiño.dni" name="dni" class="border-2 border-black rounded-md p-1" placeholder="Dni..."/>
+                    </div>
+                    <div class="flex flex-col w-3/4">
+                        <p class="font-semibold text-gray-600 text-left">Fecha de nacimiento</p>
+                        <input v-model="datosNiño.fechaNac" type="date" name="fechaNac" class="border-2 border-black rounded-md p-1" placeholder="Fecha nacimiento..."/>
+                    </div>
+                </div>
+                <div class="flex space-x-2 mt-3">
+                    <div class="flex flex-col w-1/3">
+                        <p class="font-semibold text-gray-600 text-left">Género</p>
+                        <select class="border-2 border-gray-800 rounded-md my-auto h-8" ref="seleccionarGenero" name="genero" v-model="datosNiño.genero">
+                            <option v-for="genero in generos" :key="genero" :value="genero" :selected="genero == generos[0]">{{genero}}</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col w-1/3">
+                        <p class="font-semibold text-gray-600 text-left">Curso escolar</p>
+                        <input v-model="datosNiño.curso_escolar" name="curso_escolar" class="border-2 border-black rounded-md p-1" placeholder="Curso escolar..."/>
+                    </div>
+                    <div class="flex flex-col w-1/3">
+                        <p class="font-semibold text-gray-600 text-left">Lengua Materna</p>
+                        <input v-model="datosNiño.lengua_materna" name="lengua_materna" class="border-2 border-black rounded-md p-1" placeholder="Lengua materna..."/>
+                    </div>
+                </div>
+                <div class="flex space-x-2 mt-3">
+                    <div class="flex flex-col w-3/5">
+                        <p class="font-semibold text-gray-600 text-left">Ciudad natal</p>
+                        <input v-model="datosNiño.ciudad_natal" name="ciudad_natal" class="border-2 border-black rounded-md p-1" placeholder="Ciudad natal..."/>
+                    </div>
+                    <div class="flex flex-col w-full">
+                        <p class="font-semibold text-gray-600 text-left">Ciudad de residencia</p>
+                        <div class="flex space-x-2">
+                            <input v-model="datosNiño.ciudad_residencia" name="ciudad_residencia" class="w-3/5 border-2 border-black rounded-md p-1" placeholder="Ciudad de residencia..."/>
+                            <app-button :name="'Son iguales'" class="w-40" @click="this.datosNiño.ciudad_residencia = this.datosNiño.ciudad_natal"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center mt-3">
+                    <p class="font-semibold text-gray-600 text-left">Tipo de familia</p>
+                    <select class="border-2 border-gray-800 rounded-md w-2/3 mx-auto" ref="seleccionarGenero" name="genero" v-model="datosNiño.tipo_familia">
+                        <option v-for="tipoFamilia in tiposFamilia" :key="tipoFamilia" :value="tipoFamilia" :selected="tipoFamilia === tiposFamilia	[0]">{{tipoFamilia}}</option>
+                    </select>
                 </div>
                 <div>
                     <p v-for="error in erroresValidacion" :key="error" class="text-left font-semibold text-sm text-red-600">{{error}}</p>
@@ -47,7 +94,6 @@
 
 <script>
 import crypto from 'crypto'
-import initializeAppObject from '../services/daoProvider'
 
 import {PlusCircleIcon} from '@heroicons/vue/outline'
 import TarjetaUsuariosCuestionarios from '../components/TarjetaUsuariosCuestionarios.vue'
@@ -55,9 +101,12 @@ import AppButton from '../components/AppButton.vue'
 import PopUpAnyadirUsuario from '../components/PopUpAnyadirUsuario.vue'
 import policies from '../services/policies'
 
+import {toRaw} from 'vue'
 import {mapStores} from 'pinia'
 import {useAuthStore} from '../stores/Auth.js'
 import utils from '../services/utils'
+import tiposFamilia from '../staticData/tiposFamilia'
+import generos from '../staticData/generos'
 
 export default {
     name: 'AsignarCuestionariosExpediente',
@@ -78,7 +127,13 @@ export default {
                 nombre: '',
                 apellidos: "",
                 dni: "",
-                fechaNac: ""
+                fechaNac: "",
+                genero: "",
+                curso_escolar: "",
+                ciudad_natal: "",
+                ciudad_residencia: "",
+                lengua_materna: "",
+                tipo_familia: ""
             },
             nombreExpediente: '',
             /**
@@ -91,7 +146,9 @@ export default {
              * }
              */
             categorias: [],
-            erroresValidacion: []
+            erroresValidacion: [],
+            tiposFamilia: tiposFamilia,
+            generos: generos
         }
     },
     computed: {
@@ -234,6 +291,7 @@ export default {
             if(!this.datosExpedienteCorrectos())
                 return
             
+            let errores = []
 
             var app = await this.AuthStore.App
             if(!app)
@@ -247,6 +305,12 @@ export default {
                 nombre: this.nombreExpediente,
                 dni_niño: this.datosNiño.dni,
                 fechanacimiento_niño: this.datosNiño.fechaNac,
+                genero: this.datosNiño.genero,
+                curso_escolar: this.datosNiño.curso_escolar,
+                ciudad_natal: this.datosNiño.ciudad_natal,
+                ciudad_residencia: this.datosNiño.ciudad_residencia,
+                lenga_materna: this.datosNiño.lengua_materna,
+                tipo_familia: this.datosNiño.tipo_familia 
             }
 
             if(expedienteACrear.fechanacimiento_niño == '')
@@ -255,7 +319,7 @@ export default {
             var expediente = await app.dao.expediente.create(expedienteACrear)
             
             //Se relaciona al psicólogo que loggeado con el expediente
-            this.relacionarUsuarioExpediente(app, this.AuthStore.getUser.id, expediente.id, 1)
+            await this.relacionarUsuarioExpediente(app, this.AuthStore.getUser.id, expediente.id, 1)
 
             //Usuarios cuya creación ha sido errónea
             var usuariosNoCreados = []
@@ -277,14 +341,18 @@ export default {
                                 estado_id: 1,
                                 rol_id: categoria.id
                             })
-
-                            this.relacionarUsuarioExpediente(app, nuevoUsuario.id, expediente.id, categoria.id)
+                            await this.relacionarUsuarioExpediente(app, nuevoUsuario.id, expediente.id, categoria.id, categoria.cuestionarios)
                         }catch(_){
                             usuariosNoCreados.push(usuario)
                         }
                     }else {
                         //El usuario ya estaba creado, solo lo relaciona
-                        this.relacionarUsuarioExpediente(app, usuario.id, expediente.id, categoria.id)
+                        try{
+                            let categoriaSave = Object.assign({}, categoria)
+                            await this.relacionarUsuarioExpediente(app, usuario.id, expediente.id, categoria.id, categoriaSave.cuestionarios)
+                        }catch(_){
+                            errores.push("El usuario " + usuario.email + " no ha podido ser relacionado en la categoría " + categoria.nombre + ". ¿Es posible que lo hayas añadido en dos categorías?")
+                        }
                     }
 
                     
@@ -292,18 +360,16 @@ export default {
             }
 
             //No ha habido ningún error, enviamos al usuario al expediente
-            if(usuariosNoCreados.length == 0){
+            if(usuariosNoCreados.length == 0 && errores.length === 0){
                 this.$router.push({name: 'Expediente', params: {id: expediente.id}})
                 return
             }
             
             //han habido usuarios que no se han creado, se los mostramos al usuario
-            let errores = []
             for(const usuarioError of usuariosNoCreados){
-                console.log(usuarioError)
                 errores.push('El usuario con email ' + usuarioError.email + ' ya existía en el sistema. No ha sido creado.')
             }
-            this.$router.push({name: 'ErroresExpediente', params: {errores, expedienteId: expediente.id}})
+            this.$router.push({name: 'ErroresExpediente', params: {errores: errores.join('&'), expedienteId: expediente.id}})
         },
         /**
          * Relaciona un usuario con un expediente. Guarda también la información de la categoría a la que pertenece el usuario
@@ -311,16 +377,26 @@ export default {
          * @param {*} usuarioId 
          * @param {*} expedienteId 
          */
-        async relacionarUsuarioExpediente(app, usuarioId, expedienteId, categoriaId){
+        async relacionarUsuarioExpediente(app, usuarioId, expedienteId, categoriaId, cuestionarios){
             //creamos los datos adicionales del usuario en el expediente
             let datos_adicionales_usuario = await app.dao.datos_adicionales_usuario.create()
             
-            app.dao.usuario_expediente.create({
+            const usuario_expediente = await app.dao.usuario_expediente.create({
                 usuario_id: usuarioId,
                 expediente_id: expedienteId,
                 rol_id: categoriaId,
-                datos_adicionales_usuario_id: datos_adicionales_usuario.id
+                datos_adicionales_usuario_id: datos_adicionales_usuario.id,
+                usurio_eliminado: 0
             })
+            if(cuestionarios)
+                //Asignamos los cuestionarios de la categoria al usuario
+                for(const cuestionario of cuestionarios){
+                    await app.dao.cuestionario_usuario_expediente.create({
+                        cuestionario_id: cuestionario.id,
+                        usuario_expediente_id: usuario_expediente.id,
+                        completado: 0
+                    })
+                }
         },
     }
 }
