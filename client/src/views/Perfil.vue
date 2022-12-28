@@ -137,6 +137,7 @@ export default {
             
             try{
                 this.usuario = await app.dao.usuario.read({id: this.id})
+                this.usuario.fecha_nacimiento = utils.formatearFechaAEstandar(this.usuario.fecha_nacimiento)
                 this.existeUsuario = true
             }catch(e){
                 this.usuario = {}
@@ -179,7 +180,6 @@ export default {
         },
         asignarUsuarioAModificado(){
             this.usuarioModificado = Object.assign({}, this.usuario)
-            this.usuarioModificado.fecha_nacimiento = utils.formatearFechaAEstandar(this.usuarioModificado.fecha_nacimiento)
         },
         comprobarDatosUsuario(){
             let allOk = true

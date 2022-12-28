@@ -19,8 +19,8 @@
                 <h1 class="mt-3 font-bold text-lg text-center">Datos del usuario en el expediente</h1>
                 <div class="flex flex-col items-center justify-center space-y-2">
                     <h1 class="text-gray-700 font-semibold">Relación con el niño: {{ datosUsuarioExpediente.relacion_niño ? datosUsuarioExpediente.relacion_niño : 'Sin especificar' }}</h1>
-                    <h1 class="text-gray-700 font-semibold">Fecha desde que se conoce al niño: {{ datosUsuarioExpediente.fecha_conoce ? utils.formatearFecha(datosUsuarioExpediente.fecha_conoce) : 'Sin especificar' }}</h1>
-                    <h1 class="text-gray-700 font-semibold">Colaboración: {{ datosUsuarioExpediente.colaboración ?datosUsuarioExpediente.colaboración : 'Sin especificar' }}</h1>
+                    <h1 class="text-gray-700 font-semibold">Fecha desde que se conoce al niño: {{ datosUsuarioExpediente.fecha_conoce ? obtenerFechaConoce : 'Sin especificar' }}</h1>
+                    <h1 class="text-gray-700 font-semibold">Colaboración: {{ datosUsuarioExpediente.colaboracion ? datosUsuarioExpediente.colaboracion : 'Sin especificar' }}</h1>
                     <h1 class="text-gray-700 font-semibold" v-if="usuarioEsCentro">Especialidad: {{ datosUsuarioExpediente.profesion ? datosUsuarioExpediente.profesion : 'Sin especificar' }}</h1>
                     <h1 class="text-gray-700 font-semibold">Categoría en el expediente: {{ usuario.categoriaEnExpediente ? usuario.categoriaEnExpediente.rol : 'Sin especificar' }}</h1>
                 </div>
@@ -72,6 +72,9 @@ export default {
         },
         usuarioEsCentro(){
             return utils.userIsCentro(this.usuario.id)
+        },
+        obtenerFechaConoce(){
+            return utils.formatearFecha(this.datosUsuarioExpediente.fecha_conoce)
         }
     },
     methods: {
@@ -92,6 +95,7 @@ export default {
             this.usuario.categoriaEnExpediente = await app.dao.rol.read(usuario_expediente.rol_id)
             
             this.datosUsuarioExpediente = await app.dao.datos_adicionales_usuario.read(usuario_expediente.datos_adicionales_usuario_id)
+            console.log(utils.formatearFecha(this.datosUsuarioExpediente.fecha_conoce))
         },
         async cargarExpediente(){
             const app = await this.AuthStore.App

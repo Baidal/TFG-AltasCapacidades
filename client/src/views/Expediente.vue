@@ -24,6 +24,11 @@
                 :idExpediente="this.id"
                 :idUsuario="this.idUsuarioMostrarDatos"
                 />
+            <pop-up-modificar-datos-usuario-en-expediente 
+                v-if="this.mostrarModificarDatosEnExpediente" 
+                @closePopUpModificarDatosUsuario="toggleMostrarModificarDatosEnExpediente"
+                :expedienteId="this.id"
+                />
             <!-- Zona superior de la vista-->
             <div class="flex mb-2">
                 <!-- Icono de expediente y nombre de expediente -->
@@ -37,8 +42,10 @@
                         <p class="text-sm font-semibold">{{obtenerEdadNiño}}</p>
                         <p class="text-sm font-semibold">{{expediente.dni_niño}}</p>
                         <p class="text-sm text-gray-600 font-semibold">Expediente creado el {{formatearFechaCreacionExpediente}}</p>
-                        <AppButton :name="'Modificar expediente'" class="w-52" @click="toggleMostrarModificarExpediente"/>
-                        
+                        <div class="flex space-x-2">
+                            <AppButton :name="'Modificar expediente'" class="w-52" @click="toggleMostrarModificarExpediente"/>
+                            <AppButton :name="'Mis datos en el expediente'" class="w-64" @click="toggleMostrarModificarDatosEnExpediente"/>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -93,24 +100,24 @@
                 <!-- Parte derecha -->
                 <div class="ml-5 mt-6 flex-1 flex-col">
                     <div class="flex justify-between mb-2">
-                        <div class="border-black rounded-sm flex shadow-lg p-1 space-x-4 border-2">
-                            <div :class="'hover:shadow-lg p-2 rounded-md cursor-pointer ' + (contenidoPrincipalCuestionarios ? 'bg-indigo-600 text-white opacity-90' : '')">
+                        <div class="border-black rounded-sm flex shadow-lg p-1 space-x-2 border-2 text-sm">
+                            <div :class="'hover:shadow-lg p-2 rounded-md cursor-pointer my-auto ' + (contenidoPrincipalCuestionarios ? 'bg-indigo-600 text-white opacity-90' : '')">
                                 <p class="font-semibold text-md text-center" @click="toggleContenidoPrincipal('cuestionarios')">Cuestionarios</p>
                             </div>
                             <p v-if="userIsPsicologo" class="my-auto">|</p>
-                            <div v-if="userIsPsicologo" :class="'hover:shadow-lg p-2 rounded-md cursor-pointer ' + (contenidoPrincipalAnotaciones ? 'bg-indigo-600 text-white opacity-90' : '')">
+                            <div v-if="userIsPsicologo" :class="'hover:shadow-lg p-2 rounded-md cursor-pointer my-auto ' + (contenidoPrincipalAnotaciones ? 'bg-indigo-600 text-white opacity-90' : '')">
                                 <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('anotaciones')">Anotaciones</p>
                             </div>
                             <p v-if="userIsPsicologo" class="my-auto">|</p>
-                            <div v-if="userIsPsicologo" :class="'hover:shadow-lg p-2 rounded-md cursor-pointer ' + (contenidoPrincipalCuestionariosRealizados ? 'bg-indigo-600 text-white opacity-90' : '')">
+                            <div v-if="userIsPsicologo" :class="'hover:shadow-lg p-2 rounded-md cursor-pointer my-auto ' + (contenidoPrincipalCuestionariosRealizados ? 'bg-indigo-600 text-white opacity-90' : '')">
                                 <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('cuestionariosrealizados')">Cuestionarios realizados</p>
                             </div>
                             <p v-if="userIsPsicologo" class="my-auto">|</p>
-                            <div v-if="userIsPsicologo" :class="'hover:shadow-lg p-2 rounded-md cursor-pointer ' + (contenidoPrincipalEstadisticasExpediente ? 'bg-indigo-600 text-white opacity-90' : '')">
+                            <div v-if="userIsPsicologo" :class="'hover:shadow-lg p-2 rounded-md cursor-pointer my-auto ' + (contenidoPrincipalEstadisticasExpediente ? 'bg-indigo-600 text-white opacity-90' : '')">
                                 <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('estadisticasexpediente')">Estadísticas del expediente</p>
                             </div>
                             <p class="my-auto">|</p>
-                            <div :class="'hover:shadow-lg p-2 rounded-md cursor-pointer ' + (contenidoPrincipalObservaciones ? 'bg-indigo-600 text-white opacity-90' : '')">
+                            <div :class="'hover:shadow-lg p-2 rounded-md cursor-pointer my-auto ' + (contenidoPrincipalObservaciones ? 'bg-indigo-600 text-white opacity-90' : '')">
                                 <p class="font-semibold text-md text-center rounded-md" @click="toggleContenidoPrincipal('observaciones')">Observaciones previas</p>
                             </div>
                         </div>    
@@ -196,6 +203,7 @@ import utils from '../services/utils'
 
 import {mapStores} from 'pinia'
 import {useAuthStore} from '../stores/Auth'
+import PopUpModificarDatosUsuarioEnExpediente from '../components/PopUpModificarDatosUsuarioEnExpediente.vue'
 
 
 export default {
@@ -218,7 +226,8 @@ export default {
         EstadisticasExpediente,
         TarjetaListadoCuestionario,
         Observaciones,
-        PopUpMostrarDatosUsuarioEnExpediente
+        PopUpMostrarDatosUsuarioEnExpediente,
+        PopUpModificarDatosUsuarioEnExpediente
     },
     props: {
         id: ''
@@ -244,6 +253,7 @@ export default {
             mostrarModificarExpediente: false,
             mostrarDesrelacionarExpediente: false,
             mostrarDatosUsuarioEnExpediente: false,
+            mostrarModificarDatosEnExpediente: false,
             usuarioADesrelacionar: '',
             cuestionarios: [],
             categorias: [],
@@ -527,6 +537,9 @@ export default {
         toggleMostrarModificarExpediente(){
             this.mostrarModificarExpediente = !this.mostrarModificarExpediente
         },
+        toggleMostrarModificarDatosEnExpediente(){
+            this.mostrarModificarDatosEnExpediente = !this.mostrarModificarDatosEnExpediente
+        },
         async modificarExpediente(expediente_modificado){
             const app = await this.AuthStore.App
             if(!app){
@@ -620,6 +633,9 @@ export default {
         },
         contenidoPrincipalObservaciones(){
             return this.contenidoPrincipal == 'observaciones'
+        },
+        contenidoPrincipalDatosAdicionales(){
+            return this.conenidoPrincipal == 'datosAdicionales'
         },
         loggedIn(){
             return this.AuthStore.userIsLoggedIn

@@ -1,5 +1,13 @@
 import {Entropy, charset32} from 'entropy-string'
 
+/**
+ * Por alguna razón, al obtener la fecha de la base de datos mysql se obtiene un día menos.
+ * Añadimos ese día
+ */
+function obtenerDiaFecha(fecha){
+    return (parseInt(fecha.getUTCDate().toString()) + 1).toString().padStart(2,'0')
+}
+
 export default {
     /**
      * Devuelve un string obtenido del objeto fecha pasado por parámetro
@@ -9,7 +17,7 @@ export default {
      */
     formatearFecha(fecha){
         const date = new Date(fecha)
-        return date.getUTCDate().toString().padStart(2,'0') + "/" + (date.getMonth() + 1).toString().padStart(2,'0') + "/" + date.getFullYear()
+        return obtenerDiaFecha(date) + "/" + (date.getMonth() + 1).toString().padStart(2,'0') + "/" + date.getFullYear()
     },
     /**
      * Devuelve un string obtenido del objeto fecha pasado por parámetro
@@ -19,7 +27,7 @@ export default {
      */
     formatearFechaAEstandar(fecha){
         const date = new Date(fecha)
-        return date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2,'0') + "-" + date.getUTCDate().toString().padStart(2,'0')
+        return date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2,'0') + "-" + obtenerDiaFecha(date) 
     },
     /**
      * Devuelve un Date obtenido del objeto fecha pasado por parámetro
